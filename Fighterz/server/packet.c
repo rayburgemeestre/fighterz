@@ -71,7 +71,7 @@ struct data *c;
 		/* New user just got registered */
 		send_newuser(EVERYONE, client,
 			client->id, client->x, client->y, client->deg,
-			(signed char)client->velocity, client->alive, client->frags, client->move,
+			(signed char)client->velocity, client->alive, client->frags, client->team,
 			(signed char)client->turn, (unsigned char)client->type, client->speed, client->shiptype,
 			client->nick);
 
@@ -119,8 +119,15 @@ static void m_spawn(struct data *client)
 	client->invincibility_t2 = servertime;
 	send_invincible(EVERYONE, NULL, client->id, (unsigned char)client->invincible, client->invincibility_t);
 	
-	client->x = (double)(RED.x + (BLOCKSIZE / 2));
-	client->y = (double)(RED.y + (BLOCKSIZE / 2));
+	if (client->team == 1)
+	{
+		client->x = (double)(RED.x + (BLOCKSIZE / 2));
+		client->y = (double)(RED.y + (BLOCKSIZE / 2));
+	} else {
+		client->x = (double)(BLUE.x + (BLOCKSIZE / 2));
+		client->y = (double)(BLUE.y + (BLOCKSIZE / 2));
+	}
+
 	send_spawn(EVERYONE, NULL,
 		client->id, client->x, client->y, client->deg,
 		(signed char)client->velocity, client->alive, client->frags,

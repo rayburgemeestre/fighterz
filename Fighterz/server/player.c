@@ -1,5 +1,8 @@
 #include "common.h"
 
+int red_team_count = 0;
+int blue_team_count = 0;
+
 /********************************************
 *  PLAYER FUNCTIONS
 ****************************************************/
@@ -32,8 +35,7 @@ struct data *add_player(ID sock_fd)
 //	addtext("we made a human");
 	head->bulletcnt = 0;
 	head->enabled = STATE_NEW;
-	head->x = (double)(RED.x + BLOCKSIZE / 2);
-	head->y = (double)(RED.y + BLOCKSIZE / 2); /* -> will eventually become dynamic */
+
 	/* -100,-100 means 'not visibile yet/dead' */
 	/* head->x = -100.0;
 	head->y = -100.0; */
@@ -73,6 +75,20 @@ struct data *add_player(ID sock_fd)
 	head->path[PATH_MAX_-1][1] = 0;
 
 	snprintf(head->nick, NICKLEN, "Unit%d", player_nr);
+
+	if (red_team_count < blue_team_count)
+	{
+		head->team = 1;
+		red_team_count++;
+		head->x = (double)(RED.x + BLOCKSIZE / 2);
+		head->y = (double)(RED.y + BLOCKSIZE / 2);
+	} else {
+		head->team = 0;
+		blue_team_count++;
+		head->x = (double)(BLUE.x + BLOCKSIZE / 2);
+		head->y = (double)(BLUE.y + BLOCKSIZE / 2);
+	}
+
 	return head;
 }
 
@@ -105,12 +121,6 @@ struct data *add_bot()
 	head->bullet_time = servertime;
 	head->bulletcnt = 0;
 	head->enabled = 0;
-#if 0
-	head->x = RED.x + BLOCKSIZE / 2;
-	head->y = RED.y + BLOCKSIZE / 2; /* -> will eventually become dynamic */
-#endif
-	head->x = (double)(BLUE.x + BLOCKSIZE / 2);
-	head->y = (double)(BLUE.y + BLOCKSIZE / 2); /* -> will eventually become dynamic */
 	
 	head->deg = 180;
 	head->power = MAX_HITS;
@@ -143,9 +153,19 @@ struct data *add_bot()
 
 	head->type = T_BOT;
 	head->freeze = 0;
-	
-	//head->target_x = BLUEFLAG.x + (BLOCKSIZE / 2);
-	//head->target_y = BLUEFLAG.y + (BLOCKSIZE / 2);
+
+	if (red_team_count < blue_team_count)
+	{
+		head->team = 1;
+		red_team_count++;
+		head->x = (double)(RED.x + BLOCKSIZE / 2);
+		head->y = (double)(RED.y + BLOCKSIZE / 2);
+	} else {
+		head->team = 0;
+		blue_team_count++;
+		head->x = (double)(BLUE.x + BLOCKSIZE / 2);
+		head->y = (double)(BLUE.y + BLOCKSIZE / 2);
+	}
 
 	snprintf(head->nick, NICKLEN, "Bot%d", player_nr);
 	return head;
@@ -165,6 +185,12 @@ LINK current = head;
 		future = current->next;
 		if (current->id == sock_fd)
 		{
+			//correct team information
+			if (current->team == 1)
+				red_team_count--;
+			else
+				blue_team_count--;
+
 			if (current == head)
 			{
 				/* first node */
@@ -252,7 +278,7 @@ void sendulist(struct data *client)
 	{
 		send_newuser(client, NULL,
 			current->id, current->x, current->y, current->deg,
-			(signed char)current->velocity, current->alive, current->frags, current->move,
+			(signed char)current->velocity, current->alive, current->frags, current->team,
 			(signed char)current->turn, (unsigned char)current->type, current->speed, current->shiptype,
 			current->nick);
 		// send_newuser(
@@ -310,7 +336,7 @@ int diff = servertime - current->invincibility_t2;
 
 	send_newuser(client, except,
 		current->id, current->x, current->y, current->deg,
-		(signed char)current->velocity, current->alive, current->frags, current->move,
+		(signed char)current->velocity, current->alive, current->frags, current->team,
 		(signed char)current->turn, (unsigned char)current->type, current->speed, current->shiptype,
 		current->nick);
 	//send_newuser(

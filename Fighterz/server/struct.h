@@ -116,6 +116,7 @@ struct data {
 	TIME died; /**< time player/bot died, used for the respawn delay */
 	char *errmsg; /**< Error msg to be sent */
 	int shiptype;
+	signed char team; /**< team: 0=blue,1=red */
 
     struct data *next; /**< next object in list */
 };

@@ -91,6 +91,7 @@ void loadmap() {
 	destroy_bitmap(shipbuff);
 	tmpscreen = create_bitmap(SCREEN_X, SCREEN_Y);
 	shipbuff = create_bitmap(field_width + 1, field_height + 1);
+	//fix later shipbuff = create_sub_bitmap(tmpscreen, 0, 0, SCREEN_X, SCREEN_Y);
 #endif
 }
 

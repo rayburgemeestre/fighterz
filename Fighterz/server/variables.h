@@ -93,3 +93,7 @@ extern struct bg_imgs bg_imgs_data[32];
 //server.c
 extern int id_has_redflag;
 extern int id_has_blueflag;
+
+//player.c
+extern int red_team_count;
+extern int blue_team_count;

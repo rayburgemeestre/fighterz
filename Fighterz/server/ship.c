@@ -92,18 +92,21 @@ void moveship(unsigned int id2, TIME t2)
 				// for the other ships
 				for (cnt=0; cnt<times; cnt++)
 				{
-					if (current->turn == 0) {
-						current->turn_t = servertime + diff;
-						/* Todo? break; Nothing to do anyway */
-					}
-					if (current->turn > 0) {
-						current->deg += current->turn;
-						if (current->deg > 360)
-							current->deg = (double)current->turn;
-					} else if (current->turn < 0) {
-						current->deg += current->turn;
-						if (current->deg < 0)
-							current->deg = 358.0; // 360 - current->deg ??
+					if (collidecheck2(current, 0) == 0) // YEEY! this fixes the 'wall-walking' on the serv
+					{
+						if (current->turn == 0) {
+							current->turn_t = servertime + diff;
+							/* Todo? break; Nothing to do anyway */
+						}
+						if (current->turn > 0) {
+							current->deg += current->turn;
+							if (current->deg > 360)
+								current->deg = (double)current->turn;
+						} else if (current->turn < 0) {
+							current->deg += current->turn;
+							if (current->deg < 0)
+								current->deg = 358.0; // 360 - current->deg ??
+						}
 					}
 				}
 
@@ -386,6 +389,9 @@ for (cnt=0; cnt<times; cnt++)
 					{
 						collidecheck2(current, 0);
 					}
+
+//					if (ret == 1)
+//						break; // don't move, we would collide
 
 					/* collidecheck2(current);
 					do not collide check at the server, stuff could

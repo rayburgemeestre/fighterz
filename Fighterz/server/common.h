@@ -18,6 +18,7 @@
 						if chosen 0: visa versa.
 				   */
 #ifdef _WIN32
+#define MSG_NOSIGNAL 0
   #if (DEBUG2 == 1)
       #pragma comment( linker, "/subsystem:\"windows\"" )
   #else

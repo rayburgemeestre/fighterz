@@ -115,6 +115,7 @@ extern int set_sockopts(int s);
 extern void send_hi(struct data *client);
 extern void send_servertime(struct data *client);
 extern void send_flagcarrier(ID carrier_id, unsigned int code);
+extern void send_flagcaptured(ID capturer_id, unsigned int code);
 extern void send_clearfield(struct data *client);
 extern void send_fieldline(struct data *client, unsigned int index, char *line);
 extern void send_background(struct data *client, int df_id, 
@@ -132,7 +133,7 @@ extern void send_hit(struct data *client, struct data *except,
     ID victimid, ID evilid, unsigned char newpower);
 extern void send_newuser(struct data *client, struct data *except,
     ID id, double x, double y, double deg, signed char accel, 
-	unsigned int alive, signed short frags, unsigned int pending_moves,
+	unsigned int alive, signed short frags, signed char team,
     signed char turn, unsigned char type, double speed, int shiptype,
     char *nick);
 extern void send_newship(struct data *client);

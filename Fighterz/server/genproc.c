@@ -194,6 +194,7 @@ void drawgraphics()
 	int groen = makecol(0, 255, 128);
 	clear_to_color(tmpscreen, 0);
 
+
 	/* calc fps */
 	fps_proc();
 
@@ -213,10 +214,10 @@ void drawgraphics()
 	// show_mouse(tmpscreen);
 	// poll_mouse();
 	
-
 	/* ! fieldbuff -> tmpscreen */
 	blit (fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 	/* ! shipbuff -> tmpscreen */
+	//fix later
 	masked_blit(shipbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 
 	if (show_fps == 1 && head != NULL) 

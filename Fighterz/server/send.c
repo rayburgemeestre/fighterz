@@ -67,6 +67,7 @@ unsigned short len = 0;
 	put_u16(SMSG_HI, &p, &len);
 	put_u32(SERVER_VERSION, &p, &len);
 	put_u32(client->id, &p, &len);
+
 	send_packet(client, NULL, packet, len);
 }
 void send_newship(struct data *client)
@@ -103,6 +104,21 @@ unsigned short len = 0;
 
 	put_u16(SMSG_FLAGCARR, &p, &len);
 	put_u32(carrier_id, &p, &len);
+	put_u32(code, &p, &len);
+
+	send_packet(NULL, NULL, packet, len);
+}
+
+// code 1=red captured blue flag 2=blue captured red flag.
+void send_flagcaptured(ID capturer_id, unsigned int code)
+{
+char *p = packet;
+unsigned short len = 0;
+
+	printf("flag capturer=%d,code=%d",capturer_id, code);
+
+	put_u16(SMSG_FLAGCAPT, &p, &len);
+	put_u32(capturer_id, &p, &len);
 	put_u32(code, &p, &len);
 
 	send_packet(NULL, NULL, packet, len);
@@ -248,7 +264,7 @@ unsigned short len = 0;
 
 void send_newuser(struct data *client, struct data *except,
 	ID id, double x, double y, double deg,	signed char accel, 
-	unsigned int alive, signed short frags, unsigned int pending_moves,
+	unsigned int alive, signed short frags, signed char team,
 	signed char turn, unsigned char type, double speed, int shiptype,
 	char *nick)
 {
@@ -264,7 +280,7 @@ unsigned short len = 0;
 	put_s8(accel, &p, &len);
 	put_u32(alive, &p, &len);
 	put_s16(frags, &p, &len);
-	put_u32(pending_moves, &p, &len);
+	put_s8(team, &p, &len);
 	put_s8(turn, &p, &len);
 	put_u8(type, &p, &len);
 	put_dbl(speed, &p, &len);

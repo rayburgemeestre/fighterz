@@ -151,6 +151,9 @@ int blue_x = BLUEFLAG.x + (BLOCKSIZE / 2);
 int blue_y = BLUEFLAG.y + (BLOCKSIZE / 2);
 int red_x  = REDFLAG.x  + (BLOCKSIZE / 2);
 int red_y  = REDFLAG.y  + (BLOCKSIZE / 2);
+LINK redflagcarrier, blueflagcarrier;
+
+// look for carriers
 
 	LINK lnk;
 	for (lnk = head; lnk; lnk = lnk->next)
@@ -158,20 +161,33 @@ int red_y  = REDFLAG.y  + (BLOCKSIZE / 2);
 		if (lnk->bot == 1 || lnk->bullet == 1)
 			continue;
 
-		if ( (id_has_redflag == -1 && lnk->id != id_has_blueflag) &&
+		if ( (id_has_redflag == -1 && lnk->team != 1) &&
 			((sqrt((lnk->x - red_x) * (lnk->x - red_x)+
 			 (lnk->y - red_y) * (lnk->y - red_y)) <= (BLOCKSIZE / 2))) )
 		{
 			id_has_redflag = lnk->id;
 			send_flagcarrier(lnk->id, 1);
 		}
-		else if ( (id_has_blueflag == -1 && lnk->id != id_has_redflag) &&
+		else if ( (id_has_blueflag == -1 && lnk->team != 0) &&
 			  (sqrt((lnk->x - blue_x) * (lnk->x - blue_x)+
 			 (lnk->y - blue_y) * (lnk->y - blue_y)) <= (BLOCKSIZE / 2)) )
 		{
 			id_has_blueflag = lnk->id;
 			send_flagcarrier(lnk->id, 2);
 		}
+	}
+
+// look for captures
+
+	redflagcarrier = getplayer_byid(id_has_redflag);
+	blueflagcarrier = getplayer_byid(id_has_blueflag);
+
+	if ( (id_has_redflag != -1) &&
+		((sqrt((redflagcarrier->x - blue_x) * (redflagcarrier->x - blue_x)+
+		 (redflagcarrier->y - blue_y) * (redflagcarrier->y - blue_y)) <= (BLOCKSIZE / 2))) )
+	{//blue captured redflag
+		id_has_redflag = -1;
+		printf_("blue captured the red flag!");
 	}
 }
 
