@@ -42,7 +42,7 @@ void parse_input()
 int newturn = 0;
 	if (our_node->dead == 0 || our_node->invincible == 1) 
 	{
-		if (key[KEY_LCONTROL])
+		if (key[KEY_LCONTROL] && our_node->invincible != 1)
 		{	/* Requesting fire */
 			if ( (bullet_time == 0) || ((ourtime - bullet_time) >= (unsigned)BULLET_RE) )
 			{	bullet_time = ourtime;
@@ -209,6 +209,10 @@ int newturn = 0;
 		}
 	if (key[KEY_X])
 		our_node->deg++;
+	if (key[KEY_TILDE]) // '~'
+	{
+
+	}
 	if (key[KEY_STOP])
 		if (talk == 0)
 		{
@@ -436,8 +440,7 @@ void printulist()
 	while (current != NULL)
 	{
 		if (current->bullet != 1)
-			printul((char *)(current->nick), (long int)(current->kills), 
-				(unsigned int)current->id);
+			printul(current);
 
 		current = current->next;
 	}
@@ -445,21 +448,35 @@ void printulist()
 }
 
 /* Used in printulist(); */
-void printul(char *nick, long int two, unsigned int three) 
+void printul(struct data *node) 
 {
 	char buf[128];
 	/* again no snprintf().. arghl*/
-	if (strlen(nick) > 30) nick[30] = '\0'; /* frag >30 */
-	sprintf(buf, "%8s %4d %3u", nick, two, three);
+	if (strlen(node->nick) > 10) node->nick[10] = '\0'; /* frag >10 */
+	sprintf(buf, "%8s %4d", node->nick, node->kills);
 
 	TXTPTR2 = TXTPTR2 + 10;
+	
+	int color;
+	
+	if (node->invincible == 2)
+		color = makecol(255, 255, 255); // invincible
+	else if (node->invincible == 1)
+		color = makecol(0, 255, 128); // respawned 
+	else if (node->dead == 1)
+		color = makecol(128, 64, 0); // dead
+	else if (node->dead == 3)
+		color = makecol(128, 128, 128); // spectate
+	else
+		color = makecol(255, 128, 0); // normal (alive)
+		
 
 	if (TXTPTR2 == 0) { 
 		//textprintf(tmpscreen, font, LEFT_2, 1, 42, buf); /* 42 = makecol(255, 128, 0) (orange) */
-		textprintf(ulistbuff, font, 0, 1, makecol(255, 128, 0), buf); 
+		textprintf(ulistbuff, font, 0, 1, color, buf); 
 	} else { 
 		//textprintf(tmpscreen, font, LEFT_2, TXTPTR2, 42, buf);
-		textprintf(ulistbuff, font, 0, TXTPTR2, makecol(255,128,0), buf);
+		textprintf(ulistbuff, font, 0, TXTPTR2, color, buf);
 	}
 }
 
@@ -549,10 +566,11 @@ void drawfps()
 
 void show_graphics()
 {
+	large_text_draw();
 	masked_blit(shipbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 		/* ^- if hardware supports this, then this goes fast */
 
-	show_mouse(tmpscreen);
+	// show_mouse(tmpscreen);
 	poll_mouse();	
 
 	if (STARTED == 1)

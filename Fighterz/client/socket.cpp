@@ -247,7 +247,19 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		}
 		case SMSG_INVINCIBLE:
 		{
-			verbose("SMSG_INVINCIBLE");
+			// verbose("SMSG_INVINCIBLE");
+
+			unsigned int id, t;
+			unsigned char yesno;
+
+			if (!get_u32(&id, &dta, &len))
+				goto fatal;
+			if (!get_u8(&yesno, &dta, &len))
+				goto fatal;
+			if (!get_u32(&t, &dta, &len))
+				goto fatal;
+			
+			m_invincible(id, yesno, t);
 			return;
 		}
 		case SMSG_HIT:
@@ -378,11 +390,36 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		}
 		case SMSG_SPAWN:
 		{
-			unsigned int oid;
-			verbose("SMSG_SPAWN");
-			if (!get_u32(&oid, &dta, &len))
+			unsigned int id, alive;
+			double x, y, deg, speed;
+			signed char accel, turn;
+			unsigned char type;
+			short frags;
+
+			// verbose("SMSG_SPAWN");			
+
+			if (!get_u32(&id, &dta, &len))
 				goto fatal;
-			m_spawn(oid);
+			if (!get_dbl(&x, &dta, &len))
+				goto fatal;
+			if (!get_dbl(&y, &dta, &len))
+				goto fatal;
+			if (!get_dbl(&deg, &dta, &len))
+				goto fatal;
+			if (!get_s8(&accel, &dta, &len))
+				goto fatal;
+			if (!get_u32(&alive, &dta, &len))
+				goto fatal;
+			if (!get_s16(&frags, &dta, &len))
+				goto fatal;
+			if (!get_s8(&turn, &dta, &len))
+				goto fatal;
+			if (!get_u8(&type, &dta, &len))
+				goto fatal;
+			if (!get_dbl(&speed, &dta, &len))
+				goto fatal;
+
+			m_spawn(id, x, y, deg, accel, alive, frags, turn, type, speed);
 			return;
 		}
 		case SMSG_RESPAWN:
@@ -410,7 +447,16 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		}
 		case SMSG_KICK:
 		{
-			verbose("SMSG_KICK");
+			unsigned int id;
+			char reason[128];
+
+			// verbose("SMSG_KICK");
+			if (!get_u32(&id, &dta, &len))
+				goto fatal;
+			if (!get_str(reason, &dta, &len, sizeof(reason)))
+				goto fatal;
+
+			m_kick( id, reason );
 			return;
 		}
 	}
@@ -422,7 +468,6 @@ void dopacket(int xtype, unsigned short len, char *dta)
 fatal:
 	die("Packet error");
 }
-
 
 
 int sockwrite(char *pattern, ...)
@@ -523,6 +568,26 @@ void m_nickreply(unsigned char acceptance, char *msg)
 	verbose("SMSG_NICKREPLY: %d %s", (int)acceptance, msg);
 }
 
+void m_kick( unsigned int id, char *reason )
+{
+	LINK node = getplayer_byid( id );
+
+	node->velocity = 0;
+	node->speed = 0;
+	node->dead = 1;
+
+	if (node == our_node)
+	{
+		// alert("You were kicked for:", reason, "Press [OK] to exit", "", "", 1, 1);
+		// alert("We were kicked:", "", reason, "OK", NULL, KEY_ENTER, 1);
+		large_text("KICKED!: %s", reason);
+	} else {
+		addtext("*** %s was kicked [%s]", node->nick, reason);
+	}
+
+	explosion(node->x, node->y, 250, 10, makecol(255,0,0));
+}
+
 void m_quit(unsigned int id, char *quit_msg)
 {
 	LINK current = getplayer_byid(id);
@@ -559,13 +624,13 @@ void m_newuser(int id, double x, double y, double deg,
 	signed char turn, unsigned char type, double speed,
 	char *nick)
 {
-	verbose("---------------------- adding new user ----------------------");
+/*	verbose("---------------------- adding new user ----------------------");
 	verbose("id: %d x: %2.2f y: %2.2f deg: %2.2f accel: %d, alive: %d", 
 	         id, x, y, deg, (int)accel, alive);
 	verbose("frags: %d turn: %d type: %d speed: %2.2f nick: %s", (int)frags,
 	         (int)turn, (int)type, speed, nick);
 	verbose("-------------------------------------------------------------");
-
+*/
 	/* create first node in linked list */
 	if (!(new_node = (LINK)malloc(sizeof(user))))
 	{
@@ -674,10 +739,18 @@ void m_say(unsigned int id, char *msg)
 	addtext("<[%d]%s> %s", id, node->nick, msg);
 }
 
-void m_spawn(unsigned int oid)
+// void m_spawn(unsigned int oid)
+void m_spawn(unsigned int id, double x, double y, double deg, signed char accel, 
+	unsigned int alive, short frags, signed char turn, unsigned char type, double speed)
 {
-	// verbose("spawned with id: %d", oid);
-	if (oid == our_id)
+/*	addtext("************************************");
+	addtext("spwn: id: %u, x: %2.2f, y: %2.2f", id, x, y);
+	addtext("spwn: deg: %2.2f, accel: %d, alive: %u", deg, accel, alive);
+	addtext("spwn: frags: %d, turn: %d, type: %d", (int)frags, (int)accel, (int)alive);
+	addtext("spwn: speed: %2.2f", speed);
+	addtext("************************************");
+*/
+	if (id == our_id)
 	{
 		/* sync our_node */
 		for (our_node=head; our_node->id!=our_id; our_node=our_node->next);
@@ -688,8 +761,25 @@ void m_spawn(unsigned int oid)
 		set_window_title("Fighterz"); /* or something... */
 
 		STARTED = 1;
-		our_node->dead = 0;
 	} 
+
+	LINK node = getplayer_byid( id );
+	
+	if (!node)
+	{
+		return;
+	}
+
+	node->x = x;
+	node->y = y;
+	node->deg = deg;
+	node->velocity = accel;
+	node->alive = alive;
+	node->kills = frags;
+	node->turn = turn;
+	// node->type ?
+	node->speed = speed;
+	node->dead = 0;
 }
 
 void m_respawn(unsigned int id)
@@ -719,6 +809,22 @@ void m_accel(unsigned int id, double x, double y, signed char accel, double spee
 	current->velocity = (int)accel;
 	current->speed = speed;
 	return;
+}
+
+void m_invincible(unsigned int id, unsigned char yesno, unsigned int t)
+{
+	LINK node = getplayer_byid(id);
+	int clag;
+
+	#if IGNORE_LAG == 1
+		clag = 0;
+	#else
+		clag = current_lag();
+	#endif
+			
+	node->invincible = yesno;
+	node->invincibility_t = t;
+	node->invincibility_t2 = ourtime + clag;
 }
 
 void m_turn(unsigned int id, double x, double y, signed char turn, double deg)

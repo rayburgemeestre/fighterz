@@ -245,9 +245,9 @@ void sendulist(struct data *client)
 		if (current->invincible)
 		{
 			diff = servertime - current->invincibility_t2;
-			send_invincible(client, NULL,
+			send_invincible(NULL, NULL,
 				current->id, (unsigned char)current->invincible, current->invincibility_t - diff);
-			// send_invincible(
+			// TODO: i think this line ^ is incorrect........
 		}
 	}
 }
@@ -326,6 +326,14 @@ void kick_player(struct data *client, char *reason)
 	else
 		send_kick(EVERYONE, NULL, client->id, reason);
 	SetDead(client);
+}
+
+void softkick_player(struct data *client, char *reason)
+{
+	if (!IsRegistered(client))
+		send_kick(client, NULL, client->id, reason);
+	else
+		send_kick(EVERYONE, NULL, client->id, reason);
 }
 
 void quit_player(struct data *client, char *reason)

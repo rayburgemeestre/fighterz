@@ -27,10 +27,12 @@ extern void init();
 extern void start();
 extern void init_screen();
 extern void printulist();
-extern void printul(char *nick, long int two, unsigned int three);
+extern void printul(struct data *node);
 extern void connect_socket();
 extern void sockread();
 extern int sockwrite(char *pattern, ...);
+extern void large_text(char *pattern, ...);
+extern void large_text_draw();
 extern int parse(char *stuff);
 extern int parse2(char *stuff);
 extern void lag_proc(char *lag_char, char *servertime_char);
@@ -80,8 +82,10 @@ extern void m_kill(unsigned int victimid, unsigned int evilid, char *killstr);
 extern void m_nick(unsigned int id, char *nick);
 extern void m_say(unsigned int id, char *msg);
 extern void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, double deg);
+extern void m_kick( unsigned int id, char *reason );
 extern void m_quit(unsigned int id, char *quit_msg);
-extern void m_spawn(unsigned int id);
+extern void m_spawn(unsigned int id, double x, double y, double deg, signed char accel, 
+	unsigned int alive, short frags, signed char turn, unsigned char type, double speed);
 extern void m_respawn(unsigned int id);
 extern void m_newuser(int id, double x, double y, double deg,
 					  signed char accel, unsigned int alive, signed short frags,
@@ -89,6 +93,7 @@ extern void m_newuser(int id, double x, double y, double deg,
 					  double speed, char *nick);
 extern void m_hit();
 extern void m_accel(unsigned int id, double x, double y, signed char accel, double speed);
+extern void m_invincible(unsigned int id, unsigned char yesno, unsigned int t);
 extern void m_turn(unsigned int id, double x, double y, signed char turn, double deg);
 extern void send_version();
 extern void send_nickname();

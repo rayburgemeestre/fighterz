@@ -113,3 +113,7 @@ extern int inlen;
 extern int can_spawn;
 extern int requested_spawn;
 extern int terminate_request;
+
+extern char large_text_msg[64];
+extern unsigned long large_text_time;
+extern unsigned int large_text_display_time;

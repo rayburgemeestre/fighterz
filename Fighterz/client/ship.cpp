@@ -127,7 +127,8 @@ void drawships()
 			if (show_names == 1)
 			{
 				char tmpstr[128];
-				sprintf(tmpstr, "%s [%d] [%2.2f] [%d]", current->nick, current->velocity, current->speed, current->freeze);
+				// sprintf(tmpstr, "%s [%d] [%2.2f] [%d]", current->nick, current->velocity, current->speed, current->freeze);
+				sprintf(tmpstr, "%s", current->nick);
 				textprintf_centre(shipbuff, font, current->x, 
 					current->y + BLOCKSIZE, makecol(192,192,192), tmpstr);
 			}

@@ -6,25 +6,25 @@ int getoptions()
 
 	time_proc();
 
-	option[0].x = 310;
+	option[0].x = 300;
 	option[0].y = 280;
-	strcpy(option[0].str, "1 PLAYER");
+	strcpy(option[0].str, "MULTIPLAYER");
 	option[0].time = ourtime;
 	option[0].r = 255;
 	option[0].g = 255;
 	option[0].b = 255;
 
-	option[1].x = 310;
+	option[1].x = 300;
 	option[1].y = 310;
-	strcpy(option[1].str, "MULTIPLAYER");
+	strcpy(option[1].str, "SINGLE PLAYER *");
 	option[1].time = ourtime;
 	option[1].r = 255;
 	option[1].g = 255;
 	option[1].b = 255;
 
-	option[2].x = 310;
+	option[2].x = 300;
 	option[2].y = 370;
-	strcpy(option[2].str, "OPTIONS");
+	strcpy(option[2].str, "OPTIONS *");
 	option[2].time = ourtime;
 	option[2].r = 255;
 	option[2].g = 255;

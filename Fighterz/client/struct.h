@@ -57,7 +57,7 @@ struct data {
 	unsigned int TTL; /**< Bullet's Time To Live in milliseconds */
 	unsigned int hit_t; /**< time ship got impact from bullet.. used for impact effect */
 	int impact; /**< if set to 1 the ship got impact */
-    int invincible; /**< if this is set 1, the ship cannot fire and is shielded. */
+    int invincible; /**< if this is set 1, the ship cannot fire and is shielded. if 2 also shielded but yellow (godmode) */
 	int invincibility_t; /**< amount of milliseconds to stay invincible */
 	int invincibility_t2; /**< timer that comes along with it.. <br>
 							   if ( (servertime - invincibility_t2) > invincibility_t ) then

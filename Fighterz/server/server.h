@@ -96,6 +96,7 @@ extern struct data *getplayer_byid(ID);
 extern void dopacket(struct data *client, unsigned short xtype, unsigned short len, char *dta);
 extern void readpacket(struct data *client, int s);
 extern void kick_player(struct data *client, char *reason);
+extern void softkick_player(struct data *client, char *reason);
 extern void quit_player(struct data *client, char *reason);
 
 extern void del_tha_player(struct data *client);

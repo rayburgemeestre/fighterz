@@ -219,7 +219,38 @@ size_t len;
 		quit_player(client, "Connection terminated, Client left.");
 		del_tha_player(client);
 	}
-	if (!strncmp(cmd, "nick ", 5))
+	else if (!strcmp(cmd, "die"))
+	{
+		LINK node = head;
+		while (node != NULL)
+		{
+			quit_player(node, "Server shutting down");
+			node = node->next;
+		}
+		exit(0);
+	}
+	else if (!strcmp(cmd, "spec"))
+	{
+		softkick_player(client, "Spectator mode");
+		// del_tha_player(client);
+		client->velocity = 0;
+		client->speed = 0;
+		client->dead = 3; // Dead @ 3 is disabled
+	}
+	else if (!strcmp(cmd, "respawn"))
+	{
+		send_spawnready(client);
+		client->dead = 2;
+	}
+	else if (!strcmp(cmd, "godme")) // todo: auth needed :]
+	{
+		int diff;
+		diff = servertime - client->invincibility_t2;
+		
+		client->invincible = 2;
+		send_invincible(NULL, NULL, client->id, client->invincible, servertime - diff);
+	}
+	else if (!strncmp(cmd, "nick ", 5))
 	{
 		if (strlen(cmd) > 5)
 		{

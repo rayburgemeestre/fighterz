@@ -165,6 +165,11 @@ int inlen; /**< input buffer length */
 int can_spawn;
 int requested_spawn;
 
+// large_text(), large_text_draw();
+char large_text_msg[64];
+unsigned long large_text_time;
+unsigned int large_text_display_time = 5; // secs
+
 /********************************************
 *  THE MAIN PROGRAM
 ****************************************************/
@@ -225,7 +230,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 		}
 	}
 
-	if (skip_options != 1 && 1 == 0) /* temp */
+	if (skip_options != 1 && 1 == 1) /* temp */
 		ret = getoptions();
 	else
 		ret = 0;
