@@ -35,6 +35,13 @@ typedef signed long TIME;
 
 #define SMSG_NICKREPLY	0x0700
 
+
+#define SMSG_CLEARFIELD 0x8100
+#define SMSG_FIELDLINE  0x8101
+#define SMSG_BLOCKINFO  0x8102
+#define SMSG_BACKGROUND 0x8103
+#define SMSG_FIELDEND   0x8104
+
 /* client->server msgs: CMSG_* */
 #define CMSG_VERSION	0x8000
 #define CMSG_PASS		0x8001
