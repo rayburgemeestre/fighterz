@@ -13,8 +13,9 @@
 #define PORT 8099
 #define PI 3.14159265358979
 #define IGNORE_LAG 0
-#define NOSOUND 0
+
 #define CONFIG_FILE "fighterz.cfg"
+#define RADAR_SENSOR 50 // in blocks
 /* #define ALLEGRO_STATICLINK
    #define USE_CONSOLE   */
 #define SERVER_VERSION 0x000001			/**< Current server version (sent on connect) */
@@ -22,6 +23,12 @@
 #define CLIENT_VERSION 0x00000001
 #define BASE_DATAFILE "system\\base.dat"
 #define BASE_SOUND_DATAFILE "system\\base_snd.dat"
+
+// Console
+#define CON_LINES 9
+#define CON_LINE_LENGTH 80
+// Message
+#define MSG_LINE_LENGTH 65
 
 #define T_PLAYER			0
 #define T_BOT				1
@@ -36,6 +43,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <allegro.h>
+#include "alfont/alfont.h"
 #include <math.h>
 #include <winalleg.h>
 #include <winsock.h>

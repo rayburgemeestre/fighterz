@@ -12,8 +12,6 @@ struct data {
     char nick[64]; /**< Nickname */
 	double x; /**< X position of object */
 	double y; /**< Y position of object */
-	double x2; /**< X position used for coordinates on screen */
-	double y2; /**< Y position used for coordinates on screen */
 	unsigned int power; /**< contains the amount of impacts the object can withstand */
 	double deg; /**< degrees (0 to 360), where it's heading towards */
 	unsigned long t; /**< contains the time of the object (used for movement calculations) */
@@ -69,7 +67,7 @@ struct data {
 };
 
 typedef struct data user; /**< typedef for the structure user */
-typedef user *LINK; /**< pointer to { typedef for the struct user } */
+typedef user *PLAYER; /**< pointer to { typedef for the struct user } */
 
 /** 
  *   This struct will contain all the explosion circles used in the game
@@ -91,7 +89,7 @@ struct data2 {
 };
 
 typedef struct data2 _explosion; /**< typedef for the structure data */
-typedef _explosion *LINK2; /**< pointer to { typedef for the struct data } */
+typedef _explosion *EXPLOSION; /**< pointer to { typedef for the struct data } */
 
 /** 
  *   This struct contains the option menu's data

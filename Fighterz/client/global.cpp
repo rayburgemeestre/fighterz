@@ -1,10 +1,22 @@
 #include "common.h"
 
+// FPS (frames per sec)
+int fps; /**< current frames per seconds count */
+int fps_count; /**< used to calculate FPS */
+long int fps_oldtime; /**< used to calculate FPS */
+long int fps_newtime; /**< used to calculate FPS */
+
+// our time
+struct timeb started; /**< time the game started (clientside) */
+struct timeb t; /**< used to calculate 'ourtime' in millisecs */
+unsigned long ourtime; /**< our timer used for all time calculations in millisecs */
+
 /********************************************
 *  GLOBAL FUNCTIONS
 ****************************************************/
 
 int bg_music_on = 0;
+int save_frames_to_bitmap = 0;
 
 /* WARNING: vsnprintf() wasn't available 
    char buf[512] could be overflowed */
@@ -12,7 +24,7 @@ void printff_direct(char *pattern, ...)
 {
 int clr = makecol(0,128,255);
 
-	if (STARTED == 1 || can_spawn == 1)
+	if (game_started == 1 || our_spawnstatus == 1)
 		return;
 
 	char buf[512];
@@ -24,17 +36,17 @@ int clr = makecol(0,128,255);
 
 	acquire_screen();
 
-	if (TXTPTR >= (SCREEN_Y - 10)) {
-		TXTPTR = 0;
+	if (fakeconsole_y >= (screensize_y - 10)) {
+		fakeconsole_y = 0;
 		clear_to_color(screen, makecol(0, 0, 0));
 	} else {
-		TXTPTR = TXTPTR + 10;
+		fakeconsole_y = fakeconsole_y + 10;
 	}
 
-	if (TXTPTR == 0) { 
+	if (fakeconsole_y == 0) { 
 		textprintf(screen, font, 10, 1, clr, buf);
 	} else { 
-		textprintf(screen, font, 10, TXTPTR, clr, buf);
+		textprintf(screen, font, 10, fakeconsole_y, clr, buf);
 	}
 
 	release_screen();
@@ -54,16 +66,16 @@ if (!our_node)
 		if ((key[KEY_LCONTROL]||key[KEY_Z]) && our_node->invincible != 1 && 
 			our_node->dead != 2)
 		{	/* Requesting fire */
-			if ( (bullet_time == 0) || ((ourtime - bullet_time) >= (unsigned)BULLET_RE) )
+			if ( (bullet_fire_time == 0) || ((ourtime - bullet_fire_time) >= (unsigned)our_bullet_autofiredelay) )
 			{	
-				bullet_time = ourtime;
+				bullet_fire_time = ourtime;
 
 				// SUPER FIRE (5 BULLETS)
-				if (key[KEY_Z] && (BULLET_COUNT < BULLET_MAX) && (BULLET_COUNT <= 5))
+				if (key[KEY_Z] && (our_bullet_count < our_bullet_max) && (our_bullet_count <= 5))
 				{
 				struct data* pRet;
 				int i;
-					BULLET_RE = 1200;
+					our_bullet_autofiredelay = 1200;
 
 					for (i=0; i<5; i++)
 					{
@@ -83,37 +95,35 @@ if (!our_node)
 						pRet = add_bullet(our_node, our_node->x, our_node->y, deg, ourtime);						
 						send_newbullet(pRet->x, pRet->y, pRet->deg);
 					}
-					bullet_time = ourtime;
+					bullet_fire_time = ourtime;
 					
-					BULLET_COUNT += 5;
+					our_bullet_count += 5;
 					
-					play_sample((SAMPLE *)df_snd[SHOOT].dat, 50, 128, 1000, 0);
+					play_sample((SAMPLE *)dat_sound[SHOOT].dat, 50, 128, 1000, 0);
 				}
 				// NORMAL FIRE
-				else if (key[KEY_LCONTROL] && (BULLET_COUNT < BULLET_MAX))
+				else if (key[KEY_LCONTROL] && (our_bullet_count < our_bullet_max))
 				{	
 					struct data* pRet;
 					/* add */
-					BULLET_RE = 150;
+					our_bullet_autofiredelay = 150;
 
-#if NOSOUND != 1
-					if (USE_SOUND == 1)
-						// play_sample((SAMPLE *)dataf[FATALITY].dat, 255, 128, 1000, 0);
-#endif
+						// play_sample((SAMPLE *)dat_base[FATALITY].dat, 255, 128, 1000, 0);
+
 	
 					pRet = add_bullet(our_node, our_node->x, our_node->y, our_node->deg, ourtime);
-					bullet_time = ourtime;
-					BULLET_COUNT++;
+					bullet_fire_time = ourtime;
+					our_bullet_count++;
 					send_newbullet(pRet->x, pRet->y, pRet->deg);
-					play_sample((SAMPLE *)df_snd[SHOOT].dat, 50, 128, 1000, 0);
+					play_sample((SAMPLE *)dat_sound[SHOOT].dat, 50, 128, 1000, 0);
 				}
 			} 
 		} else {
-			// UNCOMMENT THE FOLLOWING IF BULLET_RE SHOULD BE RESET ON
+			// UNCOMMENT THE FOLLOWING IF our_bullet_autofiredelay SHOULD BE RESET ON
 			// FIRE KEY RELEASE::::::::::::::
 
-			/* if ( (ourtime - bullet_time) < (unsigned)BULLET_RE)
-				bullet_time = 0; */
+			/* if ( (ourtime - bullet_fire_time) < (unsigned)our_bullet_autofiredelay)
+				bullet_fire_time = 0; */
 		}
 
 
@@ -151,7 +161,7 @@ if (!our_node)
 				int oldvel;
 				int ret = 0;
 				
-				direction_is_up = 1;
+				our_direction = 1;
 
 				oldvel = our_node->velocity;
 
@@ -178,7 +188,7 @@ if (!our_node)
 				int oldvel;
 				int ret = 0;
 
-				direction_is_up = 0;
+				our_direction = 0;
 				oldvel = our_node->velocity;
 
 				ret = collidecheck2(our_node->id, 1, 0);
@@ -207,53 +217,20 @@ if (!our_node)
 		}
 	}	
 
-	if (talk == 1 || talk == 2)
+	if (talk_mode == 1 ||  talk_mode == 2)
 	{
 		if (key[KEY_ESC])
 		{
-			talk = 0;
+			talk_mode = 0;
 			msg[0] = '\0';
 			clear_keybuf();
 		}
-	} else {
-/*		if (!key[KEY_Q] && !key[KEY_P])
-			zoom_time = 0;
-
-		if (key[KEY_P])
-		{
-			if (zoom_time == 0)
-			{
-				zoom_time = ourtime;
-				zoom_(1);
-			} else {
-				if ( (ourtime - zoom_time) >= 1000)
-				{
-					zoom_time = ourtime;
-					zoom_(1);
-				}
-			}
-		}
-		if (key[KEY_Q])
-		{
-			if (zoom_time == 0)
-			{
-				zoom_time = ourtime;
-				zoom_(0);
-			} else {
-				if ( (ourtime - zoom_time) >= 1000)
-				{
-					zoom_time = ourtime;
-					zoom_(0);
-				}
-			}
-		}
-		*/
 	}
 
 	if (key[KEY_T])
-		if (talk == 0)
+		if (talk_mode == 0)
 		{
-			talk = 1;
+			talk_mode = 1;
 			msg[0] = '\0';
 			clear_keybuf();
 		}
@@ -264,9 +241,9 @@ if (!our_node)
 
 	}
 	if (key[KEY_STOP])
-		if (talk == 0)
+		if (talk_mode == 0)
 		{
-			talk = 2;
+			talk_mode = 2;
 			msg[0] = '\0';
 			clear_keybuf();
 		}
@@ -281,7 +258,7 @@ if (!our_node)
 		k = (ret >> 8);
 		k2 = (ret & 0xff);
 
-		if (talk == 1)
+		if (talk_mode == 1)
 		{
 			if (k == KEY_BACKSPACE)
 			{
@@ -295,7 +272,7 @@ if (!our_node)
 					if (msg[0] != '\0')
 						send_say(msg);
 					msg[0] = '\0';
-					talk = 0;
+					talk_mode = 0;
 				}
 			}
 			else if (strlen(msg) < 60)
@@ -304,7 +281,7 @@ if (!our_node)
 				msg[strlen(msg)] = k2;
 			}
 		} 
-		else if (talk == 2)
+		else if (talk_mode == 2)
 		{
 			if (k == KEY_BACKSPACE)
 			{
@@ -321,10 +298,10 @@ if (!our_node)
 						send_cmd(msg);
 					}
 					msg[0] = '\0';
-					talk = 0;
+					talk_mode = 0;
 				}
 			}
-			else if (strlen(msg) < 60)
+			else if (strlen(msg) < MSG_LINE_LENGTH)
 			{
 				msg[strlen(msg) + 1] = '\0';
 				msg[strlen(msg)] = k2;
@@ -337,6 +314,16 @@ if (!our_node)
 			if ( k == KEY_4 ) { our_node->shiptype = 4; send_newship(); }
 			if ( k == KEY_5 ) { our_node->shiptype = 5; send_newship(); }
 
+			if ( k == KEY_P )
+			{
+			char nam[80]; sprintf(nam, "screen%lu.pcx", ourtime);
+			PALETTE pal;			
+				get_pallete(pal);
+				save_bitmap(nam, tmpscreen, pal);
+			}
+			if ( k == KEY_O ) {
+				save_frames_to_bitmap = save_frames_to_bitmap == 1 ? 0 : 1;
+			}
 			if ( k == KEY_H )
 			{
 				send_cmd("addbot");
@@ -345,19 +332,19 @@ if (!our_node)
 		//		while (1);
 			if ( k == KEY_R )
 			{
-				if (RADAR_SHOW == 1)
-					RADAR_SHOW = 0;
+				if (show_radar == 1)
+					show_radar = 0;
 				else
-					RADAR_SHOW = 1;
+					show_radar = 1;
 			}
 			if ( k == KEY_B && false )
 			{
-				explosion(our_node->x, our_node->y, 100, 10, makecol(255,0,0));
+				add_explosion(our_node->x, our_node->y, 100, 10, makecol(255,0,0));
 			}
 			if ( k == KEY_Y )
 			{
 			int i;
-				for (i=0; i<Y_BLOCKS; i++)
+				for (i=0; i<map_blocks_y; i++)
 				{
 					verbose(field[i]);
 				}
@@ -374,15 +361,15 @@ if (!our_node)
 			}
 			if ( k == KEY_F11 /*&& false*/ )
 			{
-				if (BOUNCING_BULLETS == 1)
+				if (mod_bounce == 1)
 				{
 					large_text("Normal!");
-					BOUNCING_BULLETS = 0;
-					BULLET_MAX = 10;
+					mod_bounce = 0;
+					our_bullet_max = 10;
 					//FIX!!!!!!!! SPEED = 0.20;
-					B_SPEED = 0.40;
-	                BULLET_TTL = 3000;
-	                BULLET_RE = 150;
+					bullet_movespeed = 0.40;
+	                our_bullet_ttl = 3000;
+	                our_bullet_autofiredelay = 150;
 					// local test (temp):
 					if (our_node->speed < our_node->max_speed)
 						our_node->speed = our_node->max_speed;
@@ -390,12 +377,12 @@ if (!our_node)
 				else
 				{
 					large_text("Bullet time!");
-					BOUNCING_BULLETS = 1;
-					BULLET_MAX = 20;
+					mod_bounce = 1;
+					our_bullet_max = 20;
 					//SPEED = 0.05;
-					B_SPEED = 0.10;
-	                BULLET_TTL = 6000; /* was 3000; */
-	                BULLET_RE = 600;
+					bullet_movespeed = 0.10;
+	                our_bullet_ttl = 6000; /* was 3000; */
+	                our_bullet_autofiredelay = 600;
 					// local test (temp):
 					if (our_node->speed > our_node->max_speed)
 						our_node->speed = our_node->max_speed;
@@ -422,55 +409,47 @@ if (!our_node)
 			}
 			if ( k == KEY_F2 )
 			{
-				if (show_ulist == 1)
-				{
-					show_ulist = 0;
-					clear_to_color(tmpscreen, makecol(0,0,0));
-				}
+				if (show_scoreboard == 1)
+					show_scoreboard = 0;
 				else
-					show_ulist = 1;
+					show_scoreboard = 1;
 			}
 			if ( k == KEY_F5 )
 			{
 				if (show_names == 1)
-				{
 					show_names = 0;
-				}
 				else
 					show_names = 1;
 			}
 			if ( k == KEY_F6 )
 			{
 				if (show_fps == 1)
-				{
-					clear_to_color(tmpscreen, makecol(0,0,0));
 					show_fps = 0;
-				}
 				else
 					show_fps = 1;
 			}
 			if ( k == KEY_F3 )
 			{
-				if (HIGH_GRAPHICS == 1)
+				if (high_gfx == 1)
 				{
 					addtext("*** SMOOTH GFX: OFF");
-					HIGH_GRAPHICS = 0;
+					high_gfx = 0;
 				}
 				else
 				{
 					addtext("*** SMOOTH GFX: ON");
-					HIGH_GRAPHICS = 1;
+					high_gfx = 1;
 				}
 			}
 			if ( k == KEY_F4 )
 			{
-				if (FULLSCREEN == 1)
+				if (fullscreen == 1)
 				{
-					FULLSCREEN = 0;
+					fullscreen = 0;
 				}
 				else
 				{
-					FULLSCREEN = 1;
+					fullscreen = 1;
 				}
 
 				set_color_depth(16);
@@ -479,12 +458,12 @@ if (!our_node)
 			}
 			if ( k == KEY_G )
 			{
-				if (grid == 1)
-					grid = 0;
+				if (mod_grid == 1)
+					mod_grid = 0;
 				else
-					grid = 1;
+					mod_grid = 1;
 				
-				drawmap();
+				draw_map();
 			}
 		}
 	}
@@ -499,7 +478,7 @@ void verbose(char *pattern, ...)
 	vsprintf(buf, pattern, ap);
 	va_end(ap);
 
-	if (STARTED)
+	if (game_started)
 		addtext("%s", buf);
 	else
 		printff_direct("%s", buf);
@@ -508,16 +487,17 @@ void verbose(char *pattern, ...)
 }
 
 /* Prints userlist */
+int scoreboard_current_y; /* scoreboard current y-position on which the next nickname should be printed */
 void printulist() 
 {
-	if (show_ulist != 1)
+	if (show_scoreboard != 1)
 		return;
 
-	TXTPTR2 = 20;
+	draw_sprite(bmp_scoreboard, (BITMAP *)dat_base[GUI_SCOREBOARD_BG].dat, 0, 0);
+
+	scoreboard_current_y = scoreboard_padding_top;
 	current = head;
-	clear_to_color(ulistbuff, makecol(0,0,0));
-	/* rect(ulistbuff, 0, 0, 150 - 1, (MAP_H + 5 + CSCREEN_H) - 1, makecol(27, 27, 27)); */
-	textprintf(ulistbuff, (FONT *)dataf[NOKIA].dat, 1, 1, makecol(255,255,255), "Player List:");
+	
 	while (current != NULL)
 	{
 		if (current->bullet != 1)
@@ -534,31 +514,32 @@ void printul(struct data *node)
 	char buf[128];
 	/* again no snprintf().. arghl*/
 	if (strlen(node->nick) > 10) node->nick[10] = '\0'; /* frag >10 */
-	sprintf(buf, "%8s %4d", node->nick, node->kills);
 
-	TXTPTR2 = TXTPTR2 + 10;
-	
 	int color;
 	
 	if (node->invincible == 2)
-		color = makecol(255, 255, 255); // invincible
+		color = makecol(0, 135, 185); // invincible
 	else if (node->invincible == 1)
-		color = makecol(0, 255, 128); // respawned 
+		color = makecol(0, 156, 241); // respawned 
 	else if (node->dead == 1)
-		color = makecol(128, 64, 0); // dead
+		color = makecol(144, 144, 144); // dead
 	else if (node->dead == 3)
-		color = makecol(128, 128, 128); // spectate
+		color = makecol(0, 49, 67); // spectate
 	else
-		color = makecol(255, 128, 0); // normal (alive)
-		
+		color = makecol(0, 186, 255); // normal (alive)
+	
+	sprintf(buf, "%d", node->kills);
 
-	if (TXTPTR2 == 0) { 
-		//textprintf(tmpscreen, font, LEFT_2, 1, 42, buf); /* 42 = makecol(255, 128, 0) (orange) */
-		textprintf(ulistbuff, (FONT *)dataf[NOKIA].dat, 0, 1, color, buf); 
+	if (scoreboard_current_y == 0) { 
+		alfont_textout_aa_ex(bmp_scoreboard, lcdfont, node->nick, scoreboard_padding_left, 1, color, -1);
+		alfont_textout_right_aa_ex(bmp_scoreboard, lcdfont, buf, scoreboard_w - scoreboard_padding_right, 1, color, -1);
 	} else { 
-		//textprintf(tmpscreen, font, LEFT_2, TXTPTR2, 42, buf);
-		textprintf(ulistbuff, (FONT *)dataf[NOKIA].dat, 0, TXTPTR2, color, buf);
+		alfont_textout_aa_ex(bmp_scoreboard, lcdfont, node->nick, scoreboard_padding_left, scoreboard_current_y, color, -1);
+		alfont_textout_right_aa_ex(bmp_scoreboard, lcdfont, buf, scoreboard_w - scoreboard_padding_right, scoreboard_current_y, color, -1);
 	}
+
+	scoreboard_current_y = scoreboard_current_y + 18;
+
 }
 
 
@@ -571,6 +552,9 @@ void terminate()
 {
 	alert("Terminated", "", "", "Ok", NULL, 0, 0);
 	// delay(3);
+	alfont_destroy_font(lcdfont);
+	alfont_destroy_font(tccmfont);
+	alfont_exit();
 	allegro_exit();
 	WSACleanup();
 	exit(-1); 
@@ -624,20 +608,22 @@ void debug()
 	if ((ourtime - dtime) > 5000) /* ~5 secs delay */
 	{
 		fputs("Clients time:   | Addr. of node:  | Id: | Nickname:\n"
-			"----------------+-----------------+-----+----------\n",dbug);
+			"----------------+-----------------+-----+----------\n",debugfile);
 		for (current=head; current; current=current->next)
 			if (current->bullet != 1)
 			{
-				fprintf(dbug, "%-15lu | %-15d | %-3u | %-12s %s\n", ourtime, current, current->id, current->nick, (our_id == current->id?"<-- our id":""));
-				fflush(dbug);
+				fprintf(debugfile, "%-15lu | %-15d | %-3u | %-12s %s\n", ourtime, current, current->id, current->nick, (our_id == current->id?"<-- our id":""));
+				fflush(debugfile);
 			}
-		fputs("\n",dbug);
+		fputs("\n",debugfile);
 		dtime = ourtime;
 	}
 #endif 
 }
-void drawfps()
+void draw_fps()
 {
+char buf[512];
+
 	if (show_fps == 1) 
 	{
 /*		textprintf(tmpscreen, font, 2, 2, makecol(255,255,255), 
@@ -647,10 +633,22 @@ void drawfps()
 				field_width, field_height
 		);
 */
-		textprintf(tmpscreen, (FONT *)dataf[NOKIA].dat, 2, 2, makecol(128, 128, 128), 
-			"FPS: %d LAG: %2.2f MIDItrack:%d   ", 
-			fps, current_lag(), midi_track
-		);
+// 		textprintf(tmpscreen, (FONT *)dat_base[NOKIA].dat, 2, 2, makecol(128, 128, 128), 
+//			"FPS: %d LAG: %2.2f MIDItrack:%d   ", 
+//			fps, current_lag(), midi_track
+//		);
+
+		// info: time
+		sprintf(buf, "TIME: %lu", ourtime);
+		alfont_textout_aa_ex(bmp_command, lcdfont, buf, info_time_x, info_time_y, makecol(255, 255, 255), -1);
+
+		// info: lag
+		sprintf(buf, "LAG: %2.2f", current_lag());
+		alfont_textout_aa_ex(bmp_command, lcdfont, buf, info_lag_x, info_lag_y, makecol(255, 255, 255), -1);
+
+		// info: fps
+		sprintf(buf, "FPS: %d", fps);
+		alfont_textout_aa_ex(bmp_command, lcdfont, buf, info_fps_x, info_fps_y, makecol(255, 255, 255), -1);
 	}
 }
 
@@ -662,10 +660,18 @@ void show_graphics()
 	poll_mouse();	
 
 	//acquire_screen();
-	blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
+	blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
+	if (save_frames_to_bitmap == 1)
+	{
+	char nam[80]; sprintf(nam, "D:\\fighterz\\%lu.pcx", ourtime);
+	PALETTE pal;
+	
+		get_pallete(pal);
+		save_bitmap(nam, tmpscreen, pal);
+	}
 	//release_screen();
 
-	if (HIGH_GRAPHICS == 1)
+	if (high_gfx == 1)
 	{
 		// rest(8);
 		vsync(); /* wait for vertical retrace (can reduce flickering) 

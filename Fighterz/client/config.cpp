@@ -54,8 +54,8 @@ void config(int ignore) /* ignore @ 1 = don't use host/port in config */
 					i++;
 				*(p + i) = '\0';
 
-				strcpy(nickname, p);
-				printff_direct("  nick:%s", nickname);
+				strcpy(our_nickname, p);
+				printff_direct("  nick:%s", our_nickname);
 				// delay(10);
 			}
 			if (!strcmp(buff, "addr") && ignore != 1)
@@ -75,9 +75,9 @@ void config(int ignore) /* ignore @ 1 = don't use host/port in config */
 					i++;
 				*(p + i) = '\0';
 
-				strcpy(taddr, p);
+				strcpy(serv_addr, p);
 
-				printff_direct("  taddr:%s", taddr);
+				printff_direct("  serv_addr:%s", serv_addr);
 			}
 			if (!strcmp(buff, "port") && ignore != 1)
 			{
@@ -94,9 +94,9 @@ void config(int ignore) /* ignore @ 1 = don't use host/port in config */
 					*(p + 5) = '\0';
 				
 				i = atoi(p);
-				tport = i;
+				serv_port = i;
 
-				printff_direct("  tport:%d", tport);
+				printff_direct("  serv_port:%d", serv_port);
 			}
 			if (!strcmp(buff, "fullscreen"))
 			{
@@ -113,13 +113,13 @@ void config(int ignore) /* ignore @ 1 = don't use host/port in config */
 					*(p + 1) = '\0';
 				
 				i = atoi(p);
-				if (FULLSCREEN != i)
+				if (fullscreen != i)
 				{
-				    FULLSCREEN = i;
+				    fullscreen = i;
 					init_screen();
 				}
 
-				//printff_direct("  fullscreen:%s", (FULLSCREEN == 1?"yes":"no"));
+				//printff_direct("  fullscreen:%s", (fullscreen == 1?"yes":"no"));
 			}
 			if (!strcmp(buff, "grid"))
 			{
@@ -136,8 +136,8 @@ void config(int ignore) /* ignore @ 1 = don't use host/port in config */
 					*(p + 1) = '\0';
 				
 				i = atoi(p);
-				grid = (i == 1?1:0);
-				printff_direct("  grid:%s", (grid == 1?"on":"off"));
+				mod_grid = (i == 1?1:0);
+				printff_direct("  mod_grid:%s", (mod_grid == 1?"on":"off"));
 			}
 			if (!strcmp(buff, "high_graphics"))
 			{
@@ -154,8 +154,8 @@ void config(int ignore) /* ignore @ 1 = don't use host/port in config */
 					*(p + 1) = '\0';
 				
 				i = atoi(p);
-				HIGH_GRAPHICS = i;
-				printff_direct("  high graphics:%s", (grid == 1?"yes":"no"));
+				high_gfx = i;
+				printff_direct("  high graphics:%s", (mod_grid == 1?"yes":"no"));
 			}
 		}
 	}

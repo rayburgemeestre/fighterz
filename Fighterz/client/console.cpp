@@ -4,15 +4,15 @@
 *  CONSOLE FUNCTIONS
 ****************************************************/
 
-void drawconsole()
+void draw_console()
 {
  	int i = 0;
 	int cur_pos = 0;
 	int temp;
 
-	clear_to_color(CONSOLE, 0);
+	clear_to_color(bmp_console, makecol(0,0,0));
 
-	while (i < MAX_C_LINES)
+	while (i < CON_LINES)
 	{
 		temp = 0;
 		
@@ -24,8 +24,8 @@ void drawconsole()
 
 		textprintf
 		(
-			CONSOLE, 
-			(FONT *)dataf[NOKIA].dat, 
+			bmp_console, 
+			(FONT *)dat_base[NOKIA].dat, 
 			1, 
 			cur_pos + 1, 
 			(
@@ -59,10 +59,10 @@ void addtext(char *pattern, ...)
 	vsprintf(buf, pattern, ap);
 	va_end(ap);
 
-	if (strlen(buf) > MAX_C_LLENGTH)
-		buf[MAX_C_LLENGTH - 1] = '\0';
+	if (strlen(buf) > CON_LINE_LENGTH)
+		buf[CON_LINE_LENGTH - 1] = '\0';
 	
-	while (i < (MAX_C_LINES - 1))
+	while (i < (CON_LINES - 1))
 	{
 		strcpy(console[i], console[i+1]);
 		i++;
@@ -70,7 +70,7 @@ void addtext(char *pattern, ...)
 
 	strcpy(console[i], buf);
 #if DEBUG == 1
-	fprintf(dbug, "%s\n", buf);
+	fprintf(debugfile, "%s\n", buf);
 #endif
 
 }
@@ -97,18 +97,31 @@ void large_text(char *pattern, ...)
 
 void large_text_draw()
 {
+int i;
+
 	if ( ( ourtime - large_text_time ) > ( large_text_display_time * 1000 ) )
 		large_text_msg[0] = '\0';
 	
 	if (strlen(large_text_msg) == 0)
 		return;
 
-	textprintf(
-		tmpscreen, 
-		(FONT *)dataf[ARCADE].dat, 
-		50, 
-		400, 
-		makecol(255, 0, 0), 
-		large_text_msg	
-	);
+//	textprintf(
+//		tmpscreen, 
+//		(FONT *)dat_base[ARCADE].dat, 
+//		50, 
+//		400, 
+//		makecol(255, 0, 0), 
+//		large_text_msg	
+//	);
+
+	// make upper case
+	for (i=0; large_text_msg[i] != '\0';)
+	{
+		if (large_text_msg[i] >= 'a' && large_text_msg[i] <= 'z')
+			large_text_msg[i] -= 32;
+		i++;
+	}
+
+	alfont_textout_centre_aa_ex(tmpscreen, tccmfont, large_text_msg, SCREEN_W / 2, SCREEN_H / 2 - 28, makecol(85, 239, 111), -1);
+
 }

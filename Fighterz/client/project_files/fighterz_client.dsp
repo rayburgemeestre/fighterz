@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 alleg.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# ADD LINK32 alleg.lib alfont.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 
 !ELSEIF  "$(CFG)" == "fighterz_client - Win32 Debug"
 
@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 alld.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 alld.lib alfont.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
 
 !ENDIF 
 
@@ -97,10 +97,6 @@ SOURCE=..\agup\agup.c
 # Begin Source File
 
 SOURCE=..\agup\aphoton.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\bullet.cpp
 # End Source File
 # Begin Source File
 
@@ -128,6 +124,10 @@ SOURCE=..\global.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\interface.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\main.cpp
 # End Source File
 # Begin Source File
@@ -136,11 +136,11 @@ SOURCE=..\map.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\options.cpp
+SOURCE=..\objects.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\parse.cpp
+SOURCE=..\options.cpp
 # End Source File
 # Begin Source File
 
@@ -156,16 +156,16 @@ SOURCE=..\settings.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\ship.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\socket.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\alfont\alfont.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\common.h

@@ -78,7 +78,7 @@ gui_bg_color = makecol(255,0,0);
 		translate_shape();
 		draw_shape(tmpscreen);
 
-		textprintf_centre(tmpscreen, (FONT *)dataf[ARCADE].dat, SCREEN_W / 2, 100, makecol(255, 255, 255), "OPTIONS (disfunctional)");
+		textprintf_centre(tmpscreen, (FONT *)dat_base[ARCADE].dat, SCREEN_W / 2, 100, makecol(255, 255, 255), "OPTIONS (disfunctional)");
 		
 		//--
 		blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H); 

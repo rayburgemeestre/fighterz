@@ -1,6 +1,9 @@
 #include "common.h"
 
-//cube
+//Options
+struct option_ option[3]; /**< menu items in option menu */
+
+//cube.cpp
 extern void init_shape();
 extern void animate_shape();
 extern void translate_shape();
@@ -10,6 +13,8 @@ typedef struct VTX		 /* vertex data */
 } VTX;
 extern void quad(BITMAP *b, VTX *v1, VTX *v2, VTX *v3, VTX *v4);
 extern void draw_shape(BITMAP *b);
+
+int options_activeitem; /**< Active item in the options menu */
 
 int getoptions()
 {
@@ -49,7 +54,7 @@ int last_retrace_count;
 	option[2].b = 255;
 	option[0].flicker = 0;
 
-	play_sample((SAMPLE *)df_snd[FAST_CONFIRM].dat, 255, 128, 1000, 0);
+	play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 255, 128, 1000, 0);
 
 	flicker_time = ourtime;
 
@@ -77,7 +82,7 @@ int last_retrace_count;
 		translate_shape();
 		draw_shape(tmpscreen);
 
-		draw_sprite(tmpscreen, (BITMAP *)dataf[MAINMENU].dat, 0, 0);
+		draw_sprite(tmpscreen, (BITMAP *)dat_base[MAINMENU].dat, 0, 0);
 
 		//blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H); 
 		//--
@@ -86,14 +91,14 @@ int last_retrace_count;
 		{
 			circle(tmpscreen, 10, 10, 10, 10);
 			
-			option[active_o_item].flicker = 1;
+			option[options_activeitem].flicker = 1;
 		} else if (ourtime - flicker_time > (1.5 *FLICKER_DELAY))
 		{
 			flicker_time = ourtime;
 
 		} else if (ourtime - flicker_time > FLICKER_DELAY)
 		{
-			option[active_o_item].flicker = 0;
+			option[options_activeitem].flicker = 0;
 		}
 
 		if (keypressed())
@@ -101,36 +106,36 @@ int last_retrace_count;
 			k = (readkey() >> 8);
 			if (k == KEY_DOWN)
 			{
-				if (active_o_item < OPTION_COUNT)
+				if (options_activeitem < OPTION_COUNT)
 				{
-					play_sample((SAMPLE *)df_snd[FAST_CONFIRM].dat, 255, 128, 1000, 0);
-					active_o_item++;
+					play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 255, 128, 1000, 0);
+					options_activeitem++;
 				}
 			}    
 			if (k == KEY_UP)
 			{
 				
-				if (active_o_item > 0)
+				if (options_activeitem > 0)
 				{
-					play_sample((SAMPLE *)df_snd[FAST_CONFIRM].dat, 255, 128, 1000, 0);
-					active_o_item--;
+					play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 255, 128, 1000, 0);
+					options_activeitem--;
 				}
 			}
 			if (k == KEY_ENTER)
 			{
-				play_sample((SAMPLE *)df_snd[CONFIRM].dat, 255, 128, 1000, 0);
-				return active_o_item;
+				play_sample((SAMPLE *)dat_sound[CONFIRM].dat, 255, 128, 1000, 0);
+				return options_activeitem;
 			}  
 			if (k == KEY_ESC)
 			{
-				play_sample((SAMPLE *)df_snd[CONFIRM].dat, 255, 128, 1000, 0);
+				play_sample((SAMPLE *)dat_sound[CONFIRM].dat, 255, 128, 1000, 0);
 				return -1; /* die :) */
 			}   			
 		}
 
 		for (i=0; i<3; i++)
 		{
-			if (active_o_item == i)
+			if (options_activeitem == i)
 			{
 				int diff, tmp, times, cnt;
 
@@ -156,7 +161,7 @@ int last_retrace_count;
 				}
 				if (option[i].flicker == 0 && (option[i].r == 0 && option[i].g == 128))
 				{
-					textprintf(tmpscreen, (FONT *)dataf[ARCADE].dat, 
+					textprintf(tmpscreen, (FONT *)dat_base[ARCADE].dat, 
 						option[i].x, option[i].y, makecol(0, 0, 0), 
 						option[i].str);				
 				}
@@ -165,7 +170,7 @@ int last_retrace_count;
 					/*char buf[512];
 					sprintf(buf, "flicker on @ %lu %d %d %d ", ourtime, ((int)ourtime - flicker_time), option[i].r, option[i].g);
 					textprintf(tmpscreen, font, 100, 100, makecol(255,255,255), buf);*/
-					textprintf(tmpscreen, (FONT *)dataf[ARCADE].dat, 
+					textprintf(tmpscreen, (FONT *)dat_base[ARCADE].dat, 
 						option[i].x, option[i].y, makecol(option[i].r,option[i].g,option[i].b), 
 						option[i].str);
 				}
@@ -197,13 +202,13 @@ int last_retrace_count;
 				} else {
 					option[i].time = ourtime;
 				}
-				textprintf(tmpscreen, (FONT *)dataf[ARCADE].dat, 
+				textprintf(tmpscreen, (FONT *)dat_base[ARCADE].dat, 
 					option[i].x, option[i].y, makecol(option[i].r,option[i].g,option[i].b), 
 					option[i].str);
 			}
 		}
 		acquire_screen();
-		blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
+		blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
 		release_screen();
 		rest(10);
 		vsync();

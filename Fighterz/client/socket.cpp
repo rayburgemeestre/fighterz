@@ -1,5 +1,13 @@
 #include "common.h"
 
+//Sockets, Communication
+SOCKET theSocket; /**< socket descriptor for our connection with server */
+double lag[5]; /**< previous 5 lag calculations */
+char serv_addr[512]; /**< host/ip of the host server */
+int serv_port; /**< port of the host server */
+char *buffer; /**< allocated to 8196bytes, serves as a buffer for data rcvd from serv */
+int inlen; /**< input buffer length */
+
 /********************************************
 *  SOCKET FUNCTIONS
 ****************************************************/
@@ -17,7 +25,7 @@ int connect_socket()
 
 	/* Store information about the server */
 	LPHOSTENT lpHostEntry;
-	lpHostEntry = gethostbyname(taddr);  /* Specifying server by its name */
+	lpHostEntry = gethostbyname(serv_addr);  /* Specifying server by its name */
 
 	if (lpHostEntry == NULL) {
 		printff_direct("Error at gethostbyname()");
@@ -634,7 +642,7 @@ void m_hi(unsigned int sver, unsigned int oid)
 
 void m_shiptype(unsigned int id, int newshiptype)
 {
-	LINK node = getplayer_byid( id );
+	PLAYER node = getplayer_byid( id );
 	node->shiptype = newshiptype;
 	//addtext("id new type: %d %d", node->id, newshiptype);
 }
@@ -647,8 +655,8 @@ void m_ping(unsigned int servertime)
 
 void m_lag(double diff)
 {
-//	if (!STARTED && can_spawn == 0)
-		//play_sample((SAMPLE *)df_snd[TUSCH].dat, 255, 128, 1000, 0);
+//	if (!game_started && our_spawnstatus == 0)
+		//play_sample((SAMPLE *)dat_sound[TUSCH].dat, 255, 128, 1000, 0);
 	int i = 0;
 	while (i < 4)
 	{
@@ -673,12 +681,18 @@ void m_nickreply(unsigned char acceptance, char *msg)
 
 void m_flagcarrier(unsigned int carrier_id, unsigned int code)
 {
-LINK lnk = getplayer_byid( carrier_id );
+PLAYER lnk = getplayer_byid( carrier_id );
+
+	if (NULL == lnk)
+	{
+		addtext("carrier_id=%d THATS NOT A VALID ID!", carrier_id);
+		return;
+	}
 
 	if (code == 1)
-		id_has_redflag = carrier_id;
+		red_flag_carrier = carrier_id;
 	else
-		id_has_blueflag = carrier_id;
+		blue_flag_carrier = carrier_id;
 
 	large_text("%s has the %s flag!", lnk->nick, code == 1 ? "red" : "blue");
 
@@ -686,70 +700,38 @@ LINK lnk = getplayer_byid( carrier_id );
 
 void m_blockinfo(int w, int h, int size)
 {
-	Y_BLOCKS = h;
-	X_BLOCKS = w;
-	BLOCKSIZE = size; // 20 anyways *sigh*
+	map_blocks_y = h;
+	map_blocks_x = w;
+	blocksize = size; // 20 anyways *sigh*
 
 //
-	BLOCKSIZE_2 = BLOCKSIZE;
-
-	field_width_2 = X_BLOCKS * BLOCKSIZE;
-	field_height_2 = Y_BLOCKS * BLOCKSIZE;
-	field_width = field_width_2;
-	field_height = field_height_2;
+	field_width = map_blocks_x * blocksize;
+	field_height = map_blocks_y * blocksize;
 
 //
-	if (field_width > field_height)
-		RADAR_SCALE = field_width / RADAR_SIZE;
-	else
-		RADAR_SCALE = field_height / RADAR_SIZE;
 
-	RADAR_W = field_width / RADAR_SCALE;
-	RADAR_W += (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2);
-	RADAR_W = (RADAR_W <= 0 ? 1 : RADAR_W);
-	RADAR_H = field_height / RADAR_SCALE;
-	RADAR_H = (RADAR_H <= 0 ? 1 : RADAR_H);
-
-
-	CONSOLE_H = (MAX_C_LINES * 10);
-	CONSOLE_W = MAP_W;
-	CONSOLE_X = LEFT;
-	CONSOLE_Y = TOP + MAP_H + CSCREEN_H + 10; 
-		
-	CONSOLE = create_sub_bitmap(tmpscreen, CONSOLE_X, CONSOLE_Y, CONSOLE_W, CONSOLE_H);
-
-	clear_to_color(CONSOLE, 0);
+	bmp_console = create_sub_bitmap(tmpscreen, console_x, console_y, console_w, console_h);
+	clear_to_color(bmp_console, makecol(0,0,0));
 	
-	CSCREEN_X = LEFT;
-	CSCREEN_Y = TOP;
 
-	FIELD_X = LEFT;
-	FIELD_Y = CSCREEN_Y + CSCREEN_H + 5;
+	bmp_radar = create_sub_bitmap(tmpscreen, radar_x, radar_y, radar_w, radar_h);
 	
-	RADAR_X = LEFT + (MAP_W - RADAR_W);
-	RADAR_Y = FIELD_Y + (MAP_H - RADAR_H);
+	bmp_radar_display = create_sub_bitmap(bmp_radar, radar_field_x, radar_field_y, radar_field_w, radar_field_h);
 
-	RADAR = create_sub_bitmap(tmpscreen, RADAR_X, RADAR_Y, RADAR_W, RADAR_H);
-	//clear_to_color(RADAR, makecol(255,0,0));
-	draw_sprite(RADAR, (BITMAP *)dataf[RADARBG].dat, 0, 0);
+	draw_sprite(bmp_radar, (BITMAP *)dat_base[GUI_RADAR_BG].dat, 0, 0);
 
-//
-	destroy_bitmap(fieldbuff);
-	/* TEST44 */
-	// shipbuff = create_bitmap(field_width + 1, field_height + 1);
-	// shipbuff = tmpscreen;
-	// het moet gewoon een subbitmap zijn:
-	shipbuff = create_sub_bitmap(tmpscreen, FIELD_X, FIELD_Y, MAP_W, MAP_H);
+	destroy_bitmap(bmp_mapfield);
+	bmp_shipfield = create_sub_bitmap(tmpscreen, field_x, field_y, field_w, field_h);
+	
+	destroy_bitmap(bmp_command);
+	bmp_command = create_sub_bitmap(tmpscreen, command_x, command_y, command_w, command_h);
+	
+	destroy_bitmap(bmp_scoreboard);
+	bmp_scoreboard = create_sub_bitmap(tmpscreen, scoreboard_x, scoreboard_y, scoreboard_w, scoreboard_h);//
 
-	destroy_bitmap(talkbuff);
-	talkbuff = create_sub_bitmap(tmpscreen, CSCREEN_X, CSCREEN_Y, MAP_W, CSCREEN_H);
-	destroy_bitmap(ulistbuff);
-	ulistbuff = create_sub_bitmap(tmpscreen, LEFT_2, TOP, 150, (MAP_H + 5 + CSCREEN_H));
-//
-
-	printff_direct("  Vertical blockcount: %d", Y_BLOCKS);
-	printff_direct("  Horizontal blockcount: %d", X_BLOCKS);
-	printff_direct("  Blocksize in pixels: %d", BLOCKSIZE);
+	printff_direct("  Vertical blockcount: %d", map_blocks_y);
+	printff_direct("  Horizontal blockcount: %d", map_blocks_x);
+	printff_direct("  Blocksize in pixels: %d", blocksize);
 }
 void m_fieldline(unsigned int index, char *fieldline)
 {
@@ -772,13 +754,13 @@ void m_background(int df_id, int pos_x, int pos_y, char *datfile)
 void m_fieldend()
 {
 	verbose("Map download: Completed");
-	drawmap();
-	STARTED = 1;
+	draw_map();
+	game_started = 1;
 	large_text("Map download complete.");
 }
 void m_kick( unsigned int id, char *reason )
 {
-	LINK node = getplayer_byid( id );
+	PLAYER node = getplayer_byid( id );
 
 	node->velocity = 0;
 	node->speed = 0;
@@ -793,16 +775,16 @@ void m_kick( unsigned int id, char *reason )
 		addtext("*** %s was kicked [%s]", node->nick, reason);
 	}
 
-	explosion(node->x, node->y, 250, 10, makecol(255,0,0));
+	add_explosion(node->x, node->y, 250, 10, makecol(255,0,0));
 }
 
 void m_quit(unsigned int id, char *quit_msg)
 {
-	LINK current = getplayer_byid(id);
+	PLAYER current = getplayer_byid(id);
 	if (current == NULL)
 		die("m_quit(): current cannot be NULL");
 
-	explosion(current->x, current->y, 500, 10, makecol(255, 128, 255));
+	add_explosion(current->x, current->y, 500, 10, makecol(255, 128, 255));
 	
 	if (current != our_node)
 	{
@@ -820,8 +802,8 @@ void m_quit(unsigned int id, char *quit_msg)
 void m_spawnready()
 {
 	verbose("SMSG_SPAWNREADY");
-	can_spawn = 1;
-	requested_spawn = 0;
+	our_spawnstatus = 1;
+	our_spawnrequested = 0;
 	our_node = getplayer_byid(our_id);
 	our_node->dead = 2;
 
@@ -845,7 +827,7 @@ void m_newuser(int id, double x, double y, double deg,
 	verbose("-------------------------------------------------------------");
 */
 	/* create first node in linked list */
-	if (!(new_node = (LINK)malloc(sizeof(user))))
+	if (!(new_node = (PLAYER)malloc(sizeof(user))))
 	{
 		printff_direct("Error allocating memory");
 		exit(-1);
@@ -867,12 +849,12 @@ void m_newuser(int id, double x, double y, double deg,
 	else
 		head->bullet = 0;
 
-	head->power = MAX_HITS;
+	head->power = ship_maxpower;
 	head->TTL = 0;
 	head->vel_time = ourtime;
 	head->x = x;
 	head->y = y;
-    setsec(head); /* secondary coordinates for this struct */
+
 	head->deg = deg;
 #if IGNORE_LAG == 1
 	clag = 0;
@@ -908,24 +890,23 @@ return;
 
 void m_kill(unsigned int victimid, unsigned int evilid, char *killstr)
 {
-	LINK evil_node = getplayer_byid(evilid);
-	LINK victim_node = getplayer_byid(victimid);
+	PLAYER evil_node = getplayer_byid(evilid);
+	PLAYER victim_node = getplayer_byid(victimid);
 
 	if (evil_node != NULL && victim_node != NULL)
 	{
 		victim_node->velocity = 0;
 		victim_node->speed = 0.0;
 		victim_node->dead = 1;
-		victim_node->power = MAX_HITS;
+		victim_node->power = ship_maxpower;
 		
-		if (victim_node == our_node)
-			guessed_power = MAX_HITS;
+	
 
 		evil_node->kills++;
 		addtext("*** %s(%d) fragged %s(%d)", evil_node->nick, evil_node->id,
 			victim_node->nick, victim_node->id);
 		
-		explosion(victim_node->x, victim_node->y, 250, 10, makecol(255,0,0));
+		add_explosion(victim_node->x, victim_node->y, 250, 10, makecol(255,0,0));
 	} else {
 		die("evil_node or victim_node is NULL");
 	}
@@ -946,7 +927,7 @@ void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, doub
 	//verbose("New bullet id: [!], ownerid: %d, x: %2.2f, y: %2.2f, deg: %2.2f\n",
 	//	ownerid, x, y, deg);
 
-	play_sample((SAMPLE *)df_snd[SHOOT].dat, 255, 128, 1000, 0);
+	play_sample((SAMPLE *)dat_sound[SHOOT].dat, 255, 128, 1000, 0);
 	add_bullet( getplayer_byid(ownerid), (int)x, (int)y, (double)deg, ourtime - clag);
 
 	return;
@@ -954,7 +935,7 @@ void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, doub
 
 void m_nick(unsigned int id, char *nick)
 {
-	LINK node = getplayer_byid(id);
+	PLAYER node = getplayer_byid(id);
 	if (strlen(nick) > 64)
 		*(nick + 63) = '\0';
 	verbose("*** Nickchange: %s -> %s", node->nick, nick);
@@ -964,7 +945,7 @@ void m_nick(unsigned int id, char *nick)
 void m_say(unsigned int id, char *msg)
 {
 	// verbose("m_say");
-	LINK node = getplayer_byid(id);
+	PLAYER node = getplayer_byid(id);
 	addtext("<[%d]%s> %s", id, node->nick, msg);
 }
 
@@ -989,10 +970,10 @@ void m_spawn(unsigned int id, double x, double y, double deg, signed char accel,
 		
 		set_window_title("Fighterz"); /* or something... */
 
-		STARTED = 1;
+		game_started = 1;
 	} 
 
-	LINK node = getplayer_byid( id );
+	PLAYER node = getplayer_byid( id );
 	
 	if (!node)
 	{
@@ -1010,12 +991,12 @@ void m_spawn(unsigned int id, double x, double y, double deg, signed char accel,
 	node->speed = speed;
 	node->dead = 0;
 
-	play_sample((SAMPLE *)df_snd[SPAWN].dat, 255, 128, 1000, 0);
+	play_sample((SAMPLE *)dat_sound[SPAWN].dat, 255, 128, 1000, 0);
 }
 
 void m_respawn(unsigned int id)
 {
-	LINK node = getplayer_byid(id);
+	PLAYER node = getplayer_byid(id);
 	node->dead = 0;
 }
 
@@ -1028,7 +1009,7 @@ void m_hit()
 // *lag*
 void m_accel(unsigned int id, double x, double y, signed char accel, double speed)
 {
-	LINK current;
+	PLAYER current;
 	unsigned long clag;
 	// verbose("SMSG_ACCEL %d %2.2f %2.2f %d %2.2f", id, x, y, (int)accel, speed);
 	current = getplayer_byid(id);
@@ -1053,7 +1034,7 @@ void m_accel(unsigned int id, double x, double y, signed char accel, double spee
 
 void m_invincible(unsigned int id, unsigned char yesno, unsigned int t)
 {
-	LINK node = getplayer_byid(id);
+	PLAYER node = getplayer_byid(id);
 	int clag;
 
 	#if IGNORE_LAG == 1
@@ -1070,7 +1051,7 @@ void m_invincible(unsigned int id, unsigned char yesno, unsigned int t)
 // *lag*
 void m_turn(unsigned int id, double x, double y, signed char turn, double deg)
 {
-LINK current;
+PLAYER current;
 unsigned int clag;
 	current = getplayer_byid(id);
 	// verbose("Got player id: %d, got deg: %2.2f", current->id, current->deg);
@@ -1091,5 +1072,4 @@ unsigned int clag;
 	current->deg = deg;
 	current->x = x;
 	current->y = y;
-	setsec(current);
 }

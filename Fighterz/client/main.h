@@ -2,23 +2,40 @@
 *  FUNCTION PROTOTYPES
 ****************************************************/
 
-extern void drawships();
-extern void drawfps();
-extern void drawexplosions();
+extern void draw_ships();
+extern void draw_ship();
+extern void draw_bullets();
+extern void draw_fps();
+extern void draw_explosions();
+extern void draw_map();
+extern void draw_radar();
+extern void draw_talk_box();
+extern void draw_console();
+
+extern void move_ships();
+extern void move_ship(unsigned int id2, unsigned long t2);
+extern void move_bullets();
+extern int move_bullet(struct data *ptr, unsigned long t2);
+
+extern struct data  *add_player(int _id, int _x, int _y, int _deg, int _move, int _turn,  
+					   int _velocity, int _alive, int _kills, int _killavg, 
+					   int _bot, double _speed, int _dead, char *_nick);
+extern struct data  *add_bullet(struct data *_id, int _x, int _y, double _deg, unsigned long _time);
+extern struct data2 *add_explosion(double x, double y, int maxrad, int speed, int color);
+extern void del_player(int sock_fd);
+extern void del_bullet(struct data *ptr);
+extern void del_explosion(struct data2 *ptr);
+
+
+
+
 extern void printff(char *pattern, ...);
 extern void printff_direct(char *pattern, ...);
 extern void terminate();
 extern void delay(int secs);
-extern void loadmap();
-extern void drawmap();
-extern void setrcoords();
-extern void zoom_(int i);
-extern void drawradar();
+
 extern void set_map_coords();
-extern void draw_talk_box();
-extern void drawship();
-extern void moveships();
-extern void moveship(unsigned int id2, unsigned long t2);
+
 extern int mainloop();
 extern void center_window();
 extern void fps_proc();
@@ -33,15 +50,10 @@ extern void sockread();
 extern int sockwrite(char *pattern, ...);
 extern void large_text(char *pattern, ...);
 extern void large_text_draw();
-extern int parse(char *stuff);
-extern int parse2(char *stuff);
 extern void lag_proc(char *lag_char, char *servertime_char);
 extern double current_lag();
-extern void add_player(int _id, int _x, int _y, int _deg, 
-				int _move, int _turn,  int _velocity, int _alive, 
-				int _kills, int _killavg, int _bot, double _speed, int _dead, char *_nick);
-extern void del_player(int sock_fd);
-extern void drawconsole();
+
+
 extern void config(int ignore);
 extern void debug();
 extern void addtext(char *pattern, ...);
@@ -51,21 +63,19 @@ extern double futureX(struct data *ptr, double angle, double speed);
 extern double futureY(struct data *ptr, double angle, double speed);
 extern double fbX(unsigned int id2);
 extern double fbY(unsigned int id2);
-extern struct data *add_bullet(struct data *_id, int _x, int _y, double _deg, unsigned long _time);
-extern void del_bullet(struct data *ptr);
-extern void movebullets();
-extern void drawbullets();
+
+
+
 extern void process_bounce(struct data *ptr, int *retval, double speed);
 extern int collidecheck2b(struct data *ptr);
 extern int bs_collidecheck(struct data *ptr);
+extern double getdistance(double x1, double y1, double x2, double y2);
 extern double getangle(double x1, double y1, double x2, double y2);
 extern int getoptions();
 extern void getsettings();
 extern double dabs(double x);
-extern void setsec(struct data *ptr);
-extern void explosion(double x, double y, int maxrad, int speed, int color);
-extern int rexplosion(struct data2 *ptr);
-extern int movebullet(struct data *ptr, unsigned long t2);
+
+
 extern void initialize_vars();
 extern void die(char *s);
 extern void parse_input();
@@ -73,7 +83,7 @@ extern void show_graphics();
 extern struct data *getplayer_byid(unsigned int id);
 extern void play_rand_bg_music();
 
-/* protocol */
+//proto.cpp
 extern void dopacket(int xtype, unsigned short len, char *dta);
 extern void verbose(char *pattern, ...);
 extern void m_hi(unsigned int sver, unsigned int oid);
@@ -95,7 +105,8 @@ extern void m_newbullet(unsigned int id, unsigned int ownerid, double x, double 
 extern void m_kick( unsigned int id, char *reason );
 extern void m_quit(unsigned int id, char *quit_msg);
 extern void m_spawn(unsigned int id, double x, double y, double deg, signed char accel, 
-	unsigned int alive, short frags, signed char turn, unsigned char type, double speed);
+					unsigned int alive, short frags, signed char turn, unsigned char type, 
+					double speed);
 extern void m_respawn(unsigned int id);
 extern void m_newuser(int id, double x, double y, double deg,
 					  signed char accel, unsigned int alive, signed short frags,
@@ -105,6 +116,8 @@ extern void m_hit();
 extern void m_accel(unsigned int id, double x, double y, signed char accel, double speed);
 extern void m_invincible(unsigned int id, unsigned char yesno, unsigned int t);
 extern void m_turn(unsigned int id, double x, double y, signed char turn, double deg);
+
+//send.cpp
 extern void send_version();
 extern void send_nickname();
 extern void send_pong(unsigned int time);
