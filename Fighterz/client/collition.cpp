@@ -501,7 +501,7 @@ int bs_collidecheck(struct data *ptr)
 					{
 						// addtext("del bullet at addr: %d", tmp);
 						explosion(tmp->x, tmp->y, 30, 30, makecol(255, 255, 255));
-						verbose("ID %u was hit by bullet owned by ID: %u", tmp2->id, tmp->owner);
+						// verbose("ID %u was hit by bullet owned by ID: %u", tmp2->id, tmp->owner);
 						del_bullet(tmp);
 						
 						retval = 1;

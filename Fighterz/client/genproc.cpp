@@ -476,7 +476,8 @@ void mainloop()
 		time_proc();
 		sockread();
 
-		if (!STARTED && requested_spawn == 0 && key[KEY_ENTER] && can_spawn == 1)
+		// if (!STARTED && requested_spawn == 0 && key[KEY_ENTER] && can_spawn == 1)
+		if (requested_spawn == 0 && key[KEY_ENTER] && can_spawn == 1)
 			send_ispawn();
 
 		if (!STARTED) 

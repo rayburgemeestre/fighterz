@@ -76,12 +76,15 @@ extern void m_ping(unsigned int servertime);
 extern void m_lag(double diff);
 extern void m_nickreply(unsigned char acceptance, char *msg);
 extern void m_spawnready();
+extern void m_kill(unsigned int victimid, unsigned int evilid, char *killstr);
 extern void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, double deg);
+extern void m_quit(unsigned int id, char *quit_msg);
 extern void m_spawn(unsigned int oid);
 extern void m_newuser(int id, double x, double y, double deg,
 					  signed char accel, unsigned int alive, signed short frags,
 					  unsigned int pending_moves, signed char turn, unsigned char type, 
 					  double speed, char *nick);
+extern void m_hit();
 extern void m_accel(unsigned int id, double x, double y, signed char accel, double speed);
 extern void m_turn(unsigned int id, double x, double y, signed char turn, double deg);
 extern void send_version();

@@ -254,6 +254,8 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		case SMSG_HIT:
 		{
 			verbose("SMSG_HIT");
+
+			m_hit();			
 			return;
 		}
 		case SMSG_SAY:
@@ -318,7 +320,19 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		}
 		case SMSG_KILL:
 		{
-			verbose("SMSG_KILL");
+			unsigned int victimid, evilid;
+			char *killstr = strdup("");
+
+			verbose("SMSG_KILL <victimid (u32)> <evilid (u32)> <killtxt (str)>");
+
+			if (!get_u32(&victimid, &dta, &len))
+				goto fatal;
+			if (!get_u32(&evilid, &dta, &len))
+				goto fatal;
+			if (!get_str(killstr, &dta, &len, sizeof(killstr)))
+				goto fatal;
+			
+			m_kill(victimid, evilid, killstr);
 			return;
 		}
 		case SMSG_NEWBULLET:
@@ -360,6 +374,15 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		case SMSG_QUIT:
 		{
 			verbose("SMSG_QUIT");
+			unsigned int id;
+			char quit_msg[64];
+
+			if (!get_u32(&id, &dta, &len))
+				goto fatal;
+			if (!get_str(quit_msg, &dta, &len, sizeof(quit_msg)))
+				goto fatal;
+
+			m_quit(id, quit_msg);
 			return;
 		}
 		case SMSG_KICK:
@@ -444,7 +467,7 @@ void lag_proc(char *lag_char, char *servertime_char)
 
 void m_hi(unsigned int sver, unsigned int oid)
 {
-	verbose("SMSG_HI: %d %d", sver, oid);
+	// verbose("SMSG_HI: %d %d", sver, oid);
 	our_id = oid; /* and our id :) */
 
 	/* We'll now send */
@@ -456,13 +479,13 @@ void m_hi(unsigned int sver, unsigned int oid)
 
 void m_ping(unsigned int servertime)
 {
-	verbose("SMSG_PING: %d", servertime);
+	// verbose("SMSG_PING: %d", servertime);
 	send_pong(servertime);
 }
 
 void m_lag(double diff)
 {
-	verbose("SMSG_LAG: %f (avg lag now: %2.2f)", diff, current_lag());
+	// verbose("SMSG_LAG: %f (avg lag now: %2.2f)", diff, current_lag());
 	int i = 0;
 	while (i < 4)
 	{
@@ -477,13 +500,24 @@ void m_nickreply(unsigned char acceptance, char *msg)
 	verbose("SMSG_NICKREPLY: %d %s", (int)acceptance, msg);
 }
 
+void m_quit(unsigned int id, char *quit_msg)
+{
+	LINK current = getplayer_byid(id);
+	if (current == NULL)
+		die("m_quit(): current cannot be NULL");
+
+	explosion(current->x, current->y, 500, 10, makecol(255, 128, 255));
+	del_player(id);
+}
+
 void m_spawnready()
 {
 	verbose("SMSG_SPAWNREADY");
 	can_spawn = 1;
 	requested_spawn = 0;
 	
-	set_window_title("fighterz -- You can press enter to spawn now.");
+	set_window_title("Fighterz -- You can press enter to spawn now.");
+
 }
 
 void m_newuser(int id, double x, double y, double deg,
@@ -553,6 +587,33 @@ return;
 	delay(2);
 }
 
+void m_kill(unsigned int victimid, unsigned int evilid, char *killstr)
+{
+	verbose("m_kill();");
+
+	LINK evil_node = getplayer_byid(evilid);
+	LINK victim_node = getplayer_byid(victimid);
+
+	if (evil_node != NULL && victim_node != NULL)
+	{
+		victim_node->velocity = 0;
+		victim_node->speed = 0.0;
+		victim_node->dead = 1;
+		victim_node->power = MAX_HITS;
+		
+		if (victim_node == our_node)
+			guessed_power = MAX_HITS;
+
+		evil_node->kills++;
+		addtext("*** %s(%d) fragged %s(%d)", evil_node->nick, evil_node->id,
+			victim_node->nick, victim_node->id);
+		
+		explosion(victim_node->x, victim_node->y, 250, 10, makecol(255,0,0));
+	} else {
+		die("evil_node or victim_node is NULL");
+	}
+}
+
 void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, double deg)
 {
 	// *the entire `unsigned int id` var isn't used
@@ -576,20 +637,28 @@ void m_spawn(unsigned int oid)
 		if (!our_node)
 			die("Failed synching our_node with our_id");
 		
-		set_window_title("fighterz"); /* or something... */
+		set_window_title("Fighterz"); /* or something... */
 
 		STARTED = 1;
+		our_node->dead = 0;
 	}
+}
+
+void m_hit()
+{
+	if (our_node->power > 0)
+		our_node->power--;
 }
 
 void m_accel(unsigned int id, double x, double y, signed char accel, double speed)
 {
 	LINK current;
 	verbose("SMSG_ACCEL %d %2.2f %2.2f %d %2.2f", id, x, y, (int)accel, speed);
-	for (current=head; current->id!=id; current=current->next)
-		;
+	current = getplayer_byid(id);
 	if (!current)
 		die("Error in SMSG_ACCEL.."); /* TODO: replace with some error function */
+
+	current->freeze = 0;
 	current->id = id;
 	current->x = x;
 	current->y = y;

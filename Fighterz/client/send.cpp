@@ -44,7 +44,7 @@ void send_ispawn()
 	char *p = packet;
 	unsigned short len = 0;
 	requested_spawn = 1;
-	verbose("CMSG_SPAWN -- requested spawn");
+	// verbose("CMSG_SPAWN -- requested spawn");
 	put_u16(CMSG_SPAWN, &p, &len);	
 	send_packet(packet, len);
 }
@@ -67,7 +67,7 @@ void send_pong(unsigned int time)
 {
 	char *p = packet;
 	unsigned short len = 0;
-	verbose("CMSG_PONG: %d", time);
+	// verbose("CMSG_PONG: %d", time);
 	
 	put_u16(CMSG_PONG, &p, &len);
 	put_u32(time, &p, &len);
@@ -78,7 +78,7 @@ void send_accel(int from)
 {
 	char *p = packet;
 	unsigned short len = 0;
-	verbose("CMSG_ACCEL(%d): %d", from, time);
+	// verbose("CMSG_ACCEL(%d): %d", from, time);
 	
 	put_u16(CMSG_ACCEL, &p, &len);
 	put_dbl(our_node->x, &p, &len);
@@ -94,7 +94,7 @@ void send_turn()
 {
 	char *p = packet;
 	unsigned short len = 0;
-	verbose("CMSG_TURN(%d): %d", (signed int)our_node->turn, (signed int)our_node->deg);
+	// verbose("CMSG_TURN(%d): %d", (signed int)our_node->turn, (signed int)our_node->deg);
 
 // TURN <x (dbl)> <y (dbl)> <turn (s8)> <deg (dbl)>
 
@@ -111,7 +111,7 @@ void send_newbullet(double x, double y, double deg)
 {
 char *p = packet;
 unsigned short len = 0;
-	verbose("CMSG_NEWBULLET");
+	// verbose("CMSG_NEWBULLET");
 
 	put_u16(CMSG_NEWBULLET, &p, &len);
 	put_dbl(x, &p, &len);
