@@ -16,6 +16,8 @@ void init()
     // set_gfx_mode(GFX_SAFE, SCREEN_X, SCREEN_Y, 0, 0);
     set_gfx_mode(GFX_AUTODETECT_WINDOWED, SCREEN_X, SCREEN_Y, 0, 0);
 
+	set_display_switch_mode(SWITCH_BACKGROUND);
+
     // Installing the keyboard handler.
     install_keyboard();
     install_mouse();

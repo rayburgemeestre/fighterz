@@ -4,6 +4,7 @@ int x_width;
 int y_width;
 BITMAP *scrn_field = NULL;
 BITMAP *sub_field = NULL;
+extern int current_bmp_df_index;
 
 int init_map(int allow_cancel)
 {
@@ -56,6 +57,16 @@ char buffer[512] = "";
                 y_width++;
                 cnt++;
             }
+			else if (*ptr == '3')
+			{
+            int df_id, pos_x, pos_y;
+            char buf[512];
+            char datafile[128];
+
+				sscanf(line, "3 %d %d %d %s\n", &df_id, &pos_x, &pos_y, &datafile);
+				sprintf(buf, "%d (%d,%d) %s", df_id, pos_x, pos_y, datafile);
+				strcpy(current_bmp_df[current_bmp_df_index++], buf);
+			}
         }
         x_width--;
 
