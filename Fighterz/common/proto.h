@@ -58,7 +58,7 @@ extern int get_s16(signed short *val, char **p, unsigned short *len);
 extern int get_u8(unsigned char *val, char **p, unsigned short *len);
 extern int get_s8(signed char *val, char **p, unsigned short *len);
 extern int get_dbl(double *val, char **p, unsigned short *len);
-extern int get_str(char *s, char **p, unsigned short *len, size_t max);
+extern int get_str(char *s, char **p, unsigned short *len, int max);
 extern int get_time(TIME *val, char **p, unsigned short *len);
 extern void put_u32(unsigned int val, char **p, unsigned short *len);
 extern void put_s32(signed int val, char **p, unsigned short *len);

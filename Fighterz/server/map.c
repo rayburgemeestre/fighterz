@@ -16,7 +16,7 @@ void loadmap() {
 	char buff[500];
 
 	if (!(fileptr = fopen(map3, "r"))) {
-		printf_("Error opening file");
+		printf_("1: Error opening file %s", map3);
 		exit(-1);
 	}
 

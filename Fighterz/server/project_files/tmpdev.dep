@@ -1,0 +1,85 @@
+# Microsoft Developer Studio Generated Dependency File, included by tmpdev.mak
+
+.\bullet.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\collition.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\console.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\findpath.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\findpath_pq.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\genproc.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\map.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\parse.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\player.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\server.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\hfiles.h"\
+	".\server.h"\
+	".\variables.h"\
+	
+
+.\ship.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
+
+.\socket.cpp : \
+	"..\..\..\..\..\dxsdk\include\basetsd.h"\
+	".\e_server.h"\
+	".\e_variables.h"\
+	".\hfiles.h"\
+	
