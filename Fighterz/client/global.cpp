@@ -301,6 +301,14 @@ int newturn = 0;
 			{
 				explosion(our_node->x, our_node->y, 100, 10, makecol(255,0,0));
 			}
+			if ( k == KEY_Y )
+			{
+			int i;
+				for (i=0; i<Y_BLOCKS; i++)
+				{
+					verbose(field[i]);
+				}
+			}
 			if ( k == KEY_F11 /*&& false*/ )
 			{
 				if (BOUNCING_BULLETS == 1)

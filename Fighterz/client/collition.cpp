@@ -25,8 +25,11 @@ void collidecheck()
 int collidecheck2(unsigned int id, int variation) /* variation = only 1 when 
 								called in mainloop() at UP/DOWN stuff */
 {
+	static char f[512];
 	LINK current2;
 	int collided = 0; /* 0=no, 1=yes */
+	int cool = 0;
+	int clr = makecol(255, 128, 0);
 	double x, y;
 	int px, py, qx, qy;
 	/* the fucked up stuff */
@@ -64,39 +67,89 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 	if ( !(px > X_BLOCKS) && !(px < 0) && 
 		!(py > Y_BLOCKS) && !(py < 0) )
 	{
-
 		/* center of the ship */
 		if (field[py][px] == '1')
+		{
+			strcpy(f, "*** Impact: Center");
 			collided = 1;
+		}
 
-		/* BLOCKSIZE / 4 down the ship */
-		if ((py - 1) > 0)
+		/* BLOCKSIZE / 4 above the ship - tested */
+		if ((py - 1) >= 0)
 		{
 			qy = (int) ((y - (BLOCKSIZE / 4)) / BLOCKSIZE);
-			if (field[qy][px] == '1') collided = 1;
+			if (field[qy][px] == '1') 
+			{
+				if (cool)
+					rectfill(
+						shipbuff, 
+						(px * BLOCKSIZE_2), (qy * BLOCKSIZE_2), 
+						((px + 1) * BLOCKSIZE_2), ((qy + 1) * BLOCKSIZE_2), 
+						clr
+					);
+				strcpy(f, "*** Impact: Above");
+				collided = 1;
+			}
 		}
-		/* BLOCKSIZE / 4 above the ship */
+		/* BLOCKSIZE / 4 down the ship - tested */
 		if ( (py + 1) <= Y_BLOCKS )
 		{
 			qy = (int)( (y + (BLOCKSIZE / 4) ) / BLOCKSIZE);
-			if (field[qy][px] == '1') collided = 1;
+			if (field[qy][px] == '1') 
+			{
+				if (cool)
+					rectfill(
+						shipbuff, 
+						(px * BLOCKSIZE_2), (qy * BLOCKSIZE_2), 
+						((px + 1) * BLOCKSIZE_2), ((qy + 1) * BLOCKSIZE_2), 
+						clr
+					);
+				strcpy(f, "*** Impact: Below");
+				collided = 1;
+			}
 		}
-		/* BLOCKSIZE / 4 on the right of the ship */
-		if ( (px + 1) <= Y_BLOCKS )
+		/* BLOCKSIZE / 4 on the right of the ship - tested*/
+		if ( (px + 1) <= (X_BLOCKS))
 		{
 			qx = (int)( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE);
-			if (field[py][qx] == '1') collided = 1;
-		} 
-		/* BLOCKSIZE / 4 on the left of the ship */
+			if (field[py][qx] == '1') 
+			{
+			char buf[512];
+
+				if (cool)
+					rectfill(
+						shipbuff, 
+						(qx * BLOCKSIZE_2), (py * BLOCKSIZE_2), 
+						((qx + 1) * BLOCKSIZE_2), ((py + 1) * BLOCKSIZE_2), 
+						clr
+					);
+
+				sprintf(buf, "*** Impact: Right");
+				strcpy(f, buf);
+				collided = 1;
+			}
+		}
+		/* BLOCKSIZE / 4 on the left of the ship - tested*/
 		if ( (px - 1) >= 0 )
 		{
 			qx = (int)( ( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE) - 0.5); // dunno why i had to add the - 0.5
 																	// in the VB version it wasn't necessary
-			if (field[py][qx] == '1') {								// TODO; find out why :)
+			if (field[py][qx] == '1') 
+			{														// TODO; find out why :)
+				if (cool)
+					rectfill(
+						shipbuff, 
+						(qx * BLOCKSIZE_2), (py * BLOCKSIZE_2), 
+						((qx + 1) * BLOCKSIZE_2), ((py + 1) * BLOCKSIZE_2), 
+						clr
+					);
+				strcpy(f, "*** Impact: Left");
 				collided = 1;
 			}
 		}
 	}
+
+	verbose(f);
 
 	if (collided == 1)
 	{
@@ -109,26 +162,13 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 this is really bitching (there's distance between the
 center of the ship and the collition point. And the collision
 point itself is also not known exactly..
-
+*/
 				if (0)
 				{
-				int retval; // make args compatible ;)
+				int retval = -1; // make args compatible ;)
 					process_bounce(current2, &retval, SPEED);
 
 				} else {
-int ret, radius = radius = BLOCKSIZE_2 / 2;
-double pos_x, pos_y;
-ret = (PI / 180) * (current->deg - 90);
-pos_x = cos(ret);
-pos_x = pos_x * (radius - (BLOCKSIZE_2 / 4));
-pos_x = pos_x + radius;
-pos_x = pos_x + current->x2 - (BLOCKSIZE_2 / 2);
-pos_y = sin(ret);
-pos_y = pos_y * (radius - (BLOCKSIZE_2 / 4));
-pos_y = pos_y + radius;
-pos_y = pos_y + current->y2 - (BLOCKSIZE_2 / 2);
-*/
-
 					//addtext("C: collided at velocity: %d", our_node->velocity);
 					//addtext("Set To 0");
 					current2->velocity = 0;
@@ -136,7 +176,7 @@ pos_y = pos_y + current->y2 - (BLOCKSIZE_2 / 2);
 					// current2->freeze = 1;
 					if (variation == 0)
 						send_accel(4);
-/*				}*/
+				}
 			}			
 		} else {
 			/* other ship */
@@ -218,6 +258,8 @@ int old_px, old_py;
 			sprintf(tmp, "%d %d COLLITION AT DEG: %f X: %f Y: %f", 
 				ptr->move, ourtime, ptr->deg, ptr->x, ptr->y);
 
+
+	circlefill(fieldbuff, ptr->x, ptr->y, 2, makecol(255, 0, 0));
 	old_px = (int)(ptr->x / BLOCKSIZE);
 	old_py = (int)(ptr->y / BLOCKSIZE);
 	px = (int)(x / BLOCKSIZE);
