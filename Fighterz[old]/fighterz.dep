@@ -1,0 +1,56 @@
+# Microsoft Developer Studio Generated Dependency File, included by fighterz.mak
+
+main.cpp : \
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\3d.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\3dmaths.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\alcompat.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\base.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\color.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\compiled.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\config.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\datafile.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\debug.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\digi.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\draw.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\file.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\fix.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\fixed.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\fli.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\fmaths.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\gfx.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\gui.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\3dmaths.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\asm.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\color.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\draw.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\file.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\fix.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\fmaths.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\gfx.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\gui.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\matrix.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\rle.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\inline\system.inl"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\internal\alconfig.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\joystick.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\keyboard.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\matrix.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\midi.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\mouse.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\palette.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\platform\al386vc.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\platform\almsvc.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\platform\alplatf.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\platform\alwin.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\quat.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\rle.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\sound.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\stream.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\system.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\text.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\timer.h"\
+	"..\..\..\progz\microsoft visual studio\vc98\include\allegro\unicode.h"\
+	".\main.h"\
+	".\variables.h"\
+	

@@ -1,0 +1,208 @@
+ fighterz
+
+ Timestamp is 3d51353f (Wed Aug 07 16:57:03 2002)
+
+ Preferred load address is 00400000
+
+ Start         Length     Name                   Class
+ 0001:00000000 00001232H .text                   CODE
+ 0002:00000000 0000016cH .rdata                  DATA
+ 0002:0000016c 00000000H .edata                  DATA
+ 0003:00000000 00000004H .CRT$XCA                DATA
+ 0003:00000004 00000004H .CRT$XCZ                DATA
+ 0003:00000008 00000004H .CRT$XIA                DATA
+ 0003:0000000c 00000004H .CRT$XIZ                DATA
+ 0003:00000010 00000024H .data                   DATA
+ 0003:00000038 00002608H .bss                    DATA
+ 0004:00000000 0000003cH .idata$2                DATA
+ 0004:0000003c 00000014H .idata$3                DATA
+ 0004:00000050 000000d0H .idata$4                DATA
+ 0004:00000120 000000d0H .idata$5                DATA
+ 0004:000001f0 000001a4H .idata$6                DATA
+
+  Address         Publics by Value              Rva+Base     Lib:Object
+
+ 0001:00000000       ?_mangled_main@@YAHXZ      00401000 f   main.obj
+ 0001:00000050       _WinMain@16                00401050 f   main.obj
+ 0001:000000b0       ?printff@@YAXPADZZ         004010b0 f   main.obj
+ 0001:000001e0       ?printulist@@YAXXZ         004011e0 f   main.obj
+ 0001:000002a0       ?printul@@YAXPADJJ@Z       004012a0 f   main.obj
+ 0001:000003a0       ?loadmap@@YAXXZ            004013a0 f   main.obj
+ 0001:00000570       ?drawmap@@YAXXZ            00401570 f   main.obj
+ 0001:00000860       ?mainloop@@YAXXZ           00401860 f   main.obj
+ 0001:00000a00       ?init@@YAXXZ               00401a00 f   main.obj
+ 0001:00000d60       ?terminate@@YAXXZ          00401d60 f   main.obj
+ 0001:00000dc0       ?delay@@YAXH@Z             00401dc0 f   main.obj
+ 0001:00000e30       ?fps_proc@@YAXXZ           00401e30 f   main.obj
+ 0001:00000eb0       ?time_proc@@YAXXZ          00401eb0 f   main.obj
+ 0001:00000f72       _allegro_exit              00401f72 f   alld:alld40.dll
+ 0001:00000f78       __WinMain                  00401f78 f   alld:alld40.dll
+ 0001:00000f7e       _textprintf                00401f7e f   alld:alld40.dll
+ 0001:00000f84       _clear_to_color            00401f84 f   alld:alld40.dll
+ 0001:00000f8a       _rectfill                  00401f8a f   alld:alld40.dll
+ 0001:00000f90       _line                      00401f90 f   alld:alld40.dll
+ 0001:00000f96       _makecol                   00401f96 f   alld:alld40.dll
+ 0001:00000f9c       _poll_keyboard             00401f9c f   alld:alld40.dll
+ 0001:00000fa2       _vsync                     00401fa2 f   alld:alld40.dll
+ 0001:00000fa8       _rest                      00401fa8 f   alld:alld40.dll
+ 0001:00000fae       _install_timer             00401fae f   alld:alld40.dll
+ 0001:00000fb4       _install_mouse             00401fb4 f   alld:alld40.dll
+ 0001:00000fba       _install_keyboard          00401fba f   alld:alld40.dll
+ 0001:00000fc0       _set_gfx_mode              00401fc0 f   alld:alld40.dll
+ 0001:00000fc6       _install_allegro           00401fc6 f   alld:alld40.dll
+ 0001:00000fcc       __chkesp                   00401fcc f   MSVCRT:MSVCRT.dll
+ 0001:00000fd2       _vsprintf                  00401fd2 f   MSVCRT:MSVCRT.dll
+ 0001:00000fd8       _sprintf                   00401fd8 f   MSVCRT:MSVCRT.dll
+ 0001:00000fde       _strlen                    00401fde f   MSVCRT:MSVCRT.dll
+ 0001:00000fe4       _atoi                      00401fe4 f   MSVCRT:MSVCRT.dll
+ 0001:00000fea       _strcpy                    00401fea f   MSVCRT:MSVCRT.dll
+ 0001:00000ff0       _strtok                    00401ff0 f   MSVCRT:MSVCRT.dll
+ 0001:00000ff6       _fgets                     00401ff6 f   MSVCRT:MSVCRT.dll
+ 0001:00000ffc       _fopen                     00401ffc f   MSVCRT:MSVCRT.dll
+ 0001:00001002       _time                      00402002 f   MSVCRT:MSVCRT.dll
+ 0001:00001008       _exit                      00402008 f   MSVCRT:MSVCRT.dll
+ 0001:0000100e       _malloc                    0040200e f   MSVCRT:MSVCRT.dll
+ 0001:00001014       _strncpy                   00402014 f   MSVCRT:MSVCRT.dll
+ 0001:0000101a       __errno                    0040201a f   MSVCRT:MSVCRT.dll
+ 0001:00001020       __onexit                   00402020 f   MSVCRT:atonexit.obj
+ 0001:0000104c       _atexit                    0040204c f   MSVCRT:atonexit.obj
+ 0001:00001060       _WinMainCRTStartup         00402060 f   MSVCRT:crtexew.obj
+ 0001:000011be       ___dllonexit               004021be f   MSVCRT:MSVCRT.dll
+ 0001:000011c4       __exit                     004021c4 f   MSVCRT:MSVCRT.dll
+ 0001:000011ca       __XcptFilter               004021ca f   MSVCRT:MSVCRT.dll
+ 0001:000011d0       ___getmainargs             004021d0 f   MSVCRT:MSVCRT.dll
+ 0001:000011d6       __initterm                 004021d6 f   MSVCRT:MSVCRT.dll
+ 0001:000011dc       __setdefaultprecision      004021dc f   MSVCRT:fp8.obj
+ 0001:000011ee       ___setusermatherr          004021ee f   MSVCRT:MSVCRT.dll
+ 0001:000011f4       __matherr                  004021f4 f   MSVCRT:merr.obj
+ 0001:000011f7       __setargv                  004021f7 f   MSVCRT:dllargv.obj
+ 0001:000011f8       ___p__commode              004021f8 f   MSVCRT:MSVCRT.dll
+ 0001:000011fe       ___p__fmode                004021fe f   MSVCRT:MSVCRT.dll
+ 0001:00001204       ___set_app_type            00402204 f   MSVCRT:MSVCRT.dll
+ 0001:0000120a       __except_handler3          0040220a f   MSVCRT:MSVCRT.dll
+ 0001:00001210       __controlfp                00402210 f   MSVCRT:MSVCRT.dll
+ 0001:00001220       _GetModuleHandleA@4        00402220 f   kernel32:KERNEL32.dll
+ 0001:00001226       _GetStartupInfoA@4         00402226 f   kernel32:KERNEL32.dll
+ 0001:0000122c       __ftime                    0040222c f   MSVCRT:MSVCRT.dll
+ 0002:0000001c       ??_C@_0N@MNKG@Player?5List?3?$AA@ 0040301c     main.obj
+ 0002:0000002c       ??_C@_0M@IPII@?$CF8s?5?$CF4d?5?$CF3d?$AA@ 0040302c     main.obj
+ 0002:00000038       ??_C@_0BK@IEC@?5?5Blocksize?5in?5pixels?3?5?$CFd?$AA@ 00403038     main.obj
+ 0002:00000054       ??_C@_0BM@NIC@?5?5Horizontal?5blockcount?3?5?$CFd?$AA@ 00403054     main.obj
+ 0002:00000070       ??_C@_0BK@EANL@?5?5Vertical?5blockcount?3?5?$CFd?$AA@ 00403070     main.obj
+ 0002:0000008c       ??_C@_01BJG@?6?$AA@        0040308c     main.obj
+ 0002:00000090       ??_C@_0BD@EDLB@Error?5opening?5file?$AA@ 00403090     main.obj
+ 0002:000000a4       ??_C@_01LHO@r?$AA@         004030a4     main.obj
+ 0002:000000a8       ??_C@_07ICNM@FPS?3?5?$CFd?$AA@ 004030a8     main.obj
+ 0002:000000b0       ??_C@_0BJ@JLAB@Press?5enter?5to?5proceed?4?4?$AA@ 004030b0     main.obj
+ 0002:000000cc       ??_C@_07CJMH@Player2?$AA@  004030cc     main.obj
+ 0002:000000d4       ??_C@_06IOLJ@TriGen?$AA@   004030d4     main.obj
+ 0002:000000dc       ??_C@_0BI@BHJO@Error?5allocating?5memory?$AA@ 004030dc     main.obj
+ 0002:000000f4       ??_C@_0CD@MOOC@Initializing?5linked?5list?5for?5use@ 004030f4     main.obj
+ 0002:00000118       ??_C@_0O@FLPI@maps?1lvl1?4txt?$AA@ 00403118     main.obj
+ 0002:00000128       ??_C@_0BA@CCDK@Loading?5map?3?5?$CFs?$AA@ 00403128     main.obj
+ 0002:00000138       ??_C@_0BC@JDIE@Some?5variables?5?$CFs?$AA@ 00403138     main.obj
+ 0002:0000014c       ??_C@_0O@DCKM@Initializing?3?$AA@ 0040314c     main.obj
+ 0002:0000015c       ??_C@_02MHMJ@?$CFu?$AA@    0040315c     main.obj
+ 0003:00000000       ___xc_a                    00404000     MSVCRT:cinitexe.obj
+ 0003:00000004       ___xc_z                    00404004     MSVCRT:cinitexe.obj
+ 0003:00000008       ___xi_a                    00404008     MSVCRT:cinitexe.obj
+ 0003:0000000c       ___xi_z                    0040400c     MSVCRT:cinitexe.obj
+ 0003:00000010       ?SCREEN_X@@3HA             00404010     main.obj
+ 0003:00000014       ?SCREEN_Y@@3HA             00404014     main.obj
+ 0003:00000018       ?LEFT@@3HA                 00404018     main.obj
+ 0003:0000001c       ?TOP@@3HA                  0040401c     main.obj
+ 0003:00000020       ?show_fps@@3HA             00404020     main.obj
+ 0003:00000024       ?show_ulist@@3HA           00404024     main.obj
+ 0003:00000030       ___defaultmatherr          00404030     MSVCRT:merr.obj
+ 0003:00000038       ?t@@3Utimeb@@A             00404038     main.obj
+ 0003:00000044       ?field@@3PAY0HO@DA         00404044     main.obj
+ 0003:000025ac       ?fps_oldtime@@3JA          004065ac     main.obj
+ 0003:000025b0       ?map@@3PADA                004065b0     main.obj
+ 0003:000025f0       ?fps_newtime@@3JA          004065f0     main.obj
+ 0003:000025f4       ?LEFT_2@@3HA               004065f4     main.obj
+ 0003:000025f8       ?TXTPTR@@3HA               004065f8     main.obj
+ 0003:000025fc       ?TXTPTR2@@3HA              004065fc     main.obj
+ 0003:00002600       ?X_BLOCKS@@3HA             00406600     main.obj
+ 0003:00002604       ?Y_BLOCKS@@3HA             00406604     main.obj
+ 0003:00002608       ?BLOCKSIZE@@3HA            00406608     main.obj
+ 0003:0000260c       ?fps@@3HA                  0040660c     main.obj
+ 0003:00002610       ?fps_count@@3HA            00406610     main.obj
+ 0003:00002614       ?ourtime@@3KA              00406614     main.obj
+ 0003:00002618       ?head@@3PAUdata@@A         00406618     main.obj
+ 0003:0000261c       ?new_node@@3PAUdata@@A     0040661c     main.obj
+ 0003:00002620       ?current@@3PAUdata@@A      00406620     main.obj
+ 0003:00002624       __dowildcard               00406624     MSVCRT:wildcard.obj
+ 0003:00002628       __newmode                  00406628     MSVCRT:_newmode.obj
+ 0003:0000262c       __commode                  0040662c     MSVCRT:xncommod.obj
+ 0003:00002630       __fmode                    00406630     MSVCRT:xtxtmode.obj
+ 0003:00002634       __adjust_fdiv              00406634     <common>
+ 0003:00002638       ___onexitend               00406638     <common>
+ 0003:0000263c       ___onexitbegin             0040663c     <common>
+ 0004:00000000       __IMPORT_DESCRIPTOR_alld40 00407000     alld:alld40.dll
+ 0004:00000014       __IMPORT_DESCRIPTOR_MSVCRT 00407014     MSVCRT:MSVCRT.dll
+ 0004:00000028       __IMPORT_DESCRIPTOR_KERNEL32 00407028     kernel32:KERNEL32.dll
+ 0004:0000003c       __NULL_IMPORT_DESCRIPTOR   0040703c     alld:alld40.dll
+ 0004:00000120       __imp__GetStartupInfoA@4   00407120     kernel32:KERNEL32.dll
+ 0004:00000124       __imp__GetModuleHandleA@4  00407124     kernel32:KERNEL32.dll
+ 0004:00000128       \177KERNEL32_NULL_THUNK_DATA 00407128     kernel32:KERNEL32.dll
+ 0004:0000012c       __imp__fgets               0040712c     MSVCRT:MSVCRT.dll
+ 0004:00000130       __imp__time                00407130     MSVCRT:MSVCRT.dll
+ 0004:00000134       __imp__strtok              00407134     MSVCRT:MSVCRT.dll
+ 0004:00000138       __imp___controlfp          00407138     MSVCRT:MSVCRT.dll
+ 0004:0000013c       __imp___except_handler3    0040713c     MSVCRT:MSVCRT.dll
+ 0004:00000140       __imp____set_app_type      00407140     MSVCRT:MSVCRT.dll
+ 0004:00000144       __imp____p__fmode          00407144     MSVCRT:MSVCRT.dll
+ 0004:00000148       __imp____p__commode        00407148     MSVCRT:MSVCRT.dll
+ 0004:0000014c       __imp___adjust_fdiv        0040714c     MSVCRT:MSVCRT.dll
+ 0004:00000150       __imp____setusermatherr    00407150     MSVCRT:MSVCRT.dll
+ 0004:00000154       __imp___initterm           00407154     MSVCRT:MSVCRT.dll
+ 0004:00000158       __imp____getmainargs       00407158     MSVCRT:MSVCRT.dll
+ 0004:0000015c       __imp___acmdln             0040715c     MSVCRT:MSVCRT.dll
+ 0004:00000160       __imp___XcptFilter         00407160     MSVCRT:MSVCRT.dll
+ 0004:00000164       __imp___exit               00407164     MSVCRT:MSVCRT.dll
+ 0004:00000168       __imp___chkesp             00407168     MSVCRT:MSVCRT.dll
+ 0004:0000016c       __imp__vsprintf            0040716c     MSVCRT:MSVCRT.dll
+ 0004:00000170       __imp__sprintf             00407170     MSVCRT:MSVCRT.dll
+ 0004:00000174       __imp__strlen              00407174     MSVCRT:MSVCRT.dll
+ 0004:00000178       __imp__atoi                00407178     MSVCRT:MSVCRT.dll
+ 0004:0000017c       __imp__strcpy              0040717c     MSVCRT:MSVCRT.dll
+ 0004:00000180       __imp___onexit             00407180     MSVCRT:MSVCRT.dll
+ 0004:00000184       __imp__fopen               00407184     MSVCRT:MSVCRT.dll
+ 0004:00000188       __imp___ftime              00407188     MSVCRT:MSVCRT.dll
+ 0004:00000188       __imp__ftime               00407188     MSVCRT:MSVCRT.dll
+ 0004:0000018c       __imp__exit                0040718c     MSVCRT:MSVCRT.dll
+ 0004:00000190       __imp__malloc              00407190     MSVCRT:MSVCRT.dll
+ 0004:00000194       __imp__strncpy             00407194     MSVCRT:MSVCRT.dll
+ 0004:00000198       __imp___errno              00407198     MSVCRT:MSVCRT.dll
+ 0004:0000019c       __imp____dllonexit         0040719c     MSVCRT:MSVCRT.dll
+ 0004:000001a0       \177MSVCRT_NULL_THUNK_DATA 004071a0     MSVCRT:MSVCRT.dll
+ 0004:000001a4       __imp__install_allegro     004071a4     alld:alld40.dll
+ 0004:000001a8       __imp__set_gfx_mode        004071a8     alld:alld40.dll
+ 0004:000001ac       __imp__install_keyboard    004071ac     alld:alld40.dll
+ 0004:000001b0       __imp__install_mouse       004071b0     alld:alld40.dll
+ 0004:000001b4       __imp__install_timer       004071b4     alld:alld40.dll
+ 0004:000001b8       __imp__key                 004071b8     alld:alld40.dll
+ 0004:000001bc       __imp__rest                004071bc     alld:alld40.dll
+ 0004:000001c0       __imp__vsync               004071c0     alld:alld40.dll
+ 0004:000001c4       __imp__poll_keyboard       004071c4     alld:alld40.dll
+ 0004:000001c8       __imp__makecol             004071c8     alld:alld40.dll
+ 0004:000001cc       __imp__line                004071cc     alld:alld40.dll
+ 0004:000001d0       __imp__rectfill            004071d0     alld:alld40.dll
+ 0004:000001d4       __imp__allegro_exit        004071d4     alld:alld40.dll
+ 0004:000001d8       __imp__screen              004071d8     alld:alld40.dll
+ 0004:000001dc       __imp__font                004071dc     alld:alld40.dll
+ 0004:000001e0       __imp__textprintf          004071e0     alld:alld40.dll
+ 0004:000001e4       __imp___WinMain            004071e4     alld:alld40.dll
+ 0004:000001e8       __imp__clear_to_color      004071e8     alld:alld40.dll
+ 0004:000001ec       \177alld40_NULL_THUNK_DATA 004071ec     alld:alld40.dll
+
+ entry point at        0001:00001060
+
+ Static symbols
+
+
+FIXUPS: 21ab fffffe99 d fffffad5 18 14 81 36 17 18 14 81 36 17 f 20 32
+FIXUPS: 1d8d 11 d 3d 28 12 36 4e 3b 43 35 10 27e fffffee4 19 f 33 6a fffff3b8
+FIXUPS: 155b 4e 24 90 53 70 55 c7 17 64 5 5 3f e 9c 14 f f 12 3c 13 28
+FIXUPS: 1a74 f f a 12 2a 21 c a fffff50a 5 f f 4f d 5f 42 4a 37 10 66 41
+FIXUPS: 1291 32 36 48 38 10 62 13 8 1c 35 a 12 28 39 a 1f 23 14

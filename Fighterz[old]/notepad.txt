@@ -1,0 +1,361 @@
+
+/********************************************
+*   This will become the remake of tachyon fighters,
+*   I'm still thinking about the new name I will give it.
+*   Work in progress.. ;)
+*                                Started: 07.08.02
+****************************************************/
+
+/* #define ALLEGRO_STATICLINK */
+/* #define USE_CONSOLE */
+
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <allegro.h>
+
+#include "main.h"
+#include "variables.h"
+
+/* linked list */
+struct data {
+    int id; /* sock_nr */
+    char nick[64];
+	/* coords: */
+	double x;
+	double y;
+	double deg; /* degrees (where it's heading towards) */
+	long int kills;
+	long int kills_avg;
+	long int score_update; /* contains time(NULL); used for: */
+	long int alive; /* amount of seconds that this player is online */
+	
+    struct data *next;
+};
+
+typedef struct data user;
+typedef user *LINK;
+
+LINK head = NULL;
+LINK new_node = NULL;
+LINK current = NULL;
+
+int main() 
+{
+	init();
+
+	mainloop();
+
+	/* Exit program. */
+	allegro_exit();
+	return 0; 
+}     
+
+/* Some Allegro magic to deal with WinMain(). */
+END_OF_MAIN();
+
+/********************************************
+*  GLOBAL FUNCTIONS
+****************************************************/
+
+/* WARNING: vsnprintf() wasn't available 
+   char buf[512] could be overflowed */
+void printff(char *pattern, ...) 
+{
+	char buf[512];
+	
+	va_list ap;
+	va_start (ap, pattern);
+	vsprintf(buf, pattern, ap);
+	va_end(ap);
+
+	if (TXTPTR >= (SCREEN_X - 10)) {
+		TXTPTR = 0;
+		clear_to_color (screen, 0);
+	} else {
+		TXTPTR = TXTPTR + 10;
+	}
+
+	if (TXTPTR == 0) { 
+		textprintf(screen, font, 10, 1, 15, buf);
+	} else { 
+		textprintf(screen, font, 10, TXTPTR, 15, buf);
+	}
+}
+
+/* Prints userlist */
+void printulist() 
+{
+	TXTPTR2 = 0;
+
+	current = head;
+	while (current != NULL)
+	{
+		printul((char *)(current->nick), (long int)(current->kills), (long int)(current->kills_avg) );
+		current = current->next;
+	}
+	
+}
+
+/* Used in printulist(); */
+void printul(char *nick, long int one, long int two) 
+{
+	char buf[128];
+	/* again no snprintf().. arghl*/
+	if (strlen(nick) > 30) nick[30] = '\0'; /* frag >30 */
+	sprintf(buf, "%8s %4d %3d", nick, one, two);
+
+	if (TXTPTR2 >= (SCREEN_X - 10)) {
+		TXTPTR2 = 0;
+		clear_to_color (screen, 0);
+	} else {
+		TXTPTR2 = TXTPTR2 + 10;
+	}
+
+	if (TXTPTR2 == 0) { 
+		textprintf(screen, font, LEFT_2, 1, 42, buf); /* 42 = makecol(255, 128, 0) (orange) */
+	} else { 
+		textprintf(screen, font, LEFT_2, TXTPTR2, 42, buf);
+	}
+}
+
+/********************************************
+*  MAP FUNCTIONS
+****************************************************/
+
+/* reads map from file, stores coordinates in array 
+   and sets some important variables */
+void loadmap() {
+
+	FILE *fileptr;
+	char *ptr;
+	int x_count = 0;
+	int cnt = 0, cnt2 = 0;
+
+	char buff[81];
+
+	if (!(fileptr = fopen(map, "r"))) {
+		printff("Error opening file");
+		terminate();
+	}
+
+	while (fgets(buff, 81, fileptr) != NULL) {
+		if ( (buff[0] == '0') || (buff[0] == '1') ) {
+			strcpy(buff, strtok(buff, "\n"));
+			
+			if ( cnt == 0 ) Y_BLOCKS = strlen(buff);
+			
+			buff[Y_BLOCKS] = '\0';
+
+			strcpy(field[cnt], buff);
+	
+			x_count++;
+
+			cnt++;
+			
+		}
+		if ( (buff[0] == '2') ) {
+			strcpy(buff, strtok(buff, "\n"));
+			ptr = &buff[2];
+			BLOCKSIZE = atoi((const char *) ptr);
+		}
+
+		X_BLOCKS = x_count;
+	}
+	printff("  Vertical blockcount: %d", X_BLOCKS);
+	printff("  Horizontal blockcount: %d", Y_BLOCKS);
+	printff("  Blocksize in pixels: %d", BLOCKSIZE);
+}
+
+/* procedure to draw map on screen */
+void drawmap() {
+	int cnt, cnt2;
+	int x = 0, length, length2;
+
+	/* Colours */
+	int blauw = makecol(0,128,255);
+	int grijs = makecol(128,128,128);
+	
+	length = Y_BLOCKS * BLOCKSIZE;
+	length2  = X_BLOCKS * BLOCKSIZE;
+	
+	/* Draw lines */
+	/*   (horizontal:) */
+	for (cnt=0; cnt<X_BLOCKS; cnt++)
+	{
+		line(screen, LEFT, (cnt * BLOCKSIZE) + TOP, length + LEFT, (cnt * BLOCKSIZE) + TOP, grijs);
+	}
+	line(screen, LEFT, (cnt * BLOCKSIZE) + TOP, length + LEFT, (cnt * BLOCKSIZE) + TOP, grijs);
+	
+	/*   (vertical:) */
+	for (cnt=0; cnt<Y_BLOCKS; cnt++)
+	{
+		line(screen, LEFT + (cnt * BLOCKSIZE), TOP, LEFT + (cnt * BLOCKSIZE), TOP + length2, grijs);
+	}
+	line(screen, LEFT + (cnt * BLOCKSIZE), TOP, LEFT + (cnt * BLOCKSIZE), TOP + length2, grijs);
+
+	/* Draw walls */
+	for (cnt=0; cnt<Y_BLOCKS; cnt++) 
+	{
+		for (cnt2=0; cnt2<X_BLOCKS; cnt2++)
+		{
+			if (field[cnt2][cnt] == '1') 
+			{
+				rectfill(screen, LEFT + (cnt * BLOCKSIZE), TOP + (cnt2 * BLOCKSIZE), LEFT + ((cnt + 1) * BLOCKSIZE), TOP + ((cnt2 + 1) * BLOCKSIZE), blauw);
+			}
+		}
+	}
+}
+
+
+
+/********************************************
+*  PROCEDURES
+****************************************************/
+
+void mainloop()
+{
+	
+	/* loop until escape key is pressed */
+	while(! key[KEY_ESC]) {
+		/* cls */
+		clear_to_color (screen, 0);
+
+		/* calc fps */
+		fps_proc();
+
+		/* draw map */
+		drawmap();
+		
+		/* show fps? */
+		if (show_fps == 1) {
+			textprintf(screen, font, 10, 1, 15, "FPS: %d", fps);
+		}
+		/* playerlist */
+		printulist();
+		
+		/* delay */
+		rest(10);
+		/* wait for vertical retrace (reduces flickering) */
+		vsync();
+		poll_keyboard(); /* This shouldn't be necessary in Windows. */
+	}
+}
+
+void init()
+{
+	/* Initialize Allegro. */
+	allegro_init();      
+
+	/* Set the resolution with SAFE autodetection. */
+	set_gfx_mode(GFX_SAFE, SCREEN_Y, SCREEN_X, 0, 0);
+	install_keyboard();
+	install_mouse();
+	install_timer();
+	// show_mouse (screen);
+	
+	printff("Initializing:");	
+	
+	printff("Some variables %s", map);
+
+	LEFT_2 = (SCREEN_Y - 150) + LEFT;
+	/*                    ^ lists width */
+
+	printff("Loading map: %s", map);
+
+	strncpy(map, "maps/lvl1.txt", 64);
+	map[64] = '\0';
+
+
+
+	/* Read map from file and set some important variables */
+	loadmap();
+
+
+	printff("Initializing linked list for users");
+
+	/* create first node in linked list */
+    if (!(new_node = (LINK)malloc(sizeof(user))))
+    {   printff("Error allocating memory");
+        exit(-1);
+    }
+	/* insert the created node */
+    new_node->next = head;
+    head = new_node;
+	/* intiate some values */
+	head->id = 0;
+	head->x = 50;
+	head->y = 40;
+	head->deg = 0;
+	head->alive = 0; /* seconds in the game*/
+	head->score_update = time(NULL);
+	head->kills = 0;
+	head->kills_avg = 0;
+	strcpy(head->nick, "TriGen");
+
+	/* DEBUG::::: */
+    if (!(new_node = (LINK)malloc(sizeof(user))))
+    {   printff("Error allocating memory");
+        exit(-1);
+    }
+	/* insert the created node */
+    new_node->next = head;
+    head = new_node;
+	/* intiate some values */
+	head->id = 1;
+	head->x = 150;
+	head->y = 140;
+	head->deg = 0;
+	head->alive = 0; /* seconds in the game*/
+	head->score_update = time(NULL);
+	head->kills = 0;
+	head->kills_avg = 0;
+	strcpy(head->nick, "Player2");
+
+	/* ///////DEBUG::::: */
+
+	/* initiate some values */
+	fps_oldtime = time(NULL);
+	
+	printff("Press enter to proceed..");
+	while(! key[KEY_ENTER]);
+}
+
+
+/********************************************
+*  GLOBAL PROCEDURES
+****************************************************/
+
+/* exit program */
+void terminate() {
+	delay(5);
+	allegro_exit();
+	exit(-1); 
+}
+
+/* delay proc */
+void delay(int secs) {
+	long int oldtime, newtime;
+	
+	oldtime = newtime = time(NULL);
+	
+	while ( (newtime - oldtime) != secs ) {
+		newtime = time(NULL);	
+	}
+}
+
+/* fps_proc */
+void fps_proc()
+{
+	fps_newtime = time(NULL);
+
+	// Change fps var..?
+	if (fps_oldtime!= fps_newtime) {
+		fps_oldtime = fps_newtime; 
+		fps = fps_count; /* set fps */
+		fps_count = 0; /* reset fps counter */
+	}
+
+	fps_count++; /* increase frame counter */
+}
