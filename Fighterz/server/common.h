@@ -10,7 +10,7 @@
  #define WINDOWS 0
 #endif
 #define DEBUG 0   /*    log ship positions etc to debug.log */
-#define DEBUG2 1  /*    1= SHOW FIELD(console msgs are logged to a file)
+#define DEBUG2 0  /*    1= SHOW FIELD(console msgs are logged to a file)
 					    0= CONSOLE ONLY
 
 						if chosen 1: replace /subsystem:console with 

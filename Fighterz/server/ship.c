@@ -208,7 +208,7 @@ for (cnt=0; cnt<times; cnt++)
 				if (current->t > t2)
 				{	/* time is not synched correctly */
 					/* todo: call function to sync again*/
-					addtext("ERROR: Time out of sync for client: %d", current->id);
+					// addtext("ERROR: Time out of sync for client: %d", current->id);
 					return;
 				}
 				diff = (servertime - current->t);

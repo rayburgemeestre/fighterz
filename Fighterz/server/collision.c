@@ -32,7 +32,7 @@ int collidecheck2(struct data *ptr, int nobounce)
 	#define BOUNCE_POSSIBLE_OR_RESTORE \
 		if (collidecheck2(current, 1) != 1) { \
 			collided = 0; \
-			addtext("collide word toch gewoon op nul gezet of niet dan ej?"); \
+			/* addtext("collide word toch gewoon op nul gezet of niet dan ej?"); */ \
 			/* fucking thing still collides? FUCK THAT */ \
 			return collided; \
 		} else { \
