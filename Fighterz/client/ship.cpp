@@ -129,7 +129,7 @@ double rw_x, rw_y; /* rightwing x,y */
 			{
 				char tmpstr[128];
 				// sprintf(tmpstr, "%s [%d] [%2.2f] [%d]", current->nick, current->velocity, current->speed, current->freeze);
-				sprintf(tmpstr, "%s", current->nick);
+				sprintf(tmpstr, "%s %2.2f", current->nick, current->deg);
 				textprintf_centre(shipbuff, font, current->x, 
 					current->y + BLOCKSIZE, makecol(192,192,192), tmpstr);
 			}
@@ -407,7 +407,7 @@ void moveship(unsigned int id2, unsigned long t2)
 				current->x = pos_x;
 				current->y = pos_y;
 				
-				//ret = collidecheck2(current->id, 1); /* OLD: stond bovenin dit blok */
+				//ret = collidecheck2(current->id, 1, 0); /* OLD: stond bovenin dit blok */
 				
 				/* did the ship fly out the field? */
 				if (current->y < 0) 
@@ -424,7 +424,7 @@ void moveship(unsigned int id2, unsigned long t2)
 				setsec(current);
 
 				//cret = 
-				collidecheck2(current->id, 0); 
+				collidecheck2(current->id, 0, 0); 
 				/*if (cret == 1)
 				{
 					if (our_node == current)

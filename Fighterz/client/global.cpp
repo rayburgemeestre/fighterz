@@ -106,7 +106,7 @@ int newturn = 0;
 
 				oldvel = our_node->velocity;
 
-				ret = collidecheck2(our_node->id, 1);
+				ret = collidecheck2(our_node->id, 1, 0);
 
 				if (ret != 1) 
 				{ 
@@ -132,7 +132,7 @@ int newturn = 0;
 				direction_is_up = 0;
 				oldvel = our_node->velocity;
 
-				ret = collidecheck2(our_node->id, 1);
+				ret = collidecheck2(our_node->id, 1, 0);
 
 				if (ret != 1) 
 				{ 

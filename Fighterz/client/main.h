@@ -46,7 +46,7 @@ extern void config(int ignore);
 extern void debug();
 extern void addtext(char *pattern, ...);
 extern void collidecheck();
-extern int collidecheck2(unsigned int id, int variation);
+extern int collidecheck2(unsigned int id, int variation, int nobounce);
 extern double futureX(struct data *ptr, double speed);
 extern double futureY(struct data *ptr, double speed);
 extern double fbX(unsigned int id2);

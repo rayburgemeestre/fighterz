@@ -16,25 +16,28 @@ void collidecheck()
 			/* TODO: */
 			// collidecheck2b(current);
 		} else {
-			collidecheck2(current->id, 0);
+			collidecheck2(current->id, 0, 0);
 		}
 		current = current->next;
 	}
 }
 
-int collidecheck2(unsigned int id, int variation) /* variation = only 1 when 
+int collidecheck2(unsigned int id, int variation, int nobounce) /* variation = only 1 when 
 								called in mainloop() at UP/DOWN stuff */
 {
-	static char f[512];
-	LINK current2;
-	int collided = 0; /* 0=no, 1=yes */
-	int cool = 0;
-	int clr = makecol(255, 128, 0);
-	double x, y;
-	int px, py, qx, qy;
-	/* the fucked up stuff */
-	double direction;
-	int step = 1; /* Will only use this nonsense temporary */
+LINK current2;
+int collided = 0; /* 0=no, 1=yes */
+int cool = 1;
+int clr = makecol(128, 128, 128);
+double x, y;
+int px, py, qx, qy;
+/* the fucked up stuff */
+double direction, old_deg;
+int step = 1; /* Will only use this nonsense temporary */
+int deg_diff_max = 40, 
+	demp_min = 10,
+	demp_max = 25,
+	rdemp;
 
 	current2 = head;
 	while (current2 != NULL)
@@ -43,6 +46,9 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 			break;
 		current2 = current2->next;
 	}
+
+old_deg = current2->deg;
+#define BOUNCE_POSSIBLE_OR_RESTORE if (collidecheck2(current2->id, 0, 1) != 1) { collided = 0; } else { current2->deg = old_deg;}
 
 	/* TODO: This is weird, change this */
     if (current2->speed != 0.00)
@@ -67,10 +73,13 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 	if ( !(px > X_BLOCKS) && !(px < 0) && 
 		!(py > Y_BLOCKS) && !(py < 0) )
 	{
+	rdemp = (dabs(current2->speed) / SPEED) * (demp_max - demp_min);
+	rdemp = (demp_max - demp_min) - rdemp;
+	rdemp = (rdemp > 0 ? rdemp : 1) + demp_min;
+
 		/* center of the ship */
 		if (field[py][px] == '1')
 		{
-			strcpy(f, "*** Impact: Center");
 			collided = 1;
 		}
 
@@ -80,6 +89,7 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 			qy = (int) ((y - (BLOCKSIZE / 4)) / BLOCKSIZE);
 			if (field[qy][px] == '1') 
 			{
+				collided = 1;
 				if (cool)
 					rectfill(
 						shipbuff, 
@@ -87,8 +97,53 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 						((px + 1) * BLOCKSIZE_2), ((qy + 1) * BLOCKSIZE_2), 
 						clr
 					);
-				strcpy(f, "*** Impact: Above");
-				collided = 1;
+
+				if (!nobounce && dabs(current2->speed) > 0.05) // static minimal speed required
+				{
+// --
+// -- Afkaatsen				
+// --
+					// Vooruit tegen de bovenkant muur (van links)
+					if (
+						current2->deg >= (90 - deg_diff_max) 
+							&& 
+						current2->deg <= 90
+					) {
+						current2->deg = ( (90 - current2->deg) / rdemp ) + 90;
+						BOUNCE_POSSIBLE_OR_RESTORE
+						
+					}
+					// Vooruit tegen de bovenkant muur (van rechts)
+					else if (
+						current2->deg >= 270
+							&& 
+						current2->deg <= (270 + deg_diff_max)
+					) {
+						current2->deg = 270 - ( (current2->deg - 270) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de bovenkant muur (van rechts!)
+					else if (
+						current2->deg >= 90
+							&& 
+						current2->deg <= (90 + deg_diff_max)
+					) {
+						current2->deg = 90 - ( (current2->deg - 90) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de bovenkant muur (van links!)
+					else if (
+						current2->deg >= (270 - deg_diff_max)
+							&& 
+						current2->deg <= 270
+					) {
+						current2->deg = 270 + ( (270 - current2->deg) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+// --
+// --
+// --
+				}
 			}
 		}
 		/* BLOCKSIZE / 4 down the ship - tested */
@@ -104,8 +159,54 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 						((px + 1) * BLOCKSIZE_2), ((qy + 1) * BLOCKSIZE_2), 
 						clr
 					);
-				strcpy(f, "*** Impact: Below");
+
 				collided = 1;
+
+				if (!nobounce && dabs(current2->speed) > 0.05) // static minimal speed required
+				{
+// --
+// -- Afkaatsen				
+// --
+					// Vooruit tegen de onderkant muur (van links)
+					if (
+						current2->deg >= (270 - deg_diff_max)
+							&& 
+						current2->deg <= 270
+					) {
+						current2->deg = 270 + ( (270 - current2->deg) / rdemp );
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Vooruit tegen de onderkant muur (van rechts)
+					else if (
+						current2->deg >= 90
+							&& 
+						current2->deg <= (90 + deg_diff_max)
+					) {
+						current2->deg = 90 - ( (current2->deg - 90) / rdemp );
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de onderkant muur (van rechts!)
+					else if (
+						current2->deg >= (90 - deg_diff_max)
+							&& 
+						current2->deg <= 90
+					) {
+						current2->deg = 90 + ( (90 - current2->deg) / rdemp );
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de onderkant muur (van links!)
+					else if (
+						current2->deg >= 270
+							&& 
+						current2->deg <= (270 + deg_diff_max)
+					) {
+						current2->deg = 270 - ( (current2->deg - 270) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+// --
+// --
+// --
+				}
 			}
 		}
 		/* BLOCKSIZE / 4 on the right of the ship - tested*/
@@ -114,8 +215,6 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 			qx = (int)( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE);
 			if (field[py][qx] == '1') 
 			{
-			char buf[512];
-
 				if (cool)
 					rectfill(
 						shipbuff, 
@@ -124,9 +223,53 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 						clr
 					);
 
-				sprintf(buf, "*** Impact: Right");
-				strcpy(f, buf);
-				collided = 1;
+					collided = 1;
+
+				if (!nobounce && dabs(current2->speed) > 0.05) // static minimal speed required
+				{
+// --
+// -- Afkaatsen				
+// --
+					// Vooruit tegen de rechterkant muur (van links)
+					if (
+						current2->deg >= (180 - deg_diff_max)
+							&& 
+						current2->deg <= 180
+					) {
+						current2->deg = ( (180 - current2->deg) / rdemp) + 180;
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Vooruit tegen de rechterkant muur (van rechts)
+					else if (
+						current2->deg >= 0
+							&& 
+						current2->deg <= deg_diff_max
+					) {
+						current2->deg = 360 - ( current2->deg / rdemp );
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de rechterkant muur (van rechts!)
+					else if (
+						current2->deg >= 180
+							&& 
+						current2->deg <= (180 + deg_diff_max)
+					) {
+						current2->deg = 180 - ( (current2->deg - 180) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de rechterkant muur (van links!)
+					else if (
+						current2->deg >= (360 - deg_diff_max)
+							&& 
+						current2->deg <= 360
+					) {
+						current2->deg = ( (360 - current2->deg) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+// --
+// --
+// --
+				}
 			}
 		}
 		/* BLOCKSIZE / 4 on the left of the ship - tested*/
@@ -143,13 +286,64 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 						((qx + 1) * BLOCKSIZE_2), ((py + 1) * BLOCKSIZE_2), 
 						clr
 					);
-				strcpy(f, "*** Impact: Left");
+
 				collided = 1;
+
+				if (!nobounce && dabs(current2->speed) > 0.05) // static minimal speed required
+				{
+// --
+// -- Afkaatsen				
+// --
+					// Vooruit tegen de linkerkant muur (van links)
+					if (
+						current2->deg >= (360 - deg_diff_max)
+							&& 
+						current2->deg <= 360
+					) {
+						current2->deg = (360 - current2->deg) / rdemp;
+						// Need to know if it won't collide now..
+						if (collidecheck2(current2->id, 0, 1) != 1)
+							collided = 0;
+					}
+					// Vooruit tegen de linkerkant muur (van rechts)
+					else if (
+						current2->deg >= 180
+							&& 
+						current2->deg <= (180 + deg_diff_max)
+					) {
+						current2->deg = 180 - ( (current2->deg - 180) / rdemp );
+						// Need to know if it won't collide now..
+						if (collidecheck2(current2->id, 0, 1) != 1)
+							collided = 0;
+					}
+					// Achterruit tegen de linkerkant muur (van rechts!)
+					else if (
+						current2->deg >= (180 - deg_diff_max)
+							&& 
+						current2->deg <= (180 + deg_diff_max)
+					) {
+						current2->deg = 180 + ( (180 - current2->deg) / rdemp );
+						// Need to know if it won't collide now..
+						if (collidecheck2(current2->id, 0, 1) != 1)
+							collided = 0;
+					}
+					// Achterruit tegen de rechterkant muur (van links!)
+					else if (
+						current2->deg >= 0
+							&& 
+						current2->deg <= deg_diff_max
+					) {
+						current2->deg = 360 - (current2->deg / rdemp);
+						// Need to know if it won't collide now..
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+// --
+// --
+// --
+				}
 			}
 		}
 	}
-
-	verbose(f);
 
 	if (collided == 1)
 	{
