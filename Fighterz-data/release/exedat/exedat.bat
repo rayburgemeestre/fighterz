@@ -1,0 +1,1 @@
+exedat fighterz.exe fighterz.dat
