@@ -305,19 +305,29 @@ int newturn = 0;
 			{
 				if (BOUNCING_BULLETS == 1)
 				{
+					large_text("Normal!");
 					BOUNCING_BULLETS = 0;
 					BULLET_MAX = 10;
+					SPEED = 0.20;
 					B_SPEED = 0.40;
 	                BULLET_TTL = 3000;
 	                BULLET_RE = 150;
+					// local test (temp):
+					if (our_node->speed < SPEED)
+						our_node->speed = SPEED;
 				}
 				else
 				{
+					large_text("Bullet time!");
 					BOUNCING_BULLETS = 1;
-					BULLET_MAX = 100;
+					BULLET_MAX = 20;
+					SPEED = 0.05;
 					B_SPEED = 0.10;
 	                BULLET_TTL = 6000; /* was 3000; */
-	                BULLET_RE = 50;
+	                BULLET_RE = 600;
+					// local test (temp):
+					if (our_node->speed > SPEED)
+						our_node->speed = SPEED;
 				}
 			}
 			if ( k == KEY_F1 )

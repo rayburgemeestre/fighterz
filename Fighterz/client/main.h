@@ -55,9 +55,10 @@ extern struct data *add_bullet(struct data *_id, int _x, int _y, double _deg, un
 extern void del_bullet(struct data *ptr);
 extern void movebullets();
 extern void drawbullets();
+extern void process_bounce(struct data *ptr, int *retval, double speed);
 extern int collidecheck2b(struct data *ptr);
 extern int bs_collidecheck(struct data *ptr);
-extern int getangle(double x1, double y1, double x2, double y2);
+extern double getangle(double x1, double y1, double x2, double y2);
 extern int getoptions();
 extern double dabs(double x);
 extern void setsec(struct data *ptr);

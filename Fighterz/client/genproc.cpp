@@ -279,7 +279,7 @@ double current_lag()
 
 // getangle() -> I ported this java code i got from www.scottandrew.com 
 // Gives the angle of the radian described by the two specified points
-int getangle(double x1, double y1, double x2, double y2)
+double getangle(double x1, double y1, double x2, double y2)
 {
 	double diffH = (x2 - x1);
 	double diffV = (y2 - y1);
@@ -314,7 +314,7 @@ int getangle(double x1, double y1, double x2, double y2)
 	else if (dgrs > 360)
 		dgrs = 90;
 
-	return (int)dgrs;
+	return (double)dgrs;
 }
 
 // the window initially starts at 32,32. 
@@ -456,7 +456,8 @@ void mainloop()
 /********** graphics **********/
 		blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 		clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
-		clear_to_color(RADAR, 0);
+		if (RADAR_SHOW == 1)
+			clear_to_color(RADAR, 0);
 		clear_to_color(CONSOLE, 0);
 		fps_proc();
 		moveships();

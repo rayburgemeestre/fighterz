@@ -6,14 +6,14 @@
 
 void drawships() 
 {
-	int color;
-	/* BLOCKSIZE = diameter */
-	int radius;	
-	double ret;
-	double pos_x, pos_y; /* ship's x,y */
-	double left_wing_deg, right_wing_deg; 
-	double lw_x, lw_y; /* leftwing x,y */
-	double rw_x, rw_y; /* rightwing x,y */
+int color;
+/* BLOCKSIZE = diameter */
+int radius;	
+double ret;
+double pos_x, pos_y; /* ship's x,y */
+double left_wing_deg, right_wing_deg; 
+double lw_x, lw_y; /* leftwing x,y */
+double rw_x, rw_y; /* rightwing x,y */
 
 //	double fill_x, fill_y;
 
@@ -113,8 +113,9 @@ void drawships()
 
 				// floodfill(shipbuff, fill_x, fill_y, color);
 				
-				/* Also draw them on radar */
-				circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + current->x / RADAR_SCALE, current->y / RADAR_SCALE, 1, color);
+				if (RADAR_SHOW == 1)
+					/* Also draw them on radar */
+					circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + current->x / RADAR_SCALE, current->y / RADAR_SCALE, 1, color);
 				
 			}
             if (current->invincible == 1)

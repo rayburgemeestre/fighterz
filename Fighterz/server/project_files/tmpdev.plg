@@ -6,7 +6,7 @@
 --------------------Configuration: tmpdev - Win32 Release--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSP1D6.tmp" with contents
+Creating temporary file "C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSPDE.tmp" with contents
 [
 /nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FR"Release/" /Fp"Release/tmpdev.pch" /YX /Fo"Release/" /Fd"Release/" /J /FD /c 
 "D:\idev\Fighterz\server\bullet.c"
@@ -25,8 +25,8 @@ Creating temporary file "C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSP1D6.tmp" with conte
 "D:\idev\Fighterz\server\ship.c"
 "D:\idev\Fighterz\server\socket.c"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSP1D6.tmp" 
-Creating temporary file "C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSP1D7.tmp" with contents
+Creating command line "cl.exe @C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSPDE.tmp" 
+Creating temporary file "C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSPDF.tmp" with contents
 [
 alleg.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:"Release/server.pdb" /machine:I386 /out:"Release/server.exe" 
 .\Release\bullet.obj
@@ -45,7 +45,7 @@ alleg.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.li
 .\Release\ship.obj
 .\Release\socket.obj
 ]
-Creating command line "link.exe @C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSP1D7.tmp"
+Creating command line "link.exe @C:\DOCUME~1\TriGen\LOCALS~1\Temp\RSPDF.tmp"
 <h3>Output Window</h3>
 Compiling...
 bullet.c

@@ -104,13 +104,39 @@ int collidecheck2(unsigned int id, int variation) /* variation = only 1 when
 		{	/* our ship */
 			if (current2->speed != 0.0)
 			{	
-				//addtext("C: collided at velocity: %d", our_node->velocity);
-				//addtext("Set To 0");
-				current2->velocity = 0;
-				current2->speed = 0.0;
-				// current2->freeze = 1;
-				if (variation == 0)
-					send_accel(4);
+/*
+*sough*
+this is really bitching (there's distance between the
+center of the ship and the collition point. And the collision
+point itself is also not known exactly..
+
+				if (0)
+				{
+				int retval; // make args compatible ;)
+					process_bounce(current2, &retval, SPEED);
+
+				} else {
+int ret, radius = radius = BLOCKSIZE_2 / 2;
+double pos_x, pos_y;
+ret = (PI / 180) * (current->deg - 90);
+pos_x = cos(ret);
+pos_x = pos_x * (radius - (BLOCKSIZE_2 / 4));
+pos_x = pos_x + radius;
+pos_x = pos_x + current->x2 - (BLOCKSIZE_2 / 2);
+pos_y = sin(ret);
+pos_y = pos_y * (radius - (BLOCKSIZE_2 / 4));
+pos_y = pos_y + radius;
+pos_y = pos_y + current->y2 - (BLOCKSIZE_2 / 2);
+*/
+
+					//addtext("C: collided at velocity: %d", our_node->velocity);
+					//addtext("Set To 0");
+					current2->velocity = 0;
+					current2->speed = 0.0;
+					// current2->freeze = 1;
+					if (variation == 0)
+						send_accel(4);
+/*				}*/
 			}			
 		} else {
 			/* other ship */
@@ -174,24 +200,216 @@ double futureY(struct data *ptr, double speed)
 }
 
 
+void process_bounce(struct data *ptr, int *retval, double speed)
+{
+int done_move = 0;
+double x, y;
+char tmp[512];
+static FILE *fd;
+int a,b,c,d;
+int px, py;
+int old_px, old_py;
 
+	x = futureX(ptr, speed);
+	y = futureY(ptr, speed);
+
+			if (!fd) fd = fopen("collition.txt", "w");
+
+			sprintf(tmp, "%d %d COLLITION AT DEG: %f X: %f Y: %f", 
+				ptr->move, ourtime, ptr->deg, ptr->x, ptr->y);
+
+	old_px = (int)(ptr->x / BLOCKSIZE);
+	old_py = (int)(ptr->y / BLOCKSIZE);
+	px = (int)(x / BLOCKSIZE);
+	py = (int)(y / BLOCKSIZE);
+
+	a = (px > old_px?1:0);
+	b = (py > old_py?1:0);
+	c = (px < old_px?1:0);
+	d = (py < old_py?1:0);
+
+	if (a || b || c || d)
+	{
+		ptr->start_x = ptr->x;
+		ptr->start_y = ptr->y;
+	}
+
+	/* Correct degrees if needed */
+	if (ptr->deg < 0)
+	{
+		sprintf(tmp, "wtf: %2.2f", ptr->deg);
+		alert(tmp, "", "", "", "", 1, 1);
+		ptr->deg += 90;
+	}
+
+	/* Lets bounce this bullet~~ */
+
+	if (c && b)
+	{	
+		addtext("MUUR = LINKS / BENEDEN");
+		addtext("status: %d %d %d %d", a, b, c, d);
+
+		if (py > 0 && field[py - 1][px] == '1')
+			ptr->deg -= 90; // 1
+		else if (px < X_BLOCKS && field[py][px + 1] == '1')
+			ptr->deg += 90; // 2
+		else
+			ptr->deg -= 180; // 3
+
+		// ?? ptr->deg = 45;
+		*retval = 1;
+	}
+	else if (a && b)
+	{
+		addtext("MUUR = RECHTS / BENEDEN");
+		addtext("status: %d %d %d %d", a, b, c, d);
+
+		if (py > 0 && field[py - 1][px] == '1')
+			ptr->deg += 90; // 1
+		if (px > 0 && field[py][px - 1] == '1')
+			ptr->deg -= 90; // 2
+		else
+			ptr->deg += 180; // 3
+
+		// ?? ptr->deg = 315;
+		*retval = 1;
+	}
+	else if (a && d)
+	{
+		addtext("MUUR = RECHTS / BOVEN");
+		addtext("status: %d %d %d %d", a, b, c, d);
+		
+		if (px > 0 && field[py][px - 1] == '1')
+			ptr->deg += 90; // 1
+		if (py < Y_BLOCKS && field[py + 1][px] == '1')
+			ptr->deg += 270; // 2
+		else
+			ptr->deg += 180; // 3
+
+		// ?? ptr->deg = 225;
+		*retval = 1;
+	}
+	else if (c && d)
+	{
+		addtext("MUUR = LINKS / BOVEN");
+		addtext("status: %d %d %d %d", a, b, c, d);
+		
+		if (px < X_BLOCKS && field[py][px + 1] == '1')
+			ptr->deg -= 90; // 1
+		if (py < Y_BLOCKS && field[py + 1][px] == '1')
+			ptr->deg -= 270; // 2
+		else
+			ptr->deg -= 180; // 3
+
+		// ?? ptr->deg = 135;
+		*retval = 1;
+	}
+
+	/* if ( (c && d) ||
+		 (a && b) ||
+		 (a && d) ||
+		 (c && d) )
+	{
+		err = 1;
+
+		if (direction == -1)
+			if (ptr->deg >= 180)
+				direction = 0;
+			else
+				direction = 1;
+
+		if (direction == 1)
+		{
+			ptr->deg++;
+		}
+		else
+		{
+			ptr->deg--;
+		}
+	} */
+	else if (a || c)
+	{
+	//	if (c) 
+	//		addtext("MUUR = LINKS");
+	//	else 
+	//		addtext("MUUR = RECHTS");
+
+		if (ptr->deg > 0 && ptr->deg < 90)
+			ptr->deg = 360.0 - ptr->deg;
+		else if (ptr->deg == 0)
+			ptr->deg = 180;
+		else if (ptr->deg == 90)
+			ptr->deg = 270;
+		else if (ptr->deg > 90 && ptr->deg < 180)
+			ptr->deg = 360 - ptr->deg;
+		else if (ptr->deg == 180)
+			ptr->deg = 0;
+		else if (ptr->deg > 180 && ptr->deg < 270)
+			ptr->deg = 360 - ptr->deg;
+		else if (ptr->deg == 270)
+			ptr->deg = 90;
+		else if (ptr->deg > 270 && ptr->deg < 360)
+			ptr->deg = 360.0 - ptr->deg;
+		else if (ptr->deg == 360)
+			ptr->deg = 180;
+
+		if (ptr->deg < 0)
+			ptr->deg += 360;
+		if (ptr->deg > 360)
+			ptr->deg -= 360;
+
+		*retval = 1;
+	}
+	else if (b || d)
+	{
+	//	if (b) 
+	//		addtext("MUUR = BENEDEN");
+	//	else
+	//		addtext("MUUR = BOVEN");
+		if (ptr->deg > 0 && ptr->deg < 90)
+			ptr->deg = 180.0 - ptr->deg;
+		else if (ptr->deg == 0)
+			ptr->deg = 180;
+		else if (ptr->deg == 90)
+			ptr->deg = 270;
+		else if (ptr->deg > 90 && ptr->deg < 180)
+			ptr->deg = 180 - ptr->deg;
+		else if (ptr->deg == 180)
+			ptr->deg = 0;
+		else if (ptr->deg > 180 && ptr->deg < 270)
+			ptr->deg = 180 - ptr->deg;
+		else if (ptr->deg == 270)
+			ptr->deg = 90;
+		else if (ptr->deg > 270 && ptr->deg < 360)
+			ptr->deg = 180 - ptr->deg;
+		else if (ptr->deg == 360)
+			ptr->deg = 180;
+
+		if (ptr->deg < 0)
+			ptr->deg += 360;
+		if (ptr->deg > 360)
+			ptr->deg -= 360;
+
+		*retval = 1;
+	}
+}
 
 // bullet
 
 int collidecheck2b(struct data *ptr)
 {
-	LINK current2;
-	int collided = 0; /* 0=no, 1=yes */
-	int err = 0;
-	double x, y;
-	// int qx, qy;
-	int px, py;
-	int old_px, old_py;
-	int retval = 0;
-	int a,b,c,d;
-	int direction = -1; /* 1 is degrees ++, 0 --
-	                  -1 = not set :) */
-
+LINK current2;
+int collided = 0; /* 0=no, 1=yes */
+int err = 0;
+double x, y;
+// int qx, qy;
+int retval = 0;
+int direction = -1; /* 1 is degrees ++, 0 --
+	              -1 = not set :) */
+int px, py;
+int old_px, old_py;
+	
+	// wat hier staat is echt zwaar fucking nuttig
 	current2 = head;
 	while (current2 != NULL)
 	{
@@ -217,7 +435,6 @@ int collidecheck2b(struct data *ptr)
 		old_py = (int)(current2->y / BLOCKSIZE);
 		px = (int)(x / BLOCKSIZE);
 		py = (int)(y / BLOCKSIZE);
-
 		
 
 		if ( !(px > X_BLOCKS) && !(px < 0) && 
@@ -264,185 +481,7 @@ int collidecheck2b(struct data *ptr)
 
 			if (BOUNCING_BULLETS == 1)
 			{
-				int done_move = 0;
-				char tmp[512];
-
-				static FILE *fd;
-				if (!fd)
-					fd = fopen("collition.txt", "w");
-
-				sprintf(tmp, "%d %d COLLITION AT DEG: %f X: %f Y: %f", 
-					current2->move, ourtime, current2->deg, current2->x, current2->y);
-				
-				a = (px > old_px?1:0);
-				b = (py > old_py?1:0);
-				c = (px < old_px?1:0);
-				d = (py < old_py?1:0);
-
-				if (a || b || c || d)
-				{
-					current2->start_x = current2->x;
-					current2->start_y = current2->y;
-				}
-
-				/* Correct degrees if needed */
-				if (current2->deg < 0)
-				{
-					sprintf(tmp, "wtf: %2.2f", current2->deg);
-					alert(tmp, "", "", "", "", 1, 1);
-					current2->deg += 90;
-				}
-
-				/* Lets bounce this bullet~~ */
-			
-				if (c && b)
-				{	
-					addtext("MUUR = LINKS / BENEDEN");
-					addtext("status: %d %d %d %d", a, b, c, d);
-
-					if (py > 0 && field[py - 1][px] == '1')
-						current2->deg -= 90; // 1
-					else if (px < X_BLOCKS && field[py][px + 1] == '1')
-						current2->deg += 90; // 2
-					else
-						current2->deg -= 180; // 3
-
-					// ?? current2->deg = 45;
-					retval = 1;
-				}
-				else if (a && b)
-				{
-					addtext("MUUR = RECHTS / BENEDEN");
-					addtext("status: %d %d %d %d", a, b, c, d);
-
-					if (py > 0 && field[py - 1][px] == '1')
-						current2->deg += 90; // 1
-					if (px > 0 && field[py][px - 1] == '1')
-						current2->deg -= 90; // 2
-					else
-						current2->deg += 180; // 3
-
-					// ?? current2->deg = 315;
-					retval = 1;
-				}
-				else if (a && d)
-				{
-					addtext("MUUR = RECHTS / BOVEN");
-					addtext("status: %d %d %d %d", a, b, c, d);
-					
-					if (px > 0 && field[py][px - 1] == '1')
-						current2->deg += 90; // 1
-					if (py < Y_BLOCKS && field[py + 1][px] == '1')
-						current2->deg += 270; // 2
-					else
-						current2->deg += 180; // 3
-
-					// ?? current2->deg = 225;
-					retval = 1;
-				}
-				else if (c && d)
-				{
-					addtext("MUUR = LINKS / BOVEN");
-					addtext("status: %d %d %d %d", a, b, c, d);
-					
-					if (px < X_BLOCKS && field[py][px + 1] == '1')
-						current2->deg -= 90; // 1
-					if (py < Y_BLOCKS && field[py + 1][px] == '1')
-						current2->deg -= 270; // 2
-					else
-						current2->deg -= 180; // 3
-
-					// ?? current2->deg = 135;
-					retval = 1;
-				}
-
-				/* if ( (c && d) ||
-					 (a && b) ||
-					 (a && d) ||
-					 (c && d) )
-				{
-					err = 1;
-
-					if (direction == -1)
-						if (current2->deg >= 180)
-							direction = 0;
-						else
-							direction = 1;
-
-					if (direction == 1)
-					{
-						current2->deg++;
-					}
-					else
-					{
-						current2->deg--;
-					}
-				} */
-				else if (a || c)
-				{
-				//	if (c) 
-				//		addtext("MUUR = LINKS");
-				//	else 
-				//		addtext("MUUR = RECHTS");
-
-					if (current2->deg > 0 && current2->deg < 90)
-						current2->deg = 360.0 - current2->deg;
-					else if (current2->deg == 0)
-						current2->deg = 180;
-					else if (current2->deg == 90)
-						current2->deg = 270;
-					else if (current2->deg > 90 && current2->deg < 180)
-						current2->deg = 360 - current2->deg;
-					else if (current2->deg == 180)
-						current2->deg = 0;
-					else if (current2->deg > 180 && current2->deg < 270)
-						current2->deg = 360 - current2->deg;
-					else if (current2->deg == 270)
-						current2->deg = 90;
-					else if (current2->deg > 270 && current2->deg < 360)
-						current2->deg = 360.0 - current2->deg;
-					else if (current2->deg == 360)
-						current2->deg = 180;
-
-					if (current2->deg < 0)
-						current2->deg += 360;
-					if (current2->deg > 360)
-						current2->deg -= 360;
-
-					retval = 1;
-				}
-				else if (b || d)
-				{
-				//	if (b) 
-				//		addtext("MUUR = BENEDEN");
-				//	else
-				//		addtext("MUUR = BOVEN");
-					if (current2->deg > 0 && current2->deg < 90)
-						current2->deg = 180.0 - current2->deg;
-					else if (current2->deg == 0)
-						current2->deg = 180;
-					else if (current2->deg == 90)
-						current2->deg = 270;
-					else if (current2->deg > 90 && current2->deg < 180)
-						current2->deg = 180 - current2->deg;
-					else if (current2->deg == 180)
-						current2->deg = 0;
-					else if (current2->deg > 180 && current2->deg < 270)
-						current2->deg = 180 - current2->deg;
-					else if (current2->deg == 270)
-						current2->deg = 90;
-					else if (current2->deg > 270 && current2->deg < 360)
-						current2->deg = 180 - current2->deg;
-					else if (current2->deg == 360)
-						current2->deg = 180;
-
-					if (current2->deg < 0)
-						current2->deg += 360;
-					if (current2->deg > 360)
-						current2->deg -= 360;
-
-					retval = 1;
-				}
+				process_bounce(ptr, &retval, B_SPEED);
 			} else {
 				/* A non bouncing bullet would die here */
 				explosion(current2->x, current2->y, 15, 10, makecol(0, 128, 255));
