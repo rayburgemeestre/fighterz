@@ -271,16 +271,17 @@ size_t len;
 	}
 	else if (!strcmp(cmd, "spec"))
 	{
-		softkick_player(client, "Spectator mode");
 		// del_tha_player(client);
 		client->velocity = 0;
 		client->speed = 0;
-		client->dead = 3; // Dead @ 3 is disabled
+		client->dead = 2;
+		send_spawnready(client);
+		// softkick_player(client, "Spectator mode");
 	}
 	else if (!strcmp(cmd, "respawn"))
 	{
-		send_spawnready(client);
 		client->dead = 2;
+		send_spawnready(client);		
 	}
 	else if (!strcmp(cmd, "godme")) // todo: auth needed :]
 	{

@@ -8,7 +8,7 @@ void drawships()
 {
 int color;
 /* BLOCKSIZE = diameter */
-int radius;	
+double radius;	
 double ret;
 double pos_x, pos_y; /* ship's x,y */
 double left_wing_deg, right_wing_deg; 
@@ -104,6 +104,18 @@ double rw_x, rw_y; /* rightwing x,y */
 				 **     DRAW SHIP    **
 				 **********************/
 				
+				// polygon test
+				{
+					int points[8] = {
+						pos_x, pos_y,
+						lw_x, lw_y,
+						current->x2, current->y2,
+						rw_x, rw_y
+					};
+					int *p = points;
+
+					polygon(shipbuff, 4, p, makecol(0, 0, 0));
+				}
 				/* ship base */
 				// line(shipbuff , current->x2, current->y2, pos_x, pos_y, color);
 				/* left wing */
@@ -113,8 +125,6 @@ double rw_x, rw_y; /* rightwing x,y */
 				line(shipbuff , pos_x, pos_y, rw_x, rw_y, color);
 				line(shipbuff , current->x2, current->y2, rw_x, rw_y, color);
 
-				// floodfill(shipbuff, fill_x, fill_y, color);
-				
 				if (RADAR_SHOW == 1)
 					/* Also draw them on radar */
 					circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + current->x / RADAR_SCALE, current->y / RADAR_SCALE, 1, color);
@@ -129,9 +139,10 @@ double rw_x, rw_y; /* rightwing x,y */
 
 			if (show_names == 1)
 			{
+				int _bullets = ((BULLET_MAX - BULLET_COUNT) * 100) / BULLET_MAX;
 				char tmpstr[128];
 				// sprintf(tmpstr, "%s [%d] [%2.2f] [%d]", current->nick, current->velocity, current->speed, current->freeze);
-				sprintf(tmpstr, "%s", current->nick);
+				sprintf(tmpstr, "%s (%d)", current->nick, _bullets);
 				textprintf_centre(shipbuff, font, current->x, 
 					current->y + BLOCKSIZE, makecol(68, 57, 81), tmpstr);
 			}

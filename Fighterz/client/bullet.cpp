@@ -32,7 +32,6 @@ struct data *add_bullet(struct data *_id, int _x, int _y, double _deg, unsigned 
   */
 
 	head->impact = 0;
-
 	return head;
 }
 

@@ -608,6 +608,8 @@ void m_ping(unsigned int servertime)
 void m_lag(double diff)
 {
 	printff_direct("SMSG_LAG: %f (avg lag now: %2.2f)", diff, current_lag());
+//	if (!STARTED && can_spawn == 0)
+		//play_sample((SAMPLE *)df_snd[TUSCH].dat, 255, 128, 1000, 0);
 	int i = 0;
 	while (i < 4)
 	{
@@ -619,7 +621,7 @@ void m_lag(double diff)
 
 void m_clearfield()
 {
-	verbose("clearfield::::::::");
+	verbose("Map download: Started");
 	bg_imgs_data_index = 0;
 }
 
@@ -692,7 +694,7 @@ void m_blockinfo(int w, int h, int size)
 }
 void m_fieldline(unsigned int index, char *fieldline)
 {
-	verbose("map: %s", fieldline);
+	// verbose("map: %s", fieldline);
 	strcpy(field[index], fieldline);
 }
 
@@ -710,6 +712,7 @@ void m_background(int df_id, int pos_x, int pos_y, char *datfile)
 }
 void m_fieldend()
 {
+	verbose("Map download: Completed");
 	drawmap();
 }
 void m_kick( unsigned int id, char *reason )
@@ -863,6 +866,7 @@ void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, doub
 	//verbose("New bullet id: [!], ownerid: %d, x: %2.2f, y: %2.2f, deg: %2.2f\n",
 	//	ownerid, x, y, deg);
 
+	play_sample((SAMPLE *)df_snd[SHOOT].dat, 255, 128, 1000, 0);
 	add_bullet( getplayer_byid(ownerid), (int)x, (int)y, (double)deg, ourtime);
 
 	return;

@@ -33,6 +33,7 @@ int getoptions()
 	clear_to_color(tmpscreen, makecol(0,0,0));
 	draw_sprite(tmpscreen, (BITMAP *)dataf[MAINMENU].dat, 125, 60);
 
+	play_sample((SAMPLE *)df_snd[FAST_CONFIRM].dat, 255, 128, 1000, 0);
 	while (1)
 	{
 		char k;

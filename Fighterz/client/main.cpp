@@ -18,6 +18,7 @@
 *  VARIABLES
 ****************************************************/
 
+MIDI *bg_music;
 /* (sub)bitmap buffers */
 BITMAP *tmpscreen; /**< Primary bitmap screen buffer used to draw everything on */
 BITMAP *fieldbuff; /**< Screen bitmap buffer used to draw the field to once (after that this 
@@ -103,10 +104,10 @@ int MOVE_BSTEPW; /**< Amount of times to move will be multiplied by this. So
                       all the bullets shall go twice as fast, because instead of 
                       moving the bullets 1 time, it will be done 2 times. */
 int USE_SOUND; /**< set to zero means sound is disabled */
-int MAP_X; /**< X position on tmpscreen where the map will be blitted */
-int MAP_Y; /**< Y position on tmpscreen where the map will be blitted */
-int MAP_W; /**< Width of fieldbuff that will be blitted on tmpscreen */
-int MAP_H; /**< Length of fieldbuff that will be blitted on tmpscreen */
+double MAP_X; /**< X position on tmpscreen where the map will be blitted */
+double MAP_Y; /**< Y position on tmpscreen where the map will be blitted */
+double MAP_W; /**< Width of fieldbuff that will be blitted on tmpscreen */
+double MAP_H; /**< Length of fieldbuff that will be blitted on tmpscreen */
 /* Console */
 unsigned int CONSOLE_X; /**< X position on tmpscreen where the console will be blitted */
 unsigned int CONSOLE_Y; /**< Y position on tmpscreen where the console will be blitted */

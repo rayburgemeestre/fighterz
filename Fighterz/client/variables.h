@@ -2,6 +2,7 @@
 *  VARIABLES
 ****************************************************/
 
+extern MIDI *bg_music;
 extern BITMAP *tmpscreen;
 extern BITMAP *fieldbuff;
 extern BITMAP *shipbuff;  
@@ -64,10 +65,10 @@ extern int BULLET_TTL;
 extern int BULLET_RE;
 extern int MOVE_BSTEPW;
 extern int USE_SOUND;
-extern int MAP_X;
-extern int MAP_Y; 
-extern int MAP_W;
-extern int MAP_H;
+extern double MAP_X;
+extern double MAP_Y; 
+extern double MAP_W;
+extern double MAP_H;
 extern unsigned int CONSOLE_X;
 extern unsigned int CONSOLE_Y;
 extern unsigned int CONSOLE_W; 

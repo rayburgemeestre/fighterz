@@ -22,7 +22,7 @@ void printff_direct(char *pattern, ...)
 
 	if (TXTPTR >= (SCREEN_Y - 10)) {
 		TXTPTR = 0;
-		clear_to_color (screen, 0);
+		clear_to_color(screen, makecol(0, 0, 0));
 	} else {
 		TXTPTR = TXTPTR + 10;
 	}
@@ -65,6 +65,7 @@ if (!our_node)
 					bullet_time = ourtime;
 					BULLET_COUNT++;
 					send_newbullet(pRet->x, pRet->y, pRet->deg);
+					play_sample((SAMPLE *)df_snd[SHOOT].dat, 50, 128, 1000, 0);
 				}
 			} 
 		} else {
@@ -172,7 +173,7 @@ if (!our_node)
 			clear_keybuf();
 		}
 	} else {
-		if (!key[KEY_Q] && !key[KEY_P])
+/*		if (!key[KEY_Q] && !key[KEY_P])
 			zoom_time = 0;
 
 		if (key[KEY_P])
@@ -203,6 +204,7 @@ if (!our_node)
 				}
 			}
 		}
+		*/
 	}
 
 	if (key[KEY_T])
@@ -316,8 +318,11 @@ if (!our_node)
 			}
 			if ( k == KEY_F8 )
 			{
-				// pauze				
-				alert("w00ted?", "", "", "Ok", NULL, 0, 0);
+				stop_midi();
+			}
+			if ( k == KEY_F9 )
+			{
+				play_midi(bg_music, TRUE);
 			}
 			if ( k == KEY_F11 /*&& false*/ )
 			{

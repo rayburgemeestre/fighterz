@@ -26,6 +26,7 @@ void init()
 	set_window_close_hook(closereq);
 
 	init_screen();	
+	clear_to_color(screen, makecol(0, 0, 255));
 	center_window();
 
 	datafile = strdup(BASE_DATAFILE);
@@ -73,7 +74,10 @@ void init()
 	}
 
 	if (USE_SOUND == 1)
-		; // play_sample((SAMPLE *)dataf[intro].dat, 255, 128, 800, 0);
+	{
+		bg_music = (MIDI *)df_snd[BG_MUSIC].dat;
+		play_midi(bg_music, TRUE);
+	}
 #endif
 }
 
@@ -456,25 +460,30 @@ void mainloop()
 		if (requested_spawn == 0 && key[KEY_LCONTROL] && can_spawn == 1)
 		{
 			send_ispawn();
+			addtext("*** To turn music off/on use F8 & F9");
 		}
 
 		if (!STARTED && can_spawn == 0)
 			continue; /* Don't do graphics */
 
 /********** graphics **********/
-		set_map_coords();
+clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
+if (RADAR_SHOW == 1)
+clear_to_color(RADAR, 0);
+clear_to_color(CONSOLE, 0);
+
 		fps_proc();
 		moveships();
 		movebullets();
 		setrcoords();
 		debug();
 
-		blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
-		clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
-		if (RADAR_SHOW == 1)
-			clear_to_color(RADAR, 0);
-		clear_to_color(CONSOLE, 0);
+		parse_input();
+		printulist();		
 
+// actual drawing
+		set_map_coords();
+		blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 		drawfps();
 		drawconsole();
 		drawexplosions();
@@ -482,10 +491,10 @@ void mainloop()
 		drawbullets();
 		drawradar();
 		draw_talk_box();
-		parse_input();
-		printulist();		
 		show_graphics();
+//
 	}
+	destroy_midi(bg_music);
 }
 
 void die(char *s)

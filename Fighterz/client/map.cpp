@@ -343,6 +343,7 @@ if (!our_node)
 	} else {
 		MAP_X = our_node->x2 - MAP_W / 2;
 		MAP_Y = our_node->y2 - MAP_H / 2;
+		// addtext("map x:%f y:%f w:%f h:%f", MAP_X, MAP_Y, MAP_W, MAP_H);
 	}
 	
 	if (field_mode == 1)
