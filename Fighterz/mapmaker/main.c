@@ -1,3 +1,9 @@
+/*
+    MapMaker for Fighterz
+
+    Build Using Dev-C++ 4 & Allegro for graphics.
+*/
+
 #include "header.h"
 
 char mapfile[512] = "";
@@ -12,9 +18,10 @@ void die(char *diemsg)
 }
 
 int main()
-{ 
+{
     init();
-    init_map();
+    // init_map(0);
+    init_datafile(0, DEFAULT_DATA_FILE);
     init_help();
     mainloop();
     terminate();

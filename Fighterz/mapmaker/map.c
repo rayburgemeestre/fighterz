@@ -1,27 +1,35 @@
 #include "header.h"
 
-int x_width = 0;
-int y_width = 0;
+int x_width;
+int y_width;
 BITMAP *scrn_field;
+BITMAP *sub_field;
 
-void init_map()
+int init_map(int allow_cancel)
 {
 int ret, cont = 1;
 char buffer[512] = "";
 
+    strcpy(buffer, DEFAULT_MAP_FILE);
+
 // Temporary disabled:
-/*    if (ret = file_select_ex(
+    if (ret = file_select_ex(
         "Select map file",
         buffer,
         "txt;TXT;",
         sizeof(buffer),
         0, 0
-    ) == 0 && cont == 1 && ! key[KEY_F12] )
+    ) == 0 && cont == 1 && ! key[KEY_F12])
     {
+        if (allow_cancel == 1)
+            return -1;
         die("");
     }
-*/
-    strcpy(buffer, "D:\\idev\\fighterz\\client\\maps\\lvl1.txt");
+
+    x_width = 0;
+    y_width = 0;
+
+    // strcpy(buffer, "D:\\idev\\fighterz\\client\\maps\\lvl1.txt");
     // alert("Opening map file:", buffer, "", "OK", NULL, 0, 0);
     strcpy(mapfile, buffer);
 
@@ -77,21 +85,37 @@ int cnt, cnt2;
     destroy_bitmap(scrn_field);
     scrn_field = create_bitmap( (x_width * BLOCKSIZE)+1,
         (y_width * BLOCKSIZE)+1);
+    {
+    int x = SCREEN_X - RIGHT,
+        y = SCREEN_Y - BOTTOM;
+        if ( (x_width * BLOCKSIZE) + 1 < x )
+            x = (x_width * BLOCKSIZE) + 1;
+        if ( (y_width * BLOCKSIZE) + 1 < y )
+            y = (y_width * BLOCKSIZE) + 1;
+        sub_field = create_sub_bitmap(screen, 0, 0, x, y);
+    }
 
     rectfill(screen, 0, 0, SCREEN_X - RIGHT, SCREEN_Y - BOTTOM, 0);
     clear_to_color(scrn_field, 0);
 
     // draw the bg's
-    for (cnt=0; cnt < 32; cnt++)
+    for (cnt=0; cnt < 32 && strlen(current_bmp_df[cnt]) >= 1; cnt++)
     {
-        if (strlen(current_bmp_df[cnt]) > 0)
-        {
-        int df_id, pos_x, pos_y;
-        char buf[512];
+    int df_id, pos_x, pos_y;
+    char buf[512], datafile[512], *fptr;
 
-            sscanf(current_bmp_df[cnt], "%d [%dx%d]", &df_id, &pos_x, &pos_y);
-            draw_sprite(scrn_field, (BITMAP *)df[df_id].dat, pos_x, pos_y);
-        }
+    char *s;
+    char b[256];
+
+        sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, &datafile);
+        sprintf(buf, "system\\%s", datafile);
+        s = buf;
+        fix_filename_path(b, s, sizeof(b));
+        // strcpy(s, b);
+        // char *fix_filename_path(char *dest, const char *path, int size);
+        // alert(buf, "", "", "Ok", NULL, 0, 0);
+        init_datafile(0, buf);
+        draw_sprite(scrn_field, (BITMAP *)df[df_id].dat, pos_x, pos_y);
     }
 
 	for (cnt=0; cnt < y_width; cnt++)

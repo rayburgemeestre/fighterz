@@ -7,8 +7,8 @@ FILE *fp;
 
     if (!(fp = fopen("help.txt", "r")))
     {
-        alert("Error:", "Could not open help.txt, help not available", "",
-            "Ok", NULL, 0, 0);
+        // alert("Error:", "Could not open help.txt, help not available", "",
+        //     "Ok", NULL, 0, 0);
         strcpy(help_text, "Help not available (could not find / open help.txt)");
         return;
     }

@@ -1,8 +1,9 @@
 #include "header.h"
 
 DATAFILE *df;
-char bmp_df[32][12];
-char current_bmp_df[32][12];
+char bmp_df[32][128];
+char current_bmp_df[32][128];
+char df_path[512];
 
 void init()
 {
@@ -26,7 +27,7 @@ void init()
     {
         char buf[512];
         sprintf(buf, "%d, %d, %d, %d, %d, %d, %d, %d",
-            makecol(32, 32, 32),
+            makecol(0, 33, 72),
             makecol(0, 255, 125),
             makecol(255, 0, 0),
             makecol(0, 0, 255),
@@ -38,8 +39,34 @@ void init()
         );
         alert(buf, "", "", "", NULL, 0, 0);
     }
+}
 
-    df = load_datafile(DATA_FILE);
+int init_datafile(int allow_cancel, char *arg_df_path)
+{
+int ret;
+
+    strcpy(df_path, arg_df_path);
+
+if (allow_cancel != 0)
+{
+    if (ret = file_select_ex(
+        "Select datafile (*.dat)",
+        df_path,
+        "dat;DAT;",
+        sizeof(df_path),
+        0, 0
+    ) == 0 && ! key[KEY_F12])
+    {
+        return -1;
+    }
+}
+
+    if (!(df = load_datafile(df_path)))
+    {
+    char buf[512];
+        sprintf(buf, "Could not load datafile: =%s=", df_path);
+        die(buf);
+    }
 
     {
     int index = 0, i = 0;
@@ -49,7 +76,7 @@ void init()
         {
             if (ptr->type == DAT_BITMAP)
             {
-            char buf[12];
+            char buf[128];
                 sprintf(buf, "%d", i);
                 strcpy(bmp_df[index++], buf);
             }

@@ -45,7 +45,8 @@ int bmp_df_h, bmp_df_w;
 
         poll_mouse();
         if ( mouse_x >= 0 && mouse_x <= (SCREEN_X - RIGHT) &&
-             mouse_y >= 0 && mouse_y <= (SCREEN_Y - BOTTOM) )
+             mouse_y >= 0 && mouse_y <= (SCREEN_Y - BOTTOM) &&
+             x <= x_width && y <= y_width )
         {
             if ( mouse_b & 1 )
             {
@@ -122,32 +123,53 @@ int bmp_df_h, bmp_df_w;
                 }
                 else if (the_dialog[DLG_BG_IMG_CHECK].flags & D_SELECTED)
                 {
-                char buf[512];
+                char buf[512], df_nam[128], *ptr = df_path, *ptr2 = df_path;
                 int i = 0, bool = 0;
+                int w = ((BITMAP *)df[atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1])].dat)->w,
+                    h = ((BITMAP *)df[atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1])].dat)->h,
+                    x = x_offset + (mouse_x - (w / 2)),
+                    y = y_offset + (mouse_y - (h / 2));
+
+                    while (*(ptr + i) != '\0')
+                    {
+                        if (*(ptr + i) == '\\')
+                            ptr2 = ptr + i + 1;
+                        i++;
+                    }
+                    i = 0;
                     // draw_sprite(screen, (BITMAP *)dataf[STARS1].dat, (cnt * BLOCKSIZE_2), (cnt2 * BLOCKSIZE_2));
                     // void stretch_sprite(BITMAP *bmp, BITMAP *sprite, int x, int y, int w, int h);
                     // draw_sprite((BITMAP *)df[atoi(bmp_df[2])].dat, screen, SCREEN_X - RIGHT, SCREEN_Y - 100);
                     // sprintf(buf, "x: %d y: %d", mouse_x, mouse_y);
 //                     alert(buf, "", "", "Ok", NULL, 0, 0);
 
-                    sprintf(buf, "%d [%dx%d]", atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1]),
-                        (x_offset + mouse_x), (y_offset + mouse_y));
+                    if (mouse_x <= (SCREEN_X - RIGHT) &&
+                        mouse_y <= (SCREEN_Y - BOTTOM))
+                    {
+                        sprintf(buf, "%d (%d,%d) %s",
+                            atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1]),
+                            x,
+                            y,
+                            ptr2
+                        );
 
-                    while (i < 32)
-                    {
-                        if (!strcmp(current_bmp_df[i], buf))
-                            if (bool != 1)
-                                bool = 1;
-                        i++;
+                        while (i < 32)
+                        {
+                            if (!strcmp(current_bmp_df[i], buf))
+                                if (bool != 1)
+                                    bool = 1;
+                            i++;
+                        }
+                        if (bool == 0)
+                        {
+                            // alert(buf, ptr2, "", "Ok", NULL, 0, 0);
+                            strcpy(current_bmp_df[current_bmp_df_index++], buf);
+                            redraw_map = 1;
+                            rest(100); // Needed, else read memory failure:
+                            // TODO: put project in MSVC++ & remove this delay
+                        }
+                        continue;
                     }
-                    if (bool == 0)
-                    {
-                        strcpy(current_bmp_df[current_bmp_df_index++], buf);
-                        redraw_map = 1;
-                        rest(100); // Needed, else read memory failure:
-                        // TODO: put project in MSVC++ & remove this delay
-                    }
-                    continue;
                 }
             }
             if ( mouse_b & 2 )
@@ -204,21 +226,39 @@ int bmp_df_h, bmp_df_w;
 
             tussen = create_bitmap(SIZE_X, SIZE_Y);
 
-            stretch_sprite(tussen, (BITMAP *)df[ atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1]) ].dat, 0, 0, SIZE_X, SIZE_Y);
+            if (bmp_df_w <= SIZE_X && bmp_df_h <= SIZE_Y)
+                blit((BITMAP *)df[ atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1]) ].dat, tussen, 0, 0, 0, 0, bmp_df_w, bmp_df_h);
+            else
+                stretch_sprite(tussen, (BITMAP *)df[ atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1]) ].dat, 0, 0, SIZE_X, SIZE_Y);
+
             sprintf(buf, "%d", the_dialog[DLG_BG_IMG_LIST].d1);
 
-            blit(tussen, screen, 0, 0, SCREEN_X - RIGHT + 1, 275,
+            blit(tussen, screen, 0, 0, SCREEN_X - RIGHT + 1, 285,
                 SIZE_X, SIZE_Y
             );
         }
-        blit(scrn_field, screen, x_offset, y_offset, 0, 0,
+
+        blit(scrn_field, sub_field, x_offset, y_offset, 0, 0,
             SCREEN_X - RIGHT, SCREEN_Y - BOTTOM);
 
+        if (the_dialog[DLG_BG_IMG_CHECK].flags & D_SELECTED)
+        {
+        int w = ((BITMAP *)df[atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1])].dat)->w,
+            h = ((BITMAP *)df[atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1])].dat)->h,
+            x = mouse_x - (w / 2),
+            y = mouse_y - (h / 2),
+            x2= x + w,
+            y2= y + h;
+
+            // void rect(BITMAP *bmp, int x1, int y1, int x2, int y2, int color);
+            rect(sub_field, x, y, x2, y2, makecol(255, 0, 0));
+            // circlefill(sub_field, mouse_x, mouse_y, 50, makecol(255, 0, 0));
+        }
         textprintf(screen, font, SCREEN_X - RIGHT + 3, SCREEN_Y - 31, makecol(255, 255, 255),
             "Pos. in blocks:" );
-        textprintf(screen, font, SCREEN_X - RIGHT + 3, SCREEN_Y - 21, makecol(197, 230, 254),
+        textprintf(screen, font, SCREEN_X - RIGHT + 3, SCREEN_Y - 21, 1023,
             "x_width:%3d", x );
-        textprintf(screen, font, SCREEN_X - RIGHT + 3, SCREEN_Y - 11, makecol(197, 230, 254),
+        textprintf(screen, font, SCREEN_X - RIGHT + 3, SCREEN_Y - 11, 1023,
             "y_width:%3d", y);
 
         show_mouse(screen);
@@ -280,6 +320,71 @@ int bmp_df_h, bmp_df_w;
                     strcpy(current_bmp_df[cnt], "");
                     current_bmp_df_index--;
                     redraw_map = 1;
+                }
+            }
+            else if ( !ret && player->obj == DLG_CURRENT_MAP_LOAD)
+            {
+                if (init_map(1) != -1)
+                {
+                    init_dlg_vars();
+                    redraw_map = 1;
+                }
+            }
+            else if ( !ret && player->obj == DLG_BG_LOAD_DATAFILE)
+            {
+                if (init_datafile(1, DEFAULT_DATA_FILE) != -1)
+                {
+                    the_dialog[DLG_BG_IMG_LIST].d1 = 0;
+                    init_dlg_vars();
+                }
+            }
+            else if ( !ret && player->obj == DLG_CURRENT_MAP_SAVE_AS)
+            {
+            char buffer[512] = "maps\\lvl-new.txt";
+                if (ret = file_select_ex(
+                    "Save file as",
+                    buffer,
+                    "txt;TXT",
+                    sizeof(buffer),
+                    0, 0
+                ) != 0 )
+                {
+                FILE *fp;
+                int cnt;
+
+                    if (!(fp = fopen(buffer, "w")))
+                    {
+                        alert("Could not open file", "", "", "Ok", NULL, 0, 0);
+                    } else {
+                        fputs("; This map is generated using mapmaker v1.0-alpha\n\n", fp);
+                       	for (cnt=0; cnt < y_width; cnt++)
+                    	{
+                            mapdata[cnt][x_width] = '\0'; // could be that
+                            // there was a garbage '1' or something (which is not
+                            // a problem because the program won't look further
+                            // then x_width anyways, but it is a problem here ;)
+                            fputs("1 ", fp);
+                            fputs(mapdata[cnt], fp);
+                            fputs("\n", fp);
+                        }
+                        fputs("2 20\n\n", fp); // the blocksize line..
+                        // the blocksize was supposed to be dynamic, but is no longer
+                        // used in newer versions of the game (and this mapmaker)
+
+                        // The background decorations
+                        for (cnt = 0; cnt < 32 && strlen(current_bmp_df[cnt]) >= 1; cnt++)
+                        {
+                        int df_id, pos_x, pos_y;
+                        char buf[512];
+                        char datafile[128];
+
+                            sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, &datafile);
+                            sprintf(buf, "3 %d %d %d %s\n", df_id, pos_x, pos_y, datafile);
+                            fputs(buf, fp);
+                        }
+
+                        fclose(fp);
+                    }
                 }
             }
         }

@@ -37,8 +37,8 @@ DIALOG the_dialog[] =
                          INGAME_DLG_FG,  INGAME_DLG_BG,   0,    0,
                          64,  0,    edit_y_width },
 // 6
-    { d_button_proc,     SCREEN_X - RIGHT + 1, 60, 30, 12,
-                         INGAME_DLG_FG_LBL,  INGAME_DLG_BG_LBL,   0,    D_EXIT,
+    { d_button_proc,     SCREEN_X - RIGHT + 1, 57, 30, 15,
+                         1023,  265,   0,    D_EXIT,
                          512,  0,    "Ok" },
 // 7
     // Adding blocks
@@ -79,18 +79,43 @@ DIALOG the_dialog[] =
                          21130,  0,   0,    0,
                          512,  0,    bmp_images },
 // 16
+    { d_button_proc,     SCREEN_X - RIGHT + 1, 269, 50, 15,
+                         1023,  265,   0,    D_EXIT,
+                         512,  0,    "Load.." },
+// 17
     // Map background
     { d_text_proc,       SCREEN_X - RIGHT + 1, 385, RIGHT - 2, 48,
                          65535,  INGAME_DLG_BG_LBL,   0,    0,
                          512,  0,    "Current images" },
-// 17
+// 18
     { d_list_proc,       SCREEN_X - RIGHT + 1, 395, RIGHT - 2, 80,
                          21130,  0,   0,    0,
                          512,  0,    current_bmp_images },
-// 18
-    { d_button_proc,     SCREEN_X - RIGHT + 1, 480, 35, 12,
-                         INGAME_DLG_FG_LBL,  INGAME_DLG_BG_LBL,   0,    D_EXIT,
+// 19
+    { d_button_proc,     SCREEN_X - RIGHT + 1, 480, 35, 15,
+                         1023,  265,   0,    D_EXIT,
                          512,  0,    "Del" },
+// 20
+    // Map background
+    { d_text_proc,       SCREEN_X - RIGHT + 1, 505, RIGHT - 2, 48,
+                         65535,  INGAME_DLG_BG_LBL,   0,    0,
+                         512,  0,    "Current map" },
+// 21
+    { d_button_proc,     SCREEN_X - RIGHT + 1, 515, 70, 15,
+                         1023,  265,   0,    D_EXIT,
+                         512,  0,    "Save" },
+// 22
+    { d_button_proc,     SCREEN_X - RIGHT + 72, 515, 70, 15,
+                         1023,  265,   0,    D_EXIT,
+                         512,  0,    "Save as" },
+// 23
+    { d_button_proc,     SCREEN_X - RIGHT + 1, 531, 70, 15,
+                         1023,  265,   0,    D_EXIT,
+                         512,  0,    "Load map" },
+// 24
+    { d_button_proc,     SCREEN_X - RIGHT + 1, 547, 70, 15,
+                         1023,  265,   0,    D_EXIT,
+                         512,  0,    "New map" },
 
     { d_textbox_proc,    5, SCREEN_Y - BOTTOM + 5, SCREEN_X - 5 - RIGHT , BOTTOM - 2 - 5,
                          21130,  0,   0,    0,
