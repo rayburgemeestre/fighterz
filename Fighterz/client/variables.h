@@ -172,7 +172,7 @@ extern int options_activeitem;
 extern struct option_ option[3];
 
 //sockets.cpp
-extern SOCKET theSocket;
+extern SOCKET sock_to_serv;
 extern double lag[5];
 extern char serv_addr[512];
 extern int serv_port;

@@ -646,7 +646,7 @@ char buf[512];
 /*		textprintf(tmpscreen, font, 2, 2, makecol(255,255,255), 
 			"FPS: %d LAG: %2.2f VEL: %d SPD: %.2f FRE:%d POW:%d SOCK:%d map-w:%d h:%d             ", 
 			fps, current_lag(), our_node->velocity, our_node->speed, 
-			our_node->freeze, our_node->power, theSocket,
+			our_node->freeze, our_node->power, sock_to_serv,
 				field_width, field_height
 		);
 */

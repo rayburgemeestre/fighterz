@@ -45,12 +45,10 @@ extern int start();
 extern void init_screen();
 extern void printulist();
 extern void printul(struct data *node);
-extern int connect_socket();
-extern void sockread();
-extern int sockwrite(char *pattern, ...);
+extern int socket_connect();
+extern void socket_read();
 extern void large_text(char *pattern, ...);
 extern void large_text_draw();
-extern void lag_proc(char *lag_char, char *servertime_char);
 extern double current_lag();
 
 
@@ -71,8 +69,8 @@ extern int collidecheck2b(struct data *ptr);
 extern int bs_collidecheck(struct data *ptr);
 extern double getdistance(double x1, double y1, double x2, double y2);
 extern double getangle(double x1, double y1, double x2, double y2);
-extern int getoptions();
-extern void getsettings();
+extern int get_options();
+extern void get_settings();
 extern double dabs(double x);
 
 

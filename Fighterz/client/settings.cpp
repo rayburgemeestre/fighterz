@@ -1,22 +1,22 @@
 #include "common.h"
+//refactored 12 dec 2004
 
-extern "C" {
-	#include "agup/agup.h"
-	#include "agup/aphoton.h"
-//	#include "agup/ans.h"
+//Include AGUP External C header files
+extern "C" 
+{
+		#include "agup/agup.h"
+		#include "agup/aphoton.h"
+		//#include "agup/ans.h"
 }
 
-//cube
-extern void init_shape();
-extern void animate_shape();
-extern void translate_shape();
-typedef struct VTX		 /* vertex data */
-{
-    fixed x, y, z;
-} VTX;
-extern void quad(BITMAP *b, VTX *v1, VTX *v2, VTX *v3, VTX *v4);
-extern void draw_shape(BITMAP *b);
-int bg_color = 0xFFFFFF;
+//functions
+//--
+// void get_settings();
+
+//variables
+//--
+//Dialog
+int bg_color = 0xFFFFFF; /* dialog background colour */
 DIALOG settings[] =
 {
    /* (proc)                 (x)  (y)  (w)  (h)  (fg) (bg)                    (key) (flags) (d1) (d2) (dp)                                 (dp2) (dp3) */
@@ -47,44 +47,65 @@ DIALOG settings[] =
    { NULL,                   0,   0,   0,   0,   0,   0,        0,    0,      0,   0,   NULL,                                NULL, NULL }
 };
 
-void getsettings()
+//external
+//--
+//type definitions:
+typedef struct VTX		 /* vertex data */
 {
-// for cube:
+    fixed x, y, z;
+} VTX;
+//cube functions:
+extern void init_shape();
+extern void animate_shape();
+extern void translate_shape();
+extern void quad(BITMAP *b, VTX *v1, VTX *v2, VTX *v3, VTX *v4);
+extern void draw_shape(BITMAP *b);
+
+//get_settings(): [...]
+void get_settings()
+{
+//cube:
+//--
 int last_retrace_count;
 bg_color = makecol(216, 216, 216);
-//--
+//dialog:
 DIALOG_PLAYER *ds;
 
-gui_bg_color = makecol(255,0,0);
+	//Initialization:
+	gui_bg_color = makecol(255,0,0);
+	clear_to_color(tmpscreen, makecol(0,0,0));
 
-	// cube stuff:
+	//Cube Initialization
     set_projection_viewport(0, 0, SCREEN_W, SCREEN_H);
     init_shape();
     last_retrace_count = retrace_count;
 	//--
 
+	//Agup Initialization
 	agup_init(aphoton_theme);
 	ds = init_dialog(settings, -1);
+	//--
 
-//	while (!key[KEY_ESC])
-//	{
-		clear_to_color(tmpscreen, makecol(0,0,0));
-		//cube
-		while (last_retrace_count < retrace_count)
-		{
-			animate_shape();
-			last_retrace_count++;
-		}
-		translate_shape();
-		draw_shape(tmpscreen);
+	//cube [static/non moving background image ;), 
+	//      update_dialog etc didn't seem to work 
+	//      properly in combination with agup]
+	while (last_retrace_count < retrace_count)
+	{
+		animate_shape();
+		last_retrace_count++;
+	}
+	translate_shape(); // 3D -> 2D
+	draw_shape(tmpscreen); //Draw
 
-		textprintf_centre(tmpscreen, (FONT *)dat_base[ARCADE].dat, SCREEN_W / 2, 100, makecol(255, 255, 255), "OPTIONS (disfunctional)");
-		
-		//--
-		blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H); 
-		do_dialog(settings, -1);
-//		update_dialog(ds);
-//	}
-	while (key[KEY_ESC])
-		;
+	//Draw Options Text
+	textprintf_centre(tmpscreen, (FONT *)dat_base[ARCADE].dat, 
+		SCREEN_W / 2, 100, 
+		makecol(255, 255, 255), 
+		"OPTIONS [Currently doesn't work]");
+	
+	//--
+	blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H); 
+	do_dialog(settings, -1);
+
+	//while (key[KEY_ESC]);
 }

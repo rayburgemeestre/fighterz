@@ -162,7 +162,7 @@ stop_midi();
 		lag[i] = 0.0;
 	
 	printff_direct("Connecting socket to %s:%d", serv_addr, serv_port);
-	if (-1 == connect_socket())
+	if (-1 == socket_connect())
 		return -1;
 
 
@@ -525,7 +525,7 @@ int mainloop()
 	{
 /********** initialization **********/
 		time_proc();
-		sockread();
+		socket_read();
 
 		// if (!game_started && our_spawnrequested == 0 && key[KEY_ENTER] && our_spawnstatus == 1)
 		if (our_spawnrequested == 0 && key[KEY_LCONTROL] && our_spawnstatus == 1)

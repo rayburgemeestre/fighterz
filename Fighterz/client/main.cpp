@@ -136,7 +136,7 @@ while (!key[KEY_ESC])
 {
 	//alert("in while!", "", "", "OK", NULL, KEY_ENTER, 1);
 		if (skip_options != 1)
-			ret = getoptions();
+			ret = get_options();
 		else
 			ret = 0;
 
@@ -161,7 +161,7 @@ while (!key[KEY_ESC])
 				}
 				break;
 			case 2:
-				getsettings();
+				get_settings();
 				break;
 			default:
 				break;
