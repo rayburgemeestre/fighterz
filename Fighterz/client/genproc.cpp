@@ -8,7 +8,7 @@ int radar_padding_y = 0;
 ****************************************************/
 
 int terminate_request = 0;
-int midi_track = 0;
+int midi_track = 3;
 
 void closereq()
 {
@@ -112,7 +112,7 @@ int start()
 int i;
 
 stop_midi();
-play_rand_bg_music();
+//play_rand_bg_music();
 
 	//set_color_depth(16);
 	//init_screen();		
@@ -543,6 +543,21 @@ int mainloop()
 
 
 		fps_proc();
+
+/* Nice moment to check if invinsibility should be turned off :) */
+
+for (current=head; current!=NULL; current=current->next)
+	if (current->invincible == 1)
+	{
+		int diff;
+		diff = ourtime - current->invincibility_t2;
+		if (diff > (signed)current->invincibility_t)
+		{
+			/* No longer invincible */
+			current->invincible = 0;
+		}
+	}
+
 		move_ships();
 		move_bullets();
 		debug();
@@ -565,10 +580,12 @@ int mainloop()
 
 		draw_console();
 		draw_explosions();
+		
+		draw_bullets();
 		draw_ships();
 		drawflags();
 		
-		draw_bullets();
+		
 		draw_radar();
 		
 		printulist();
@@ -620,21 +637,27 @@ void play_rand_bg_music()
 	switch (midi_track)
 	{
 		case 1:
+			set_volume(255, 130);
 			bg_music = (MIDI *)dat_sound[BG_MUSIC ].dat;
 			break;
 		case 2:
+			set_volume(255, 130);
 			bg_music = (MIDI *)dat_sound[BG_MUSIC2].dat;
 			break;
 		case 3:
+			set_volume(255, 130);
 			bg_music = (MIDI *)dat_sound[BG_MUSIC3].dat;
 			break;
 		case 4:
+			set_volume(255, 130);
 			bg_music = (MIDI *)dat_sound[BG_MUSIC4].dat;
 			break;
 		case 5:
+			set_volume(255, 130);
 			bg_music = (MIDI *)dat_sound[BG_MUSIC5].dat;
 			break;
 		case 6:
+			set_volume(255, 130);
 			bg_music = (MIDI *)dat_sound[BG_MUSIC6].dat;
 			break;
 	}

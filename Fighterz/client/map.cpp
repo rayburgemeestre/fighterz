@@ -12,6 +12,9 @@ int bg_imgs_data_index; /**< current index variable used to fill the container *
 double scale = 1.0; /**< a block is 1 pixel on the radar */
 int radar_field_bmp_w, radar_field_bmp_h; /**< radar field buffer size */
 
+int red_spawn_x, red_spawn_y;
+int blue_spawn_x, blue_spawn_y;
+
 int red_flag_x, red_flag_y; /**< red flag location */
 int blue_flag_x, blue_flag_y; /**< blue flag location */
 int red_flag_carrier = -1; /**< redflag carrier */
@@ -158,10 +161,18 @@ void draw_map()
 			}
 			/* Draw red team spawn location */
 			if (field[cnt2][cnt] == '2') 
+			{
+				red_spawn_x = cnt * blocksize;
+				red_spawn_y = cnt2 * blocksize;
 				rect(bmp_mapfield, cnt * blocksize + 1, cnt2 * blocksize + 1, (cnt + 1) * blocksize - 1, (cnt2 + 1) * blocksize - 1, makecol(255,0,0));
+			}
 			/* Draw blue team spawn location */
 			if (field[cnt2][cnt] == '3') 
+			{
+				blue_spawn_x = cnt * blocksize;
+				blue_spawn_y = cnt2 * blocksize;
 				rect(bmp_mapfield, cnt * blocksize + 1, cnt2 * blocksize + 1, (cnt + 1) * blocksize - 1, (cnt2 + 1) * blocksize - 1, makecol(0,0,255));
+			}
 			/* Draw red teams flag location */
 			if (field[cnt2][cnt] == '4') 
 			{

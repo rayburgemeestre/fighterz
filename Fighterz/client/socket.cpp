@@ -757,6 +757,10 @@ void m_fieldend()
 	draw_map();
 	game_started = 1;
 	large_text("Map download complete.");
+
+	// I'd like to view our spawn location please instead of 0,0
+	x_on_map = red_spawn_x - field_w / 2;
+	y_on_map = red_spawn_y - field_h / 2;
 }
 void m_kick( unsigned int id, char *reason )
 {
@@ -927,7 +931,9 @@ void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, doub
 	//verbose("New bullet id: [!], ownerid: %d, x: %2.2f, y: %2.2f, deg: %2.2f\n",
 	//	ownerid, x, y, deg);
 
-	play_sample((SAMPLE *)dat_sound[SHOOT].dat, 255, 128, 1000, 0);
+	if (ownerid != our_id) 
+		play_sample((SAMPLE *)dat_sound[SHOOT].dat, 50, 128, 1000, 0);
+
 	add_bullet( getplayer_byid(ownerid), (int)x, (int)y, (double)deg, ourtime - clag);
 
 	return;
@@ -991,7 +997,7 @@ void m_spawn(unsigned int id, double x, double y, double deg, signed char accel,
 	node->speed = speed;
 	node->dead = 0;
 
-	play_sample((SAMPLE *)dat_sound[SPAWN].dat, 255, 128, 1000, 0);
+	play_sample((SAMPLE *)dat_sound[SPAWN].dat, 100, 128, 1000, 0);
 }
 
 void m_respawn(unsigned int id)

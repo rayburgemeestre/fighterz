@@ -54,7 +54,7 @@ int last_retrace_count;
 	option[2].b = 255;
 	option[0].flicker = 0;
 
-	play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 255, 128, 1000, 0);
+	play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 128, 128, 1000, 0);
 
 	flicker_time = ourtime;
 
@@ -108,7 +108,7 @@ int last_retrace_count;
 			{
 				if (options_activeitem < OPTION_COUNT)
 				{
-					play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 255, 128, 1000, 0);
+					play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 128, 128, 1000, 0);
 					options_activeitem++;
 				}
 			}    
@@ -117,7 +117,7 @@ int last_retrace_count;
 				
 				if (options_activeitem > 0)
 				{
-					play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 255, 128, 1000, 0);
+					play_sample((SAMPLE *)dat_sound[FAST_CONFIRM].dat, 128, 128, 1000, 0);
 					options_activeitem--;
 				}
 			}
@@ -132,7 +132,7 @@ int last_retrace_count;
 				return -1; /* die :) */
 			}   			
 		}
-
+		
 		for (i=0; i<3; i++)
 		{
 			if (options_activeitem == i)

@@ -13,14 +13,14 @@ extern void draw_talk_box();
 extern void draw_console();
 
 extern void move_ships();
-extern void move_ship(unsigned int id2, unsigned long t2);
+extern void move_ship(struct data *client);
 extern void move_bullets();
 extern int move_bullet(struct data *ptr, unsigned long t2);
 
 extern struct data  *add_player(int _id, int _x, int _y, int _deg, int _move, int _turn,  
 					   int _velocity, int _alive, int _kills, int _killavg, 
 					   int _bot, double _speed, int _dead, char *_nick);
-extern struct data  *add_bullet(struct data *_id, int _x, int _y, double _deg, unsigned long _time);
+extern struct data  *add_bullet(struct data *owner, int x, int y, double deg, unsigned long time);
 extern struct data2 *add_explosion(double x, double y, int maxrad, int speed, int color);
 extern void del_player(int sock_fd);
 extern void del_bullet(struct data *ptr);

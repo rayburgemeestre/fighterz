@@ -124,7 +124,7 @@ SOURCE=..\global.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\interface.cpp
+SOURCE=..\interface.cpp
 # End Source File
 # Begin Source File
 

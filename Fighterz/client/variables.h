@@ -87,6 +87,8 @@ extern int bg_imgs_data_index;
 //--
 extern double scale;
 extern int radar_field_bmp_w, radar_field_bmp_h; // RADAR_W = from RADAR bitmap (smaller)
+extern int red_spawn_x, red_spawn_y;
+extern int blue_spawn_x, blue_spawn_y;
 extern int red_flag_x, red_flag_y;
 extern int blue_flag_x, blue_flag_y;
 extern int red_flag_carrier;

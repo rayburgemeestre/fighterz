@@ -15,7 +15,7 @@ unsigned long ourtime; /**< our timer used for all time calculations in millisec
 *  GLOBAL FUNCTIONS
 ****************************************************/
 
-int bg_music_on = 0;
+int bg_music_on = 1;
 int save_frames_to_bitmap = 0;
 
 /* WARNING: vsnprintf() wasn't available 
@@ -313,6 +313,7 @@ if (!our_node)
 			if ( k == KEY_3 ) { our_node->shiptype = 3; send_newship(); }
 			if ( k == KEY_4 ) { our_node->shiptype = 4; send_newship(); }
 			if ( k == KEY_5 ) { our_node->shiptype = 5; send_newship(); }
+			if ( k == KEY_6 ) { our_node->shiptype = 6; send_newship(); }
 
 			if ( k == KEY_P )
 			{

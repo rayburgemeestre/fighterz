@@ -113,21 +113,22 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
 		if (skip_options != 1)
 		{
+			set_volume(255, 255);
 			play_midi(intro_music, TRUE);
 
 			clear_to_color(screen, makecol(0,0,0));
-/*			textprintf_centre(screen, (FONT *)dat_base[ARCADE].dat, screensize_x / 2, 
+			textprintf_centre(screen, (FONT *)dat_base[ARCADE].dat, screensize_x / 2, 
 				screensize_y / 2, makecol(192, 192, 192), "Tachyon Fighterz");
 			
 			if (fullscreen == 1)
 				Sleep(2000); // extra delay for switching resolution..
 
-			Sleep(1000);
+			//Sleep(1000);
 
 			clear_to_color(screen, makecol(0,0,0));
 			textprintf_centre(screen, (FONT *)dat_base[ARCADE].dat, screensize_x / 2, 
 				screensize_y / 2, makecol(192, 192, 192), "www.fighterz.net");
-			Sleep(1000); */
+			//Sleep(1000);
 
 		}
 

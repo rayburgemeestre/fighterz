@@ -751,7 +751,6 @@ int old_px, old_py;
 				/* A non bouncing bullet would die here */
 				add_explosion(current2->x, current2->y, 15, 10, makecol(0, 128, 255));
 				del_bullet(current2);
-				addtext("Deleted bullet");
 				retval = 1;
 			}
 		}

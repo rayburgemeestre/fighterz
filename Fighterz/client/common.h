@@ -24,6 +24,10 @@
 #define BASE_DATAFILE "system\\base.dat"
 #define BASE_SOUND_DATAFILE "system\\base_snd.dat"
 
+//move_ships
+#define TURN_SPEED  10 // was: 18
+#define ACCEL_SPEED 30
+
 // Console
 #define CON_LINES 9
 #define CON_LINE_LENGTH 80
