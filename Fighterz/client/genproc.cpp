@@ -463,16 +463,18 @@ void mainloop()
 
 /********** graphics **********/
 		set_map_coords();
-		blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
-		clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
-		if (RADAR_SHOW == 1)
-			clear_to_color(RADAR, 0);
-		clear_to_color(CONSOLE, 0);
 		fps_proc();
 		moveships();
 		movebullets();
 		setrcoords();
 		debug();
+
+		blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
+		clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
+		if (RADAR_SHOW == 1)
+			clear_to_color(RADAR, 0);
+		clear_to_color(CONSOLE, 0);
+
 		drawfps();
 		drawconsole();
 		drawexplosions();
