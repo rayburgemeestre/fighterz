@@ -2,8 +2,8 @@
 
 int x_width;
 int y_width;
-BITMAP *scrn_field;
-BITMAP *sub_field;
+BITMAP *scrn_field = NULL;
+BITMAP *sub_field = NULL;
 
 int init_map(int allow_cancel)
 {
@@ -70,6 +70,7 @@ char buffer[512] = "";
         }
     }
     destroy_bitmap(scrn_field);
+	scrn_field = NULL;
     {
         char tmp[512];
         sprintf(tmp, "params %d, %d", (x_width * BLOCKSIZE)+1,
@@ -80,11 +81,13 @@ char buffer[512] = "";
 	return 0;
 }
 
+
 void drawmap()
 {
 int cnt, cnt2;
 
-    destroy_bitmap(scrn_field);
+	if (scrn_field)
+		destroy_bitmap(scrn_field);
     scrn_field = create_bitmap( (x_width * BLOCKSIZE)+1,
         (y_width * BLOCKSIZE)+1);
     {

@@ -63,10 +63,20 @@ if (allow_cancel != 0)
 
     if (!(df = load_datafile(df_path)))
     {
-    char buf[512];
-        sprintf(buf, "Could not load datafile: =%s=", df_path);
-        die(buf);
-    }
+    char mbuf[512];
+	char buf[512];
+        sprintf(mbuf, "Could not load datafile: =%s=", df_path);
+		/* try in c:\fighterz... */
+		sprintf(buf, "c:\\fighterz\\%s", df_path);
+		strcpy(df_path, buf);
+		if (df = load_datafile(df_path)) {
+			char mbuf2[512];
+			sprintf(mbuf2, "using %s instead.", df_path);
+			alert("Warning:", mbuf, mbuf2, "OK", NULL, 0, 0);
+		} else {
+			die(mbuf);
+		}
+	}
 
     {
     int index = 0, i = 0;
