@@ -1,0 +1,9 @@
+[Project]
+FileName=C:\matrix\agup\agup.dev
+Name=Project 1
+Use_gpp=1
+UnitCount=0
+ResFiles=C:\matrix\agup\rsrc.rc
+NoConsole=1
+IsDll=0
+Icon=C:\Dev-C++\Bin\Mainicon.ico
