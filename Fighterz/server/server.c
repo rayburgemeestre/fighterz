@@ -345,6 +345,7 @@ int main(void)
 						}
 		}
 //test
+#if DEBUG2 == 1
 		if (key[KEY_H])
 		{
 			struct data *bot;
@@ -397,6 +398,7 @@ int main(void)
 			}
 			while (key[KEY_G]);
 		}
+#endif
 //test
 		
 		/* ********************** */

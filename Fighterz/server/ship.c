@@ -353,7 +353,7 @@ for (cnt=0; cnt<times; cnt++)
 												ty = (int) ((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
 											} while (field[ty][tx] == '1');
 
-											flyto(current->id, rand_x, rand_y);
+//SKIP IT:									flyto(current->id, rand_x, rand_y);
 										}
 #endif
 										/* XXXXXXZ */

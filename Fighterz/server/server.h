@@ -50,6 +50,8 @@ extern void drawships();
 extern void printulist();
 extern void printul(char *nick, long int one);
 extern void parse_input();
+#else
+extern void addtext(char *pattern, ...);
 #endif
 extern void initialize_vars();
 extern void initialize_debug();

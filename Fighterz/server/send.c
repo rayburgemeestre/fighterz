@@ -169,7 +169,7 @@ void send_spawnready(struct data *client)
 {
 char *p = packet;
 unsigned short len = 0;
-	//verbose("SMSG_SPAWNREADY");
+	verbose("SMSG_SPAWNREADY");
 	put_u16(SMSG_SPAWNREADY, &p, &len);
 	send_packet(client, NULL, packet, len);
 }

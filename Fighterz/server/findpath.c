@@ -193,6 +193,7 @@ while (y2 > field_height) y2 -= field_height;
 			field_height
 		);
 
+#if DEBUG2 == 1
 		{
 			double a, b, c, d;
 			a = x1; while (a > field_width) a -= field_width;
@@ -201,7 +202,7 @@ while (y2 > field_height) y2 -= field_height;
 			d = y2; while (d > field_height) d -= field_height;
 			line(fieldbuff, (int)a, (int)b, (int)c, (int)d, makecol(255,0,0));
 		}
-
+#endif
 		if (ret == 1)
 		{	
 			static int old_x, 
@@ -220,7 +221,7 @@ while (y2 > field_height) y2 -= field_height;
 			old_r = startr = current_r; /* was: current instead of old */
 			fprintf(fp, "LOG: old_c = startc = current_c (%d)\n", current_c);
 			fprintf(fp, "LOG: old_r = startr = current_r (%d)\n", current_r);
-
+#if DEBUG2 == 1
 			{
 				double x = (double)tcoord_x;
 				double y = (double)tcoord_y;
@@ -237,6 +238,7 @@ while (y2 > field_height) y2 -= field_height;
 				old_x = x;
 				old_y = y;
 			}
+#endif
 		}
 		else 
 		{
@@ -246,6 +248,7 @@ while (y2 > field_height) y2 -= field_height;
 			tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
 			tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
 
+#if DEBUG2 == 1
 			{
 				double x = (double)tcoord_x;
 				double y = (double)tcoord_y;
@@ -266,6 +269,7 @@ while (y2 > field_height) y2 -= field_height;
 					line(fieldbuff, (int)a, (int)b, (int)c, (int)d, makecol(0,255,0));
 				}
 			}
+#endif
 		}
 	}
 

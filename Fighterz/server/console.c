@@ -41,5 +41,8 @@ void addtext(char *pattern, ...)
 	strcpy(console[i], buf);
 
 }
+#else
+
+void addtext(char *pattern, ...) { return; };
 
 #endif
