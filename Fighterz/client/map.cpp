@@ -3,6 +3,12 @@
 double scale = BLOCKSIZE / RADAR_SCALE;
 int radar_w, radar_h;
 
+int red_flag_x, red_flag_y;
+int blue_flag_x, blue_flag_y;
+
+int id_has_redflag = -1;
+int id_has_blueflag = -1;
+
 /********************************************
 *  MAP FUNCTIONS
 ****************************************************/
@@ -210,10 +216,18 @@ void drawmap()
 				rect(fieldbuff, cnt * BLOCKSIZE + 1, cnt2 * BLOCKSIZE + 1, (cnt + 1) * BLOCKSIZE - 1, (cnt2 + 1) * BLOCKSIZE - 1, makecol(0,0,255));
 			/* Draw red teams flag location */
 			if (field[cnt2][cnt] == '4') 
-				rect(fieldbuff, cnt * BLOCKSIZE + 1, cnt2 * BLOCKSIZE + 1, (cnt + 1) * BLOCKSIZE - 1, (cnt2 + 1) * BLOCKSIZE - 1, makecol(255,128,0));
+			{
+				red_flag_x = cnt * BLOCKSIZE;
+				red_flag_y = cnt2 * BLOCKSIZE;
+				rect(fieldbuff, red_flag_x + 1, red_flag_y + 1, (cnt + 1) * BLOCKSIZE - 1, (cnt2 + 1) * BLOCKSIZE - 1, makecol(255,128,0));
+			}
 			/* Draw blue teams flag location */			
 			if (field[cnt2][cnt] == '5') 
+			{
+				blue_flag_x = cnt * BLOCKSIZE;
+				blue_flag_y = cnt2 * BLOCKSIZE;
 				rect(fieldbuff, cnt * BLOCKSIZE + 1, cnt2 * BLOCKSIZE + 1, (cnt + 1) * BLOCKSIZE - 1, (cnt2 + 1) * BLOCKSIZE - 1, makecol(0,128,255));
+			}
 		}
 	}
 

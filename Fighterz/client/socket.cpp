@@ -195,6 +195,21 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			m_nickreply(acceptance, str);
 			return;
 		}
+		case SMSG_FLAGCARR:
+		{
+		unsigned int carrier_id;
+		unsigned int code;
+
+			if (!get_u32(&carrier_id, &dta, &len))
+				goto fatal;
+			if (!get_u32(&code, &dta, &len))
+				goto fatal;
+			
+			addtext("flag_carrier id=%lu,code=%lu", carrier_id, code);			
+			m_flagcarrier(carrier_id, code);
+
+			return;
+		}
 		case SMSG_CLEARFIELD:
 		{
 			m_clearfield();
@@ -654,6 +669,19 @@ void m_clearfield()
 void m_nickreply(unsigned char acceptance, char *msg)
 {
 	verbose("SMSG_NICKREPLY: %d %s", (int)acceptance, msg);
+}
+
+void m_flagcarrier(unsigned int carrier_id, unsigned int code)
+{
+LINK lnk = getplayer_byid( carrier_id );
+
+	if (code == 1)
+		id_has_redflag = carrier_id;
+	else
+		id_has_blueflag = carrier_id;
+
+	large_text("%s has the %s flag!", lnk->nick, code == 1 ? "red" : "blue");
+
 }
 
 void m_blockinfo(int w, int h, int size)

@@ -130,6 +130,10 @@ extern int bg_music_on;
 //map.cpp
 extern double scale;
 extern int radar_w, radar_h; // RADAR_W = from RADAR bitmap (smaller)
+extern int red_flag_x, red_flag_y;
+extern int blue_flag_x, blue_flag_y;
+extern int id_has_redflag;
+extern int id_has_blueflag;
 
 //genproc.cpp
 extern int radar_padding_x;

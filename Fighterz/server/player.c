@@ -153,10 +153,13 @@ struct data *add_bot()
 
 void del_player(ID sock_fd)
 {
-	LINK old = NULL;
-	LINK future = NULL;
-	LINK current = head;
-	
+LINK old = NULL;
+LINK future = NULL;
+LINK current = head;
+
+	if (sock_fd == id_has_redflag) id_has_redflag = -1;
+	if (sock_fd == id_has_blueflag) id_has_blueflag = -1;
+
 	while (current != NULL)
 	{
 		future = current->next;

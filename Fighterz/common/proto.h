@@ -36,6 +36,7 @@ typedef signed long TIME;
 
 #define SMSG_NICKREPLY	0x0700
 
+#define SMSG_FLAGCARR   0x8000 /* Flag Carrier */
 
 #define SMSG_CLEARFIELD 0x8100
 #define SMSG_FIELDLINE  0x8101

@@ -1,5 +1,8 @@
 #include "common.h"
 
+int id_has_redflag  = -1;
+int id_has_blueflag = -1;
+
 /* 
 	TODO:
 	
@@ -140,6 +143,34 @@ int debug_level; /**< Debug level for within findpath routines (in my
 int temprrr = 0; /**< debug var, can be deleted */
 
 /* End of vars section */
+
+//temp
+void flagcheck()
+{
+int blue_x = BLUEFLAG.x + (BLOCKSIZE / 2);
+int blue_y = BLUEFLAG.y + (BLOCKSIZE / 2);
+int red_x  = REDFLAG.x  + (BLOCKSIZE / 2);
+int red_y  = REDFLAG.y  + (BLOCKSIZE / 2);
+
+	LINK lnk;
+	for (lnk = head; lnk; lnk = lnk->next)
+	{
+		if ( (id_has_redflag == -1 && lnk->id != id_has_blueflag) &&
+			((sqrt((lnk->x - red_x) * (lnk->x - red_x)+
+			 (lnk->y - red_y) * (lnk->y - red_y)) <= (BLOCKSIZE / 2))) )
+		{
+			id_has_redflag = lnk->id;
+			send_flagcarrier(lnk->id, 1);
+		}
+		else if ( (id_has_blueflag == -1 && lnk->id != id_has_redflag) &&
+			  (sqrt((lnk->x - blue_x) * (lnk->x - blue_x)+
+			 (lnk->y - blue_y) * (lnk->y - blue_y)) <= (BLOCKSIZE / 2)) )
+		{
+			id_has_blueflag = lnk->id;
+			send_flagcarrier(lnk->id, 2);
+		}
+	}
+}
 
 int main(void)
 {
@@ -314,6 +345,8 @@ int main(void)
 		moveships();
 		
 		movebullets();
+
+		flagcheck();
 
 		/* ***** ai_bots() ****** */
 		{

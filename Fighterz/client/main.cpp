@@ -236,7 +236,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 				skip_options = 0;
 			}
 		}
-		//skip_options = 1;
+		skip_options = 1;
 
 		if (skip_options != 1)
 		{

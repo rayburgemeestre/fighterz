@@ -93,6 +93,19 @@ unsigned short len = 0;
 	send_packet(client, NULL, packet, len);
 }
 
+// code 1=red flag 2=blue flag.
+void send_flagcarrier(ID carrier_id, unsigned int code)
+{
+char *p = packet;
+unsigned short len = 0;
+
+	put_u16(SMSG_FLAGCARR, &p, &len);
+	put_u32(carrier_id, &p, &len);
+	put_u32(code, &p, &len);
+
+	send_packet(NULL, NULL, packet, len);
+}
+
 void send_clearfield(struct data *client)
 {
 char *p = packet;

@@ -89,3 +89,7 @@ extern int temprrr;
 extern int element;
 
 extern struct bg_imgs bg_imgs_data[32];
+
+//server.c
+extern int id_has_redflag;
+extern int id_has_blueflag;

@@ -81,6 +81,7 @@ extern void m_shiptype(unsigned int id, int newshiptype);
 extern void m_ping(unsigned int servertime);
 extern void m_lag(double diff);
 extern void m_nickreply(unsigned char acceptance, char *msg);
+extern void m_flagcarrier(unsigned int carrier_id, unsigned int code);
 extern void m_clearfield();
 extern void m_fieldline(unsigned int index, char *fieldline);
 extern void m_blockinfo(int w, int h, int size);

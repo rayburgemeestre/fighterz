@@ -464,6 +464,57 @@ void initialize_vars()
 	buffer = (char *)malloc(8192);
 }
 
+
+void drawflags()
+{
+#define FLAG_ANIM_ITERATOR 500
+static unsigned long prev_flag_time = 0;
+static unsigned int flag = 1; // 1 or 2;
+int red_x, red_y, blue_x, blue_y;
+
+	if (id_has_redflag != -1)
+	{
+	LINK lnk = getplayer_byid(id_has_redflag);
+
+		red_x = lnk->x - (5) - MAP_X + 3;
+		red_y = lnk->y - (18) - MAP_Y + 3;
+	} else {
+		red_x = red_flag_x - MAP_X + 3;
+		red_y = red_flag_y - MAP_Y + 3;
+	}
+
+	if (id_has_blueflag != -1)
+	{
+	LINK lnk = getplayer_byid(id_has_redflag);
+
+		blue_x = lnk->x - (5) - MAP_X + 3;
+		blue_y = lnk->y - (18) - MAP_Y + 3;
+	} else {
+		blue_x = blue_flag_x - MAP_X + 3;
+		blue_y = blue_flag_y - MAP_Y + 3;
+	}
+
+	if ( (prev_flag_time == 0) || 
+		 ((ourtime - prev_flag_time) >= FLAG_ANIM_ITERATOR) )
+	{
+		prev_flag_time = ourtime;
+
+		flag = flag == 1 ? 2 : 1;
+	}
+
+	if (flag == 1)
+	{
+		draw_sprite(shipbuff, (BITMAP *)dataf[REDFLAG1].dat, red_x, red_y);
+		draw_sprite(shipbuff, (BITMAP *)dataf[BLUEFLAG1].dat, blue_x, blue_y);
+	}
+	else
+	{
+		draw_sprite(shipbuff, (BITMAP *)dataf[REDFLAG2].dat, red_x, red_y);
+		draw_sprite(shipbuff, (BITMAP *)dataf[BLUEFLAG2].dat, blue_x, blue_y);		
+	}
+
+	return;
+}
 void blit_field() 
 {
 	// Draw (cached) fieldbuffer on tmpscreen
@@ -540,17 +591,21 @@ int mainloop()
 
 // actual drawing
 		set_map_coords();
+
 		
 		blit_field();
 		blit_radar();
-
+		
 		drawfps();
 		drawconsole();
 		drawexplosions();
 		drawships();
-		drawbullets();
+		drawflags();
 		
+		drawbullets();
 		drawradar();
+		
+
 		draw_talk_box();
 		show_graphics();
 //

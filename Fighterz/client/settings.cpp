@@ -50,9 +50,6 @@ DIALOG settings[] =
 void getsettings()
 {
 // for cube:
-BITMAP *buffer;
-PALLETE pal;
-int c, w, h;
 int last_retrace_count;
 bg_color = makecol(216, 216, 216);
 //--

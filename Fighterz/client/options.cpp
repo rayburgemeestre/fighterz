@@ -17,9 +17,6 @@ int i;
 unsigned long flicker_time;
 #define FLICKER_DELAY 100
 // for cube:
-BITMAP *buffer;
-PALLETE pal;
-int c, w, h;
 int last_retrace_count;
 //--
 

@@ -114,6 +114,7 @@ extern int set_sockopts(int s);
 /* send.c externs */
 extern void send_hi(struct data *client);
 extern void send_servertime(struct data *client);
+extern void send_flagcarrier(ID carrier_id, unsigned int code);
 extern void send_clearfield(struct data *client);
 extern void send_fieldline(struct data *client, unsigned int index, char *line);
 extern void send_background(struct data *client, int df_id, 
