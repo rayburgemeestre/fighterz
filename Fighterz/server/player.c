@@ -342,6 +342,7 @@ void quit_player(struct data *client, char *reason)
 		send_quit(client, NULL, client->id, reason);
 	else
 		send_quit(EVERYONE, NULL, client->id, reason);
+
 	SetDead(client);
 }
 

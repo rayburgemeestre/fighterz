@@ -14,7 +14,8 @@ void closereq()
 void init()
 {
 	char *datafile;
-	
+	char *datafile_sound;
+
 	allegro_init();
 
 	set_color_depth(16);
@@ -29,6 +30,12 @@ void init()
 
 	datafile = strdup(BASE_DATAFILE);
 	dataf = load_datafile(datafile);
+	
+	datafile_sound = strdup(BASE_SOUND_DATAFILE);
+	df_snd = load_datafile(datafile_sound);
+	if (!df_snd)
+		alert("sdf", "", "", "", NULL, 0, 0);
+
 	//dataf = load_datafile("#");
 
 	destroy_bitmap(tmpscreen);
@@ -66,7 +73,7 @@ void init()
 	}
 
 	if (USE_SOUND == 1)
-		// play_sample((SAMPLE *)dataf[intro].dat, 255, 128, 800, 0);
+		; // play_sample((SAMPLE *)dataf[intro].dat, 255, 128, 800, 0);
 #endif
 }
 
@@ -433,7 +440,6 @@ void initialize_vars()
 	buffer = (char *)malloc(8192);
 }
 
-
 void mainloop()
 {
 /********** mainloop init **********/
@@ -447,13 +453,16 @@ void mainloop()
 		sockread();
 
 		// if (!STARTED && requested_spawn == 0 && key[KEY_ENTER] && can_spawn == 1)
-		if (requested_spawn == 0 /* && key[KEY_ENTER] */ && can_spawn == 1)
+		if (requested_spawn == 0 && key[KEY_LCONTROL] && can_spawn == 1)
+		{
 			send_ispawn();
+		}
 
-		if (!STARTED) 
+		if (!STARTED && can_spawn == 0)
 			continue; /* Don't do graphics */
-		
+
 /********** graphics **********/
+		set_map_coords();
 		blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 		clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
 		if (RADAR_SHOW == 1)
@@ -473,7 +482,6 @@ void mainloop()
 		draw_talk_box();
 		parse_input();
 		printulist();		
-		set_map_coords();
 		show_graphics();
 	}
 }

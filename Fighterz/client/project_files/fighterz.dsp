@@ -196,6 +196,10 @@ SOURCE=..\..\common\proto.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\sound.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\struct.h
 # End Source File
 # Begin Source File

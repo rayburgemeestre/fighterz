@@ -92,6 +92,7 @@ FILE *dbug; /**< debug file descriptor: used for logging some data */
 int showscr; /**< set to 1 = yes, and all graphics will be blitted on the screen */
 /* TODO: STARTED & showscr should be combined, they serve the same purpose */
 DATAFILE *dataf; /** link to allegro datafile which shall contain all fonts/graphics/sounds */
+DATAFILE *df_snd; /** asdjflkasjdf */
 unsigned long bullet_time; /**< used for delay in firing shots while holding fire key down */
 int BULLET_COUNT; /**< current amount of bullets we own (in field/screen) */
 int BULLET_MAX; /**< user can only have this amount of bullets at a time in the field */

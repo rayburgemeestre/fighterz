@@ -26,6 +26,8 @@ double rw_x, rw_y; /* rightwing x,y */
 		{
 			if (current->impact == 1)
 				color = makecol(255, 0, 0); /* red */
+			else if (current->dead == 2)
+				color = makecol(128, 128, 128); /* grey */
 			else if (current == our_node)
 				color = makecol(255, 255, 255); /* white */
 			else
@@ -129,9 +131,9 @@ double rw_x, rw_y; /* rightwing x,y */
 			{
 				char tmpstr[128];
 				// sprintf(tmpstr, "%s [%d] [%2.2f] [%d]", current->nick, current->velocity, current->speed, current->freeze);
-				sprintf(tmpstr, "%s %2.2f", current->nick, current->deg);
+				sprintf(tmpstr, "%s", current->nick);
 				textprintf_centre(shipbuff, font, current->x, 
-					current->y + BLOCKSIZE, makecol(192,192,192), tmpstr);
+					current->y + BLOCKSIZE, makecol(68, 57, 81), tmpstr);
 			}
 
 		}
@@ -193,7 +195,7 @@ void moveship(unsigned int id2, unsigned long t2)
 			if (current->bullet == 1)
 				return;
 
-			if (id2 == our_id)
+			if (current == our_node)
 			{
 				diff = (ourtime - our_node->turn_t);
 				tmp = 10; /* Turn speed */
@@ -264,6 +266,7 @@ void moveship(unsigned int id2, unsigned long t2)
 						0.0000 is tegenwoordig al groter dan 0.00 ofzo
 						dus ehm, vandaar die vage extra 0.001 steeds.....
 					*/
+					send_accel(9);
 				}
 				else if (current->velocity == -1)
 				{

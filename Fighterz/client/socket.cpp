@@ -607,7 +607,7 @@ void m_ping(unsigned int servertime)
 
 void m_lag(double diff)
 {
-	// verbose("SMSG_LAG: %f (avg lag now: %2.2f)", diff, current_lag());
+	printff_direct("SMSG_LAG: %f (avg lag now: %2.2f)", diff, current_lag());
 	int i = 0;
 	while (i < 4)
 	{
@@ -758,9 +758,10 @@ void m_spawnready()
 	verbose("SMSG_SPAWNREADY");
 	can_spawn = 1;
 	requested_spawn = 0;
-	
-	set_window_title("Fighterz -- You can press enter to spawn now.");
-
+	our_node = getplayer_byid(our_id);
+	our_node->dead = 2;
+	set_window_title("Fighterz -- Hit fire to respawn");
+	large_text("Connected, spawn to join");
 }
 
 void m_newuser(int id, double x, double y, double deg,
@@ -786,7 +787,7 @@ void m_newuser(int id, double x, double y, double deg,
 	head = new_node;
 	/* intiate some values */
 	head->id = id;
-	head->dead = 0; /* CHK */
+	head->dead = 2; /* spawnready ofzo? */
 	
 	if (type == T_BOT) /* TODO: change all these seperate */
 		head->bot = 1; /* fucking variables to one named type */
@@ -924,6 +925,8 @@ void m_spawn(unsigned int id, double x, double y, double deg, signed char accel,
 	// node->type ?
 	node->speed = speed;
 	node->dead = 0;
+
+	play_sample((SAMPLE *)df_snd[SPAWN].dat, 255, 128, 1000, 0);
 }
 
 void m_respawn(unsigned int id)

@@ -8,7 +8,7 @@
    char buf[512] could be overflowed */
 void printff_direct(char *pattern, ...) 
 {
-	if (STARTED == 1)
+	if (STARTED == 1 || can_spawn == 1)
 		return;
 
 	char buf[512];
@@ -40,9 +40,14 @@ void printff_direct(char *pattern, ...)
 void parse_input()
 {
 int newturn = 0;
+
+if (!our_node)
+	return;
+
 	if (our_node->dead == 0 || our_node->invincible == 1) 
 	{
-		if (key[KEY_LCONTROL] && our_node->invincible != 1)
+		if (key[KEY_LCONTROL] && our_node->invincible != 1 && 
+			our_node->dead != 2)
 		{	/* Requesting fire */
 			if ( (bullet_time == 0) || ((ourtime - bullet_time) >= (unsigned)BULLET_RE) )
 			{	bullet_time = ourtime;
@@ -510,7 +515,8 @@ void printul(struct data *node)
 
 /* exit program */
 void terminate() {
-	delay(3);
+	alert("Terminated", "", "", "Ok", NULL, 0, 0);
+	// delay(3);
 	allegro_exit();
 	WSACleanup();
 	exit(-1); 
@@ -580,11 +586,16 @@ void drawfps()
 {
 	if (show_fps == 1) 
 	{
-		textprintf(tmpscreen, font, 2, 2, makecol(255,255,255), 
+/*		textprintf(tmpscreen, font, 2, 2, makecol(255,255,255), 
 			"FPS: %d LAG: %2.2f VEL: %d SPD: %.2f FRE:%d POW:%d SOCK:%d map-w:%d h:%d             ", 
 			fps, current_lag(), our_node->velocity, our_node->speed, 
 			our_node->freeze, our_node->power, theSocket,
 				field_width, field_height
+		);
+*/
+		textprintf(tmpscreen, font, 2, 2, makecol(128, 128, 128), 
+			"FPS: %d LAG: %2.2f       ", 
+			fps, current_lag()
 		);
 	}
 }
@@ -598,12 +609,12 @@ void show_graphics()
 	// show_mouse(tmpscreen);
 	poll_mouse();	
 
-	if (STARTED == 1)
-	{
+//	if (STARTED == 1)
+//	{
 		acquire_screen();
 		blit (tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
 		release_screen();
-	}
+//	}
 	if (HIGH_GRAPHICS == 1)
 	{
 		rest(8);

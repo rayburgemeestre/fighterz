@@ -235,7 +235,7 @@ int bs_collidecheck(struct data *ptr)
 			{
 				i = 0;
 				if ( (tmp2->bullet != 1) && (tmp->owner != tmp2) && (tmp->owner->bullet != 1) && 
-					 (tmp2->dead != 1) && (tmp2->invincible == 0) )
+					 (tmp2->dead == 0) && (tmp2->invincible == 0) )
 				{
 					/* Compare coordinates with this ship */
 					if ( (dabs(tmp2->x - (tmp->x) ) <= (double)(BLOCKSIZE / 4)) &&

@@ -44,20 +44,24 @@ int getoptions()
 			k = (readkey() >> 8);
 			if (k == KEY_DOWN)
 			{
+				play_sample((SAMPLE *)df_snd[FAST_CONFIRM].dat, 255, 128, 1000, 0);
 				if (active_o_item < OPTION_COUNT)
 					active_o_item++;
 			}    
 			if (k == KEY_UP)
 			{
+				play_sample((SAMPLE *)df_snd[FAST_CONFIRM].dat, 255, 128, 1000, 0);
 				if (active_o_item > 0)
 					active_o_item--;
 			}    
 			if (k == KEY_ENTER)
 			{
+				play_sample((SAMPLE *)df_snd[CONFIRM].dat, 255, 128, 1000, 0);
 				return active_o_item;
 			}   
 			if (k == KEY_ESC)
 			{
+				play_sample((SAMPLE *)df_snd[CONFIRM].dat, 255, 128, 1000, 0);
 				return -1; /* die :) */
 			}   			
 		}

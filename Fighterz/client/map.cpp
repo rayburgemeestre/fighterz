@@ -133,7 +133,7 @@ void drawmap() {
 		{
 			{
 				int ret;
-				if (1 == 1)
+				if (!grid)
 				{
 					/* temporary stars :) */
 					ret = 1+(int) (15*rand()/(RAND_MAX+1.0));
@@ -159,57 +159,12 @@ void drawmap() {
 		{
 			if (strlen(bg_imgs_data[i].datfile) > 0)
 			{
-				plot_datimg(bg_imgs_data[i]);
+				if (!grid)
+					plot_datimg(bg_imgs_data[i]);
 			}
 		}		
 	}
-	    /* int df_id, pos_x, pos_y;
-    char buf[512], datafile[512], *fptr;
 
-    char *s;
-    char b[256];
-
-        sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, &datafile);
-        sprintf(buf, "system\\%s", datafile);
-        s = buf;
-        fix_filename_path(b, s, sizeof(b));
-        // strcpy(s, b);
-        // char *fix_filename_path(char *dest, const char *path, int size);
-        // alert(buf, "", "", "Ok", NULL, 0, 0);
-        init_datafile(0, buf);
-        draw_sprite(scrn_field, (BITMAP *)df[df_id].dat, pos_x, pos_y);
-		*/
-
-	if (0) {
-		/* random stuff */
-		unsigned long rw, rh;
-		int i;
-		/* draw 2 nevels */
-		for (i=0; i<2; i++)
-		{
-			rw = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
-			rh = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
-			draw_sprite(fieldbuff, (BITMAP *)dataf[NEVEL].dat, rw, rh);
-		}
-		
-		/* draw 2 nevels */
-		for (i=0; i<2; i++)
-		{
-			rw = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
-			rh = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
-			draw_sprite(fieldbuff, (BITMAP *)dataf[NEVEL2].dat, rw, rh);
-		}
-
-		/* draw 2 nevels */
-		for (i=0; i<2; i++)
-		{
-			rw = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
-			rh = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
-			draw_sprite(fieldbuff, (BITMAP *)dataf[NEVEL3].dat, rw, rh);
-		}
-
-	}
-	
 	if (grid)
 	{
 		/* Draw lines */
@@ -236,8 +191,10 @@ void drawmap() {
 			if (field[cnt2][cnt] == '1')
 			{
 				rectfill(fieldbuff, (cnt * BLOCKSIZE_2), (cnt2 * BLOCKSIZE_2), 
-				((cnt + 1) * BLOCKSIZE_2), ((cnt2 + 1) * BLOCKSIZE_2), makecol(128, 128, 128) ); // was blauw
-				/* test :P */
+				((cnt + 1) * BLOCKSIZE_2), ((cnt2 + 1) * BLOCKSIZE_2), 
+				( grid ? makecol(40, 45, 87) : makecol(128, 128, 128)) ); // was blauw
+				
+				if (!grid)
 				draw_sprite(fieldbuff, (BITMAP *)dataf[WALL].dat, (cnt * BLOCKSIZE_2), (cnt2 * BLOCKSIZE_2) );
 			}
 			/* Draw red team spawn location */
@@ -269,6 +226,9 @@ void drawradar()
 	LINK x;
 
 	double _power, _bullets, _guessed_power;
+
+	if (!our_node)
+		return;
 
 	rectfill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + 1, 
 		1, RADAR_W - 2, RADAR_H - 2, makecol(0, 0, 0));
@@ -359,25 +319,47 @@ void drawradar()
 	}
 }
 
+unsigned long map_scroll;
 void set_map_coords()
 {
-		MAP_X = our_node->x2 - MAP_W / 2;
-		if (field_mode == 1)
-		{
-			if (MAP_X < 0 || field_width <= (unsigned)MAP_W) 
-				MAP_X = 0;
-			if ((unsigned)MAP_X > ((field_width_2 + 1) - MAP_W)) 
-				MAP_X = (field_width_2 + 1) - MAP_W;
-		}
+if (!our_node)
+	return;
 
-		MAP_Y = our_node->y2 - MAP_H / 2;
-		if (field_mode == 1)
+	if (our_node->dead == 2)
+	{
+		if ((ourtime - map_scroll) >= 10)
 		{
-			if (MAP_Y < 0 || field_height <= (unsigned)MAP_H ) 
-				MAP_Y = 0;
-			if ((unsigned)MAP_Y > ((field_height_2 + 1) - MAP_H)) 
-				MAP_Y = (field_height_2 + 1) - MAP_H;
+			map_scroll = ourtime;
+			
+			if (key[KEY_LEFT])
+				MAP_X -= 10;
+			if (key[KEY_RIGHT])
+				MAP_X += 10;
+			if (key[KEY_UP])
+				MAP_Y -= 10;
+			if (key[KEY_DOWN])
+				MAP_Y += 10;
 		}
+	} else {
+		MAP_X = our_node->x2 - MAP_W / 2;
+		MAP_Y = our_node->y2 - MAP_H / 2;
+	}
+	
+	if (field_mode == 1)
+	{
+		if (MAP_X < 0 || field_width <= (unsigned)MAP_W) 
+			MAP_X = 0;
+		if ((unsigned)MAP_X > ((field_width_2 + 1) - MAP_W)) 
+			MAP_X = (field_width_2 + 1) - MAP_W;
+	}
+	
+	if (field_mode == 1)
+	{
+		if (MAP_Y < 0 || field_height <= (unsigned)MAP_H ) 
+			MAP_Y = 0;
+		if ((unsigned)MAP_Y > ((field_height_2 + 1) - MAP_H)) 
+			MAP_Y = (field_height_2 + 1) - MAP_H;
+	}
 }
 
 void zoom_(int i)

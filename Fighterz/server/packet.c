@@ -229,6 +229,46 @@ size_t len;
 		}
 		exit(0);
 	}
+	else if (!strncmp(cmd, "kick ", 5))
+	{
+		if (strlen(cmd) > 5)
+		{
+		int temp;
+		char *ptr;
+		char buf[512];
+		LINK node;
+
+			
+			ptr = cmd;
+			ptr += 5;
+			temp = atoi(ptr);
+			node = getplayer_byid(temp);
+
+			sprintf(buf, "Kicked by: %s", client->nick);
+			node->dead = 3; // Dead @ 3 is disabled
+			softkick_player(node, buf);			
+		}
+	}
+	else if (!strncmp(cmd, "skick ", 6))
+	{
+		if (strlen(cmd) > 6)
+		{
+		int temp;
+		char *ptr;
+		char buf[512];
+		LINK node;
+
+			
+			ptr = cmd;
+			ptr += 5;
+			temp = atoi(ptr);
+			node = getplayer_byid(temp);
+
+			sprintf(buf, "Kicked from server by: %s", client->nick);
+			quit_player(node, buf);
+			del_tha_player(node);
+		}
+	}
 	else if (!strcmp(cmd, "spec"))
 	{
 		softkick_player(client, "Spectator mode");
@@ -263,7 +303,7 @@ size_t len;
 			send_nick(EVERYONE, NULL, client->id, client->nick);
 		}
 	}
-	if (!strcmp(cmd, "whoami"))
+	else if (!strcmp(cmd, "whoami"))
 	{
 		// TODO: send nick back ;))
 	}

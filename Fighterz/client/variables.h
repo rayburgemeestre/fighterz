@@ -56,6 +56,7 @@ extern FILE *dbug;
 #endif
 extern int showscr; 
 extern DATAFILE *dataf;
+extern DATAFILE *df_snd;
 extern unsigned long bullet_time;
 extern int BULLET_COUNT;
 extern int BULLET_MAX;

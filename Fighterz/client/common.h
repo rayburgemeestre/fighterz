@@ -8,7 +8,7 @@
 #define PORT 8099
 #define PI 3.14159265358979
 #define IGNORE_LAG 0
-#define NOSOUND 1
+#define NOSOUND 0
 #define CONFIG_FILE "fighterz.cfg"
 /* #define ALLEGRO_STATICLINK
    #define USE_CONSOLE   */
@@ -16,6 +16,7 @@
 #define MIN_CLIENT_VERSION 0x00000000	/**< Min. client version required (older=kick) */
 #define CLIENT_VERSION 0x00000001
 #define BASE_DATAFILE "system\\base.dat"
+#define BASE_SOUND_DATAFILE "system\\base_snd.dat"
 
 #define T_PLAYER			0
 #define T_BOT				1
@@ -41,6 +42,7 @@
 #include <fcntl.h> 
 
 #include "data.h"
+#include "sound.h"
 #include "main.h"
 #include "../common/proto.h"
 #include "../common/sys.h"

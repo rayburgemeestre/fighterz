@@ -78,6 +78,8 @@ void send_accel(int from)
 {
 	char *p = packet;
 	unsigned short len = 0;
+	if (!our_node)
+		return;
 	// verbose("CMSG_ACCEL(%d): %d", from, time);
 	
 	put_u16(CMSG_ACCEL, &p, &len);
