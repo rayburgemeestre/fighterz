@@ -63,7 +63,7 @@ struct data {
 	                           invincibility drops. */
 	int dead; /**< 1 = yes, and therefore invisible on map */
 	int shiptype; 
-	signed char team; /**< team 0=blue,1=red */
+	signed char team; /**< team 1=red,2=blue */
 
     struct data *next; /**< next object in list */
 };

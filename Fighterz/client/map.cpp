@@ -15,6 +15,8 @@ int radar_field_bmp_w, radar_field_bmp_h; /**< radar field buffer size */
 int red_spawn_x, red_spawn_y;
 int blue_spawn_x, blue_spawn_y;
 
+int red_flag_def_x, red_flag_def_y; /**< red flag default location */
+int blue_flag_def_x, blue_flag_def_y; /**< red flag default location */
 int red_flag_x, red_flag_y; /**< red flag location */
 int blue_flag_x, blue_flag_y; /**< blue flag location */
 int red_flag_carrier = -1; /**< redflag carrier */
@@ -178,6 +180,8 @@ void draw_map()
 			{
 				red_flag_x = cnt * blocksize;
 				red_flag_y = cnt2 * blocksize;
+				red_flag_def_x = red_flag_x;
+				red_flag_def_y = red_flag_y;
 				rect(bmp_mapfield, red_flag_x + 1, red_flag_y + 1, (cnt + 1) * blocksize - 1, (cnt2 + 1) * blocksize - 1, makecol(255,128,0));
 			}
 			/* Draw blue teams flag location */			
@@ -185,6 +189,8 @@ void draw_map()
 			{
 				blue_flag_x = cnt * blocksize;
 				blue_flag_y = cnt2 * blocksize;
+				blue_flag_def_x = blue_flag_x;
+				blue_flag_def_y = blue_flag_y;
 				rect(bmp_mapfield, cnt * blocksize + 1, cnt2 * blocksize + 1, (cnt + 1) * blocksize - 1, (cnt2 + 1) * blocksize - 1, makecol(0,128,255));
 			}
 		}

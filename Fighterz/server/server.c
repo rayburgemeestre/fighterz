@@ -3,6 +3,9 @@
 int id_has_redflag  = -1;
 int id_has_blueflag = -1;
 
+unsigned int red_team_score = 0;
+unsigned int blue_team_score = 0;
+
 /* 
 	TODO:
 	
@@ -117,6 +120,8 @@ struct location REDFLAG; /**< struct which will contain the position of the red 
                               on the map (not in x/y coordinates, but in blocks)*/
 struct location BLUEFLAG; /**< struct which will contain the position of the red flag 
                                on the map (not in x/y coordinates, but in blocks)*/
+struct location red_flag_default; /**< red flag default location */
+struct location blue_flag_default; /**< blue flag default location */
 int extra_x; /**< Used within the path calculations (x-offset) */
 int extra_y; /**< Used within the path calculations (x-offset) */
 ID bot_id; /**< Used to give bots id's like 1000, 1001, 1002 etc */
@@ -151,6 +156,10 @@ int blue_x = BLUEFLAG.x + (BLOCKSIZE / 2);
 int blue_y = BLUEFLAG.y + (BLOCKSIZE / 2);
 int red_x  = REDFLAG.x  + (BLOCKSIZE / 2);
 int red_y  = REDFLAG.y  + (BLOCKSIZE / 2);
+int blue_def_x = blue_flag_default.x + (BLOCKSIZE / 2);
+int blue_def_y = blue_flag_default.y + (BLOCKSIZE / 2);
+int red_def_x  = red_flag_default.x  + (BLOCKSIZE / 2);
+int red_def_y  = red_flag_default.y  + (BLOCKSIZE / 2);
 LINK redflagcarrier, blueflagcarrier;
 
 // look for carriers
@@ -161,19 +170,51 @@ LINK redflagcarrier, blueflagcarrier;
 		if (lnk->bot == 1 || lnk->bullet == 1)
 			continue;
 
-		if ( (id_has_redflag == -1 && lnk->team != 1) &&
-			((sqrt((lnk->x - red_x) * (lnk->x - red_x)+
-			 (lnk->y - red_y) * (lnk->y - red_y)) <= (BLOCKSIZE / 2))) )
+		//er staat iemand op de rode vlag
+		if (  
+			(sqrt((lnk->x - red_x) * (lnk->x - red_x)+
+			 (lnk->y - red_y) * (lnk->y - red_y)) <= (BLOCKSIZE / 2)) )
 		{
-			id_has_redflag = lnk->id;
-			send_flagcarrier(lnk->id, 1);
-		}
-		else if ( (id_has_blueflag == -1 && lnk->team != 0) &&
+			printf_("ok er staat iemand op de rode vlag\n");
+			if ((id_has_redflag == -1) && (lnk->team == 2))
+			{//blauw pakt rode vlag
+				printf_("blauw pakt rode vlag\n");
+				id_has_redflag = lnk->id;
+				send_flagcarrier(lnk->id, 1);
+
+				// of de vlag ergens anders ligt:
+			} else if (( (red_x != red_def_x) && (red_y != red_def_y) ) && 
+				(lnk->team == 1)) {
+			//rood pakt rode vlag terug
+				printf_("rood pakt rode vlag terug\n");
+				id_has_redflag = -1;
+				REDFLAG.x = red_flag_default.x;
+				REDFLAG.y = red_flag_default.y;
+				send_flagrestorer(lnk->id, 1);
+			}
+		} // er staat iemand op de blauwe vlag
+		
+		
+		if ( 
 			  (sqrt((lnk->x - blue_x) * (lnk->x - blue_x)+
 			 (lnk->y - blue_y) * (lnk->y - blue_y)) <= (BLOCKSIZE / 2)) )
 		{
-			id_has_blueflag = lnk->id;
-			send_flagcarrier(lnk->id, 2);
+			printf_("ok er staat iemand op de blauwe vlag");
+			if ((id_has_blueflag == -1) && (lnk->team == 1))
+			{//rood pakt blauwe vlag
+				printf_("rood pakt blauwe vlag\n");
+				id_has_blueflag = lnk->id;
+				send_flagcarrier(lnk->id, 2);
+
+			} else if (( (blue_x != blue_def_x) && (blue_y != blue_def_y) ) && 
+				(lnk->team == 2)) {
+			//blauw pakt blauwe vlag terug
+				printf_("blauw pakt blauwe vlag terug\n");
+				id_has_blueflag = -1;
+				BLUEFLAG.x = blue_flag_default.x;
+				BLUEFLAG.y = blue_flag_default.y;
+				send_flagrestorer(lnk->id, 2);
+			}
 		}
 	}
 
@@ -181,13 +222,33 @@ LINK redflagcarrier, blueflagcarrier;
 
 	redflagcarrier = getplayer_byid(id_has_redflag);
 	blueflagcarrier = getplayer_byid(id_has_blueflag);
+	
+	//printf_("blue_x=%d blue_y=%d\n", (int)blue_x, (int)blue_y);
 
-	if ( (id_has_redflag != -1) &&
-		((sqrt((redflagcarrier->x - blue_x) * (redflagcarrier->x - blue_x)+
-		 (redflagcarrier->y - blue_y) * (redflagcarrier->y - blue_y)) <= (BLOCKSIZE / 2))) )
+	// if the blueflag is carried and if the redflag isn't carried
+	if ( (id_has_blueflag != -1) && (id_has_redflag == -1) &&
+		((sqrt((blueflagcarrier->x - red_def_x) * (blueflagcarrier->x - red_def_x)+
+		 (blueflagcarrier->y - red_def_y) * (blueflagcarrier->y - red_def_y)) <= (BLOCKSIZE / 2))) )
+	{//red captured blueflag
+		id_has_blueflag = -1;
+		red_team_score++;
+		printf_("red captured the blue flag!\n");
+		send_flagcaptured(blueflagcarrier->id, 2);
+		BLUEFLAG.x = blue_flag_default.x;
+		BLUEFLAG.y = blue_flag_default.y;
+	}
+
+	// if the redflag is carried and if the blueflag isn't carried
+	if ( (id_has_redflag != -1) && (id_has_blueflag == -1) &&
+		((sqrt((redflagcarrier->x - blue_def_x) * (redflagcarrier->x - blue_def_x)+
+		 (redflagcarrier->y - blue_def_y) * (redflagcarrier->y - blue_def_y)) <= (BLOCKSIZE / 2))) )
 	{//blue captured redflag
 		id_has_redflag = -1;
-		printf_("blue captured the red flag!");
+		blue_team_score++;
+		printf_("blue captured the red flag!\n");
+		send_flagcaptured(redflagcarrier->id, 1);
+		REDFLAG.x = red_flag_default.x;
+		REDFLAG.y = red_flag_default.y;
 	}
 }
 

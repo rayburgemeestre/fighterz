@@ -72,6 +72,8 @@ extern struct location RED;
 extern struct location BLUE;
 extern struct location REDFLAG;
 extern struct location BLUEFLAG;
+extern struct location red_flag_default;
+extern struct location blue_flag_default;
 extern int extra_x;
 extern int extra_y;
 extern ID bot_id;
@@ -93,6 +95,8 @@ extern struct bg_imgs bg_imgs_data[32];
 //server.c
 extern int id_has_redflag;
 extern int id_has_blueflag;
+extern unsigned int red_team_score;
+extern unsigned int blue_team_score;
 
 //player.c
 extern int red_team_count;

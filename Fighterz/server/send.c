@@ -109,7 +109,22 @@ unsigned short len = 0;
 	send_packet(NULL, NULL, packet, len);
 }
 
-// code 1=red captured blue flag 2=blue captured red flag.
+// code 1=red flag 2=blue flag.
+void send_flagrestorer(ID restorer_id, unsigned int code)
+{
+char *p = packet;
+unsigned short len = 0;
+
+	printf("flag restorer_id=%d,code=%d",restorer_id,code);
+
+	put_u16(SMSG_FLAGREST, &p, &len);
+	put_u32(restorer_id, &p, &len);
+	put_u32(code, &p, &len);
+
+	send_packet(NULL, NULL, packet, len);
+}
+
+// code 1=red flag captured by blue team 2=blue flag captured by red team.
 void send_flagcaptured(ID capturer_id, unsigned int code)
 {
 char *p = packet;
@@ -120,6 +135,8 @@ unsigned short len = 0;
 	put_u16(SMSG_FLAGCAPT, &p, &len);
 	put_u32(capturer_id, &p, &len);
 	put_u32(code, &p, &len);
+	put_u32(red_team_score, &p, &len);
+	put_u32(blue_team_score, &p, &len);
 
 	send_packet(NULL, NULL, packet, len);
 }

@@ -187,13 +187,17 @@ void drawmap() {
 				rectfill(fieldbuff, cnt * BLOCKSIZE, cnt2 * BLOCKSIZE, (cnt + 1) * BLOCKSIZE, (cnt2 + 1) * BLOCKSIZE, makecol(255,128,0));
 				REDFLAG.x = cnt * BLOCKSIZE;
 				REDFLAG.y = cnt2 * BLOCKSIZE;
+				red_flag_default.x = REDFLAG.x;
+				red_flag_default.y = REDFLAG.y;
 			}
 			/* Draw blue teams flag location */			
 			if (field[cnt2][cnt] == '5') 
 			{
 				rectfill(fieldbuff, cnt * BLOCKSIZE, cnt2 * BLOCKSIZE, (cnt + 1) * BLOCKSIZE, (cnt2 + 1) * BLOCKSIZE, makecol(0,128,255));
 				BLUEFLAG.x = cnt * BLOCKSIZE;
-				BLUEFLAG.y = cnt2 * BLOCKSIZE;			
+				BLUEFLAG.y = cnt2 * BLOCKSIZE;
+				blue_flag_default.x = BLUEFLAG.x;
+				blue_flag_default.y = BLUEFLAG.y;
 			}
 		}
 	}
@@ -263,12 +267,16 @@ void drawmap_features() {
 			{
 				REDFLAG.x = cnt * BLOCKSIZE;
 				REDFLAG.y = cnt2 * BLOCKSIZE;
+				red_flag_default.x = REDFLAG.x;
+				red_flag_default.y = REDFLAG.y;
 			}
 			/* got blue teams flag location */			
 			if (field[cnt2][cnt] == '5') 
 			{
 				BLUEFLAG.x = cnt * BLOCKSIZE;
 				BLUEFLAG.y = cnt2 * BLOCKSIZE;			
+				blue_flag_default.x = BLUEFLAG.x;
+				blue_flag_default.y = BLUEFLAG.y;
 			}
 		}
 	}

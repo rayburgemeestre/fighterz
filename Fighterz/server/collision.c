@@ -539,13 +539,28 @@ int bs_collidecheck(struct data *ptr)
 							tmp2->died = servertime;
 							tmp2->dead = 1;
 							tmp2->power = MAX_HITS;
-							tmp2->x = -100.0;
-							tmp2->y = -100.0;
 
 							tmp->owner->frags++;
 							printf_("*** %s(%d)(%d) got killed by: %s(%d)\n", tmp->owner->nick, tmp->owner->id, tmp->owner->bullet, tmp2->nick, tmp2->id);
 							//soc__NOTUSED__kwrite_all("K %d %d\n", tmp->owner->id, tmp2->id);
 							send_kill(EVERYONE, NULL, tmp2->id, tmp->owner->id, ""); /* "" = '\0' = default kill text */
+
+							// flag stuff
+							if (id_has_redflag == tmp2->id)
+							{
+								id_has_redflag = -1;
+								REDFLAG.x = tmp2->x;
+								REDFLAG.y = tmp2->y;
+							}
+							else if (id_has_blueflag == tmp2->id)
+							{
+								id_has_blueflag = -1;
+								BLUEFLAG.x = tmp2->x;
+								BLUEFLAG.y = tmp2->y;
+							}
+							
+							tmp2->x = -100.0;
+							tmp2->y = -100.0;
 						}
 
 						del_bullet(tmp);

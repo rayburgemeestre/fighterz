@@ -83,7 +83,7 @@ struct data *add_player(ID sock_fd)
 		head->x = (double)(RED.x + BLOCKSIZE / 2);
 		head->y = (double)(RED.y + BLOCKSIZE / 2);
 	} else {
-		head->team = 0;
+		head->team = 2;
 		blue_team_count++;
 		head->x = (double)(BLUE.x + BLOCKSIZE / 2);
 		head->y = (double)(BLUE.y + BLOCKSIZE / 2);
@@ -161,7 +161,7 @@ struct data *add_bot()
 		head->x = (double)(RED.x + BLOCKSIZE / 2);
 		head->y = (double)(RED.y + BLOCKSIZE / 2);
 	} else {
-		head->team = 0;
+		head->team = 2;
 		blue_team_count++;
 		head->x = (double)(BLUE.x + BLOCKSIZE / 2);
 		head->y = (double)(BLUE.y + BLOCKSIZE / 2);
@@ -266,6 +266,9 @@ void printplayerlist()
 		current = current->next;
 	}
 	printf_("---------------------------------------\n");
+
+	printf_("redflag carrier=%d\n", id_has_redflag);
+	printf_("blueflag carrier=%d\n", id_has_blueflag);
 }
 
 // sendulist(id); will send already connected players

@@ -221,8 +221,11 @@ void drawgraphics()
 	masked_blit(shipbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 
 	if (show_fps == 1 && head != NULL) 
-		textprintf(tmpscreen, font, 1, 1, 15, "FPS: %d spd:%.2f lg:%2.2f bc:%du", fps, (head != NULL?head->speed:0.0), (head != NULL?current_lag(head->id):0.0), head->bulletcnt);
+	{
+		textprintf(tmpscreen, font, 1, 1, 15, "FPS: %d spd:%.2f lg:%2.2f bc:%du  %d,%d", fps, (head != NULL?head->speed:0.0), (head != NULL?current_lag(head->id):0.0), head->bulletcnt,
+		(int)REDFLAG.x, (int)REDFLAG.y);
 			/* shows: fps, speed, lag, bulletcount.. */
+	}
 
 	drawconsole();
 

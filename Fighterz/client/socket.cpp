@@ -218,6 +218,43 @@ void dopacket(int xtype, unsigned short len, char *dta)
 
 			return;
 		}
+		case SMSG_FLAGREST:
+		{
+		unsigned int restorer_id;
+		unsigned int code;
+
+			if (!get_u32(&restorer_id, &dta, &len))
+				goto fatal;
+			if (!get_u32(&code, &dta, &len))
+				goto fatal;
+			
+			addtext("restorer_id id=%lu,code=%lu", restorer_id, code);			
+			m_flagrestorer(restorer_id, code);
+
+			return;
+		}
+		case SMSG_FLAGCAPT:
+		{
+		unsigned int capturer_id;
+		unsigned int code;
+		unsigned int red_team_score;
+		unsigned int blue_team_score;
+
+			if (!get_u32(&capturer_id, &dta, &len))
+				goto fatal;
+			if (!get_u32(&code, &dta, &len))
+				goto fatal;
+			if (!get_u32(&red_team_score, &dta, &len))
+				goto fatal;
+			if (!get_u32(&blue_team_score, &dta, &len))
+				goto fatal;
+			
+			addtext("flag_capturer id=%lu,code=%lu,points red=%lu,blue=%lu", capturer_id, code,
+				red_team_score, blue_team_score);			
+			m_flagcapturer(capturer_id, code, red_team_score, blue_team_score);
+
+			return;
+		}
 		case SMSG_CLEARFIELD:
 		{
 			m_clearfield();
@@ -698,6 +735,53 @@ PLAYER lnk = getplayer_byid( carrier_id );
 
 }
 
+void m_flagrestorer(unsigned int restorer_id, unsigned int code)
+{
+PLAYER lnk = getplayer_byid( restorer_id );
+
+	if (NULL == lnk)
+	{
+		addtext("restorer_id=%d THATS NOT A VALID ID!", restorer_id);
+		return;
+	}
+
+	if (code == 1)
+	{
+		red_flag_x = red_flag_def_x;
+		red_flag_y = red_flag_def_y;
+	} else {
+		blue_flag_x = blue_flag_def_x;
+		blue_flag_y = blue_flag_def_y;
+	}
+
+	large_text("%s restored the %s flag!", lnk->nick, code == 1 ? "red" : "blue");
+}
+
+void m_flagcapturer(unsigned int capturer_id, unsigned int code, 
+					unsigned int red_team_score, unsigned int blue_team_score)
+{
+PLAYER lnk = getplayer_byid( capturer_id );
+
+	if (NULL == lnk)
+	{
+		addtext("capturer_id=%d THATS NOT A VALID ID!", capturer_id);
+		return;
+	}
+
+	if (code == 1)
+	{
+		red_flag_carrier = -1;
+		red_flag_x = red_flag_def_x;
+		red_flag_y = red_flag_def_y;
+	} else {
+		blue_flag_carrier = -1;
+		blue_flag_x = blue_flag_def_x;
+		blue_flag_y = blue_flag_def_y;
+	}
+	
+	large_text("%s captured the %s flag!", lnk->nick, code == 1 ? "red" : "blue");
+}
+
 void m_blockinfo(int w, int h, int size)
 {
 	map_blocks_y = h;
@@ -780,6 +864,20 @@ void m_kick( unsigned int id, char *reason )
 	}
 
 	add_explosion(node->x, node->y, 250, 10, makecol(255,0,0));
+	
+	//flagstuff
+	if (red_flag_carrier == node->id)
+	{
+		red_flag_carrier = -1;
+		red_flag_x = node->x;
+		red_flag_y = node->y;
+	}
+	if (blue_flag_carrier == node->id)
+	{
+		blue_flag_carrier = -1;
+		blue_flag_x = node->x;
+		blue_flag_y = node->y;
+	}
 }
 
 void m_quit(unsigned int id, char *quit_msg)
@@ -801,6 +899,20 @@ void m_quit(unsigned int id, char *quit_msg)
 		verbose("*** Disconnected [%s]", quit_msg);
 		; // we dead ;)
 	}
+	
+	//flagstuff
+	if (red_flag_carrier == current->id)
+	{
+		red_flag_carrier = -1;
+		red_flag_x = current->x;
+		red_flag_y = current->y;
+	}
+	if (blue_flag_carrier == current->id)
+	{
+		blue_flag_carrier = -1;
+		blue_flag_x = current->x;
+		blue_flag_y = current->y;
+	}
 }
 
 void m_spawnready()
@@ -810,6 +922,8 @@ void m_spawnready()
 	our_spawnstatus = 1;
 	our_spawnrequested = 0;
 	our_node->dead = 2;
+
+//flagstuff *snip*
 
 	set_window_title("Fighterz -- Hit fire to respawn");
 	set_map_coords();
@@ -914,6 +1028,20 @@ void m_kill(unsigned int victimid, unsigned int evilid, char *killstr)
 		add_explosion(victim_node->x, victim_node->y, 250, 10, makecol(255,0,0));
 	} else {
 		die("evil_node or victim_node is NULL");
+	}
+
+	//flagstuff
+	if (red_flag_carrier == victim_node->id)
+	{
+		red_flag_carrier = -1;
+		red_flag_x = victim_node->x;
+		red_flag_y = victim_node->y;
+	}
+	if (blue_flag_carrier == victim_node->id)
+	{
+		blue_flag_carrier = -1;
+		blue_flag_x = victim_node->x;
+		blue_flag_y = victim_node->y;
 	}
 }
 

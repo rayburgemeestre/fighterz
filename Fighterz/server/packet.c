@@ -278,10 +278,26 @@ size_t len;
 			ptr += 5;
 			temp = atoi(ptr);
 			node = getplayer_byid(temp);
+			if (!node)
+				return;
 
 			sprintf(buf, "Kicked by: %s", client->nick);
 			node->dead = 3; // Dead @ 3 is disabled
-			softkick_player(node, buf);			
+			softkick_player(node, buf);
+
+			//flagstuff
+			if (id_has_redflag == node->id)
+			{
+				id_has_redflag = -1;
+				REDFLAG.x = node->x;
+				REDFLAG.y = node->y;
+			}
+			else if (id_has_blueflag == node->id)
+			{
+				id_has_blueflag = -1;
+				REDFLAG.x = node->x;
+				REDFLAG.y = node->y;
+			}
 		}
 	}
 	else if (!strncmp(cmd, "skick ", 6))
@@ -302,21 +318,73 @@ size_t len;
 			sprintf(buf, "Kicked from server by: %s", client->nick);
 			quit_player(node, buf);
 			del_tha_player(node);
+			
+			//flagstuff
+			if (id_has_redflag == node->id)
+			{
+				id_has_redflag = -1;
+				REDFLAG.x = node->x;
+				REDFLAG.y = node->y;
+			}
+			else if (id_has_blueflag == node->id)
+			{
+				id_has_blueflag = -1;
+				BLUEFLAG.x = node->x;
+				BLUEFLAG.y = node->y;
+			}
 		}
 	}
 	else if (!strcmp(cmd, "spec"))
 	{
+		if (1 == 2)
+		{//deprecated
 		// del_tha_player(client);
 		client->velocity = 0;
 		client->speed = 0;
 		client->dead = 2;
 		send_spawnready(client);
 		// softkick_player(client, "Spectator mode");
+		} else {
+			client->velocity = 0;
+			client->speed = 0;
+			client->dead = 2;
+			client->dead = 2;
+			softkick_player(client, "Thou shall spectate");
+			send_spawnready(client);
+		}
+
+		//flagstuff
+		if (id_has_redflag == client->id)
+		{
+			id_has_redflag = -1;
+			REDFLAG.x = client->x;
+			REDFLAG.y = client->y;
+		}
+		else if (id_has_blueflag == client->id)
+		{
+			id_has_blueflag = -1;
+			BLUEFLAG.x = client->x;
+			BLUEFLAG.y = client->y;
+		}
 	}
 	else if (!strcmp(cmd, "respawn"))
 	{
 		client->dead = 2;
 		send_spawnready(client);		
+
+		//flagstuff
+		if (id_has_redflag == client->id)
+		{
+			id_has_redflag = -1;
+			REDFLAG.x = client->x;
+			REDFLAG.y = client->y;
+		}
+		else if (id_has_blueflag == client->id)
+		{
+			id_has_blueflag = -1;
+			BLUEFLAG.x = client->x;
+			BLUEFLAG.y = client->y;
+		}
 	}
 	else if (!strcmp(cmd, "godme")) // todo: auth needed :]
 	{
@@ -393,6 +461,7 @@ again:
 	else if (!strcmp(cmd, "ship3")) { client->shiptype = 3; send_newship(client); }
 	else if (!strcmp(cmd, "ship4")) { client->shiptype = 4; send_newship(client); }
 	else if (!strcmp(cmd, "ship5")) { client->shiptype = 5; send_newship(client); }
+	else if (!strcmp(cmd, "ship6")) { client->shiptype = 6; send_newship(client); }
 }
 
 static void m_say(struct data *client, char *txt)

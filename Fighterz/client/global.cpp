@@ -501,7 +501,7 @@ void printulist()
 	//blue
 	for (current=head; current; current=current->next)
 	{
-		if (current->team != 0)
+		if (current->team != 2)
 			continue;
 
 		if (current->bullet != 1)
@@ -530,7 +530,7 @@ int color;
 	if (strlen(node->nick) > 10) 
 		node->nick[10] = '\0'; /* frag >10 */
 
-	if (node->team == 0)
+	if (node->team == 2)
 	{	
 		if (node->invincible == 2) color = makecol(0, 135, 185); // invincible
 		else if (node->invincible == 1) color = makecol(0, 156, 241); // respawned 
