@@ -26,7 +26,7 @@ LINK current;
 		}
 		printf("send_packet -> %u xtype: 0x%.2X%.2X\n",
 			(unsigned int)client->id, (unsigned char)*pktin, (unsigned char)*(pktin+1));
-		n = send(client->id, pkt, len + 2, 0);
+		n = send(client->id, pkt, len + 2, MSG_NOSIGNAL);
 		if (n != len+2)
 		{
 			SetDeadSend(client);
@@ -43,7 +43,7 @@ LINK current;
 			{
 				printf("send_packet BC! -> %u xtype: 0x%.2X%.2X\n",
 					(unsigned int)current->id, (unsigned char)*pktin, (unsigned char)*(pktin+1));
-				n = send(current->id, pkt, len + 2, 0);
+				n = send(current->id, pkt, len + 2, MSG_NOSIGNAL);
 				if (n != len+2)
 				{
 					SetDeadSend(current);
