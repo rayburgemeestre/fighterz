@@ -4,7 +4,7 @@ int current_bmp_df_index = 0;
 void mainloop()
 {
 DIALOG_PLAYER *player;
-int x_offset = 0, y_offset = 0, ret;
+int x_offset = 0, y_offset = 0;
 struct timeb t, starttime;
 unsigned long ourtime = 0;
 int last_zoom_time = 0;
@@ -52,8 +52,6 @@ int bmp_df_h, bmp_df_w;
             {
                 if (the_dialog[DLG_NORMAL_WALL_CHECK].flags & D_SELECTED)
                 {
-                char buf[512];
-
                     mapdata[y][x] = '1';
                     if (mouse_x <= (x_width * BLOCKSIZE) &&
                         mouse_y <= (y_width * BLOCKSIZE))
@@ -123,7 +121,7 @@ int bmp_df_h, bmp_df_w;
                 }
                 else if (the_dialog[DLG_BG_IMG_CHECK].flags & D_SELECTED)
                 {
-                char buf[512], df_nam[128], *ptr = df_path, *ptr2 = df_path;
+                char buf[512], *ptr = df_path, *ptr2 = df_path;
                 int i = 0, bool = 0;
                 int w = ((BITMAP *)df[atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1])].dat)->w,
                     h = ((BITMAP *)df[atoi(bmp_df[the_dialog[DLG_BG_IMG_LIST].d1])].dat)->h,

@@ -51,7 +51,7 @@ char buffer[512] = "";
                 if (strlen(line) <= 2)
                     die("Invalid line input while reading mapfile");
                 strcpy(mapdata[cnt], (ptr + 2));
-                if (strlen(ptr+2) > x_width)
+                if ((signed)strlen(ptr+2) > x_width)
                     x_width = strlen(ptr+2);
                 y_width++;
                 cnt++;
@@ -76,6 +76,8 @@ char buffer[512] = "";
             (y_width * BLOCKSIZE)+1);
         // alert(tmp, "", "", "", NULL, 1, 1);
     }
+
+	return 0;
 }
 
 void drawmap()
@@ -102,7 +104,7 @@ int cnt, cnt2;
     for (cnt=0; cnt < 32 && strlen(current_bmp_df[cnt]) >= 1; cnt++)
     {
     int df_id, pos_x, pos_y;
-    char buf[512], datafile[512], *fptr;
+    char buf[512], datafile[512];
 
     char *s;
     char b[256];
@@ -120,7 +122,6 @@ int cnt, cnt2;
 
 	for (cnt=0; cnt < y_width; cnt++)
 	{
-        char buf[512];
 		line(scrn_field, 0, (cnt * BLOCKSIZE), (x_width * BLOCKSIZE),
             (cnt * BLOCKSIZE), makecol(128, 128, 128));
 	}

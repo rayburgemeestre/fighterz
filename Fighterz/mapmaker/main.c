@@ -14,7 +14,7 @@ char edit_y_width[64];
 void die(char *diemsg)
 {
     alert("Fatal error:", diemsg, "shutting down..", "OK", NULL, 0, 0);
-    terminate();
+    exit(-1);
 }
 
 int main()
@@ -24,8 +24,6 @@ int main()
     init_datafile(0, DEFAULT_DATA_FILE);
     init_help();
     mainloop();
-    terminate();
-
     return 0;
 }     
 

@@ -1,4 +1,8 @@
 #include "data.h"
+
+#include <stdio.h>
+#include <string.h>
+
 #include <allegro.h>
 #include <time.h>
 #include <sys/types.h>
@@ -48,5 +52,13 @@ extern char *bmp_images(int index, int *list_size);
 extern char *current_bmp_images(int index, int *list_size);
 extern char bmp_df[32][128];
 extern char current_bmp_df[32][128];
+extern void die(char *diemsg);
+extern void init();
+extern void init_help();
+extern int init_datafile(int allow_cancel, char *arg_df_path);
+extern int init_map(int allow_cancel);
+extern void init_dlg_vars();
+extern void mainloop();
+extern void drawmap();
 
 extern int df_index;

@@ -84,4 +84,6 @@ if (allow_cancel != 0)
             i++;
         }
     }
+
+	return 0;
 }
