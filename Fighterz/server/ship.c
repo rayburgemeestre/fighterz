@@ -46,6 +46,7 @@ LINK current = head;
 							current->y = (double)(BLUE.y + (BLOCKSIZE / 2));
 							current->dead = 0;
 							notify_of_respawn(EVERYONE, NULL, current);
+							flyto(current->id, REDFLAG.x, REDFLAG.y);
 						}
 					}
 				}
@@ -120,7 +121,7 @@ for (cnt=0; cnt<times; cnt++)
 
 	if (current->velocity == 1)
 	{ 
-		if (current->speed < SPEED)
+		if (current->speed < current->max_speed)
 			current->speed += 0.01;
 	}
 	else if (current->velocity == 0.00)
@@ -143,7 +144,7 @@ for (cnt=0; cnt<times; cnt++)
 	}
 	else if (current->velocity == -1)
 	{
-		if (current->speed > (-1 * SPEED))
+		if (current->speed > (-1 * current->max_speed))
 			current->speed -= 0.01;
 	}
 	else
@@ -601,6 +602,7 @@ void flyto(int id, double x, double y)
 	// tmp->velocity = 2;
 	tmp->velocity = 1;
 	tmp->speed = 0.00;
+	verbose("flyto speed @ max: %.2f" , tmp->max_speed);
 	
 	send_turn(EVERYONE, NULL, tmp->id, tmp->x, tmp->y, (signed char)tmp->turn, tmp->deg);
 	send_accel(EVERYONE, NULL, tmp->id, tmp->x, tmp->y, (signed char)tmp->velocity, tmp->speed);

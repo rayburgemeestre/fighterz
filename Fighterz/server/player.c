@@ -45,6 +45,7 @@ struct data *add_player(ID sock_fd)
 	head->turn_t = servertime;
 	head->velocity = 0;
 	head->speed = 0.0;
+	head->max_speed = 0.2;
 	head->vel_time = servertime;
 	head->alive = 0; /* seconds in the game*/
 	//head->score_update = time(NULL);
@@ -112,6 +113,7 @@ struct data *add_bot()
 	head->turn = 0;
 	head->turn_t = servertime;
 	head->speed = 0.00;
+	head->max_speed = 0.10;
 	head->velocity = 0;
 	head->vel_time = servertime;
 	head->alive = 0; /* seconds in the game*/

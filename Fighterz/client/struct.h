@@ -18,7 +18,8 @@ struct data {
 	double deg; /**< degrees (0 to 360), where it's heading towards */
 	unsigned long t; /**< contains the time of the object (used for movement calculations) */
 	unsigned int move; /**< pending amount of times this ship should be moved */
-	double speed; /**< speed of object (between -0.20 and 0.20) */
+	double speed; /**< speed of object (between -0.20 and 0.20, 0.20 defined in max_speed!!!!!) */
+	double max_speed;
 	unsigned long vel_time; /**< used to calculate the thrust speed etc, 
 								 this is (just as 't') all relative to time ever 
 	                             X millisecs increase speed with X etc.. */
@@ -101,6 +102,7 @@ struct option_
 	int y; /**< Y position of item on the screen */
 	int r, g, b; /**< Items colors */
 	unsigned long time; /**< Used to constrain time to the highlight effect */
+	int flicker; /**< Flicker on or off */
 	char str[100]; /**< The caption of the item */
 };
 

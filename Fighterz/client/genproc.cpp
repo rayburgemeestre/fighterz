@@ -76,7 +76,7 @@ void init()
 	if (USE_SOUND == 1)
 	{
 		bg_music = (MIDI *)df_snd[BG_MUSIC].dat;
-		play_midi(bg_music, TRUE);
+		intro_music = (MIDI *)df_snd[METAMORPHOSIS4].dat;
 	}
 #endif
 }
@@ -116,7 +116,7 @@ void start()
 	LEFT_2 = (SCREEN_X - 150) - LEFT;
 	/*					^ lists width */
 	
-	SPEED_2 = SPEED;
+	//SPEED_2 = SPEED; // NOT USED???
 	B_SPEED_2 = B_SPEED;
 	
 // snipped: asdfasdfasdf
@@ -168,6 +168,10 @@ void init_screen()
 	}
 }
 
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!!!!!!!!!!!! DEPRECATED !!!!!!!!!!!!!!!!!!! ?? LOL ik laat echt te veel staan ;)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 void add_player(int _id, int _x, int _y, int _deg, int _move, int _turn,  
 				int _velocity, int _alive, int _kills, int _killavg, 
 				int _bot, double _speed, int _dead, char *_nick)
@@ -202,6 +206,7 @@ void add_player(int _id, int _x, int _y, int _deg, int _move, int _turn,
 	head->turn_t = ourtime;
 	head->velocity = _velocity;
 	head->speed = _speed;
+	head->max_speed = 0.20;
 	head->alive = _alive; /* seconds in the game*/
 	head->kills = _kills;
 	head->kills_avg = _killavg;
@@ -400,7 +405,7 @@ void initialize_vars()
 	BOUNCING_BULLETS = 0;
 	MOVE_STEPW = 1; 
 	MOVE_BSTEPW = 1;
-	SPEED = 0.20; 
+	// DEPRECATED SPEED = 0.20; now: playerObj->max_speed!!!!!!
 	B_SPEED = 0.40;
 	TXTPTR = 0; 
 	TXTPTR2 = 0; 
@@ -431,7 +436,7 @@ void initialize_vars()
 	CSCREEN_H = 30;
 	ZOOM = 0;
 	zoom_time = 0;
-	MAX_HITS = 10;
+	MAX_HITS = 3;
 	talk = 0;
 	MAX_CHARS_IN_SENTENCE = 80;
 	active_o_item = 0;
@@ -440,6 +445,14 @@ void initialize_vars()
 	tport = 8099;
 	direction_is_up = 1;
 	ftime(&started); /* ret starting time */
+
+	LINK head = NULL;
+	LINK new_node = NULL;
+	LINK current = NULL;
+	LINK our_node = NULL;
+	LINK2 e_head = NULL;
+	LINK2 e_new_node = NULL;
+	LINK2 e_current = NULL;
 
 	buffer = (char *)malloc(8192);
 }
@@ -494,7 +507,8 @@ clear_to_color(CONSOLE, 0);
 		show_graphics();
 //
 	}
-	destroy_midi(bg_music);
+	alert("end of mainloop", "", "", "", NULL, 0, 0);
+	stop_midi();
 }
 
 void die(char *s)

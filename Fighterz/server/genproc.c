@@ -169,7 +169,7 @@ void parse_input()
 			// findpath(head);
 			bot = add_bot();
 			notify_of_newuser(EVERYONE, NULL, bot);
-			flyto((bot_id - 1), REDFLAG.x, REDFLAG.y);
+			flyto(bot->id, REDFLAG.x, REDFLAG.y);
 			// addtext("2: %d", head->bot);
 			//}
 		}
@@ -244,7 +244,6 @@ void initialize_vars()
 {
 	path_calc_dbg_on = 0; // == off
 
-	SPEED = 0.20;
 	// lag_check = 0;
 	player_nr = 0;
 	LAG_CHECKS = 5; 
@@ -259,7 +258,7 @@ void initialize_vars()
 	BULLET_TTL = 3000;
 	MOVE_BSTEPW = 1;
 	B_SPEED = 0.40;
-	MAX_HITS = 10;
+	MAX_HITS = 3;
 	MAX_CHARS_IN_SENTENCE = 80;
 	bot_id = 1000;
 	debug_level = 0;
@@ -362,90 +361,35 @@ double getangle(double x1, double y1, double x2, double y2)
 
 int valid_target(double x1, double y1, double x2, double y2, double precision)
 {
-	int collided, radius, i;
-	double left_wing_deg, right_wing_deg; 
-	double lw_x, lw_y; /* leftwing x,y */
-	double rw_x, rw_y; /* rightwing x,y */
+int collided, radius, i;
+double left_wing_deg, right_wing_deg; 
+double lw_x, lw_y; /* leftwing x,y */
+double rw_x, rw_y; /* rightwing x,y */
 
-	double tmp_x, tmp_y;
-	double cur_x, cur_y;
-	double deg, ret;
+double tmp_x, tmp_y;
+double cur_x, cur_y;
+double deg, ret;
 
-	cur_x = x1;
-	cur_y = y1;
-
-//	fprintf(juub, "IN THE BEGINNING: X: %.2f Y:%.2f\n", cur_x, cur_y);
-
-	radius = BLOCKSIZE / 2;
-
-	deg = getangle(x2, y2, cur_x, cur_y);
-//	fprintf(juub, "I> x: %.2f y: %.2f x: %.2f y: %.2f deg: %.2f\n", x2, y2, cur_x, cur_y, deg);
-
-//	circlefill(fieldbuff, 970, 110, 22, makecol(255,255,255));
-
+	cur_x    = x1;
+	cur_y    = y1;
+	radius   = BLOCKSIZE / 2;
+	deg      = getangle(x2, y2, cur_x, cur_y);
 	collided = 0;
-	//fprintf(juub, "abs(%.2f - %.2f) = %d\n", cur_x, x2, abs(cur_x - x2) );
-	//fprintf(juub, "abs(%.2f - %.2f) = %d\n", cur_y, y2, abs(cur_y - y2) );
+	i        = 0;
 
-	i = 0;
 
-	/* werkt alleen in 'we are 4' XXXXXXZ */
-
-	/* KEEP */
-	//circlefill(fieldbuff, x2 - field_width, y2 - field_height, 5, makecol(0,255,temprrr));
-
-	temprrr += 5;
-
-//	circle(fieldbuff, x1, y1, 10, makecol(255,0,0));
-
-							/* was BLOCKSIZE / 2 */
 	while (
 		(dabs(cur_x - x2) > precision || dabs(cur_y - y2) > precision )
     )
 	{
-
-//fprintf(juub, "1> x: %.2f y: %.2f deg: %.2f\n", cur_x, cur_y, deg);
-
-	//	i++;
-	//	if (i == 100)
-	//		exit(-1);
-
-
-/*if (element > 0)
-{
-	blit (fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
-	blit (tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
-	alert("","","","","",1,1);
-}*/
-		
-		
-		/* if (deg == 270)
-		{
-
-			char buf[500];
-
-	blit (fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
-	blit (tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
-
-			sprintf(buf, "x1:%.2f y1:%.2f x2:%.2f y2:%.2f", x1, y1, x2, y2);
-		alert(buf, "","","","",1,1);
-		} */
-
-		//addtext("%.2f <---", deg);
-
-		//fprintf(juub, "ATM x is: %.2f y is:%.2f\n", cur_x, cur_y);
 		tmp_x = vtX(cur_x, deg);
 
-		//fprintf(juub, "BEFORE y is: %.2f \n", cur_y);
 		tmp_y = vtY(cur_y, deg);
-		//fprintf(juub, "AFTER y is: %.2f \n", tmp_y);
-
-//fprintf(juub, "abs(%.2f - %.2f) = %d\n", tmp_x, x2, abs(tmp_x - x2) );
-//fprintf(juub, "abs(%.2f - %.2f) = %d\n", tmp_y, y2, abs(tmp_y - y2) );
-
+		
 		/* We need some side coords */
 		left_wing_deg = deg + 90;
 		right_wing_deg = deg - 90;
+
 			/* left wing */
 		ret = (PI / 180) * (left_wing_deg - 90);
 		lw_x = cos(ret);
@@ -456,6 +400,7 @@ int valid_target(double x1, double y1, double x2, double y2, double precision)
 		lw_y = lw_y * (radius / 2);
 		lw_y = lw_y + radius;
 		lw_y = lw_y + tmp_y - (BLOCKSIZE / 2);
+
 			/* right wing */
 		ret = (PI / 180) * (right_wing_deg - 90);
 		rw_x = cos(ret);
@@ -469,75 +414,40 @@ int valid_target(double x1, double y1, double x2, double y2, double precision)
 
 		/* Check if tmp_x/tmp_y collide with something :) */
 		
-		// circle(tmpscreen, tmp_x, tmp_y, 5, makecol(255, 255, 255));
-		//fprintf(juub, "t> x: %.2f y: %.2f deg: %.2f\n", tmp_x, tmp_y, deg);
-		/* Werkt nu dus alleen in een 'We are 4' situatie :) XXXXXXZ */
-		//putpixel(fieldbuff, tmp_x - field_width, tmp_y - field_height , makecol(255,0,0));
-		//putpixel(fieldbuff, lw_x - field_width, lw_y - field_height, makecol(0,255,0));
-		//putpixel(fieldbuff, rw_x - field_width, rw_y - field_height, makecol(0,0,255));
-
-
-	//	fprintf(juub, "  -> %d - %d - %d\n", (int)(tmp_x / BLOCKSIZE), (int)(tmp_y / BLOCKSIZE), 
-	//		map[(int)(tmp_y / BLOCKSIZE)][(int)(tmp_x / BLOCKSIZE)]	
-	//	);
-		
-		//fprintf(juub, "2> x: %.2f y: %.2f deg: %.2f\n", cur_x, cur_y, deg);
 		if (map[(int)(tmp_y / BLOCKSIZE)][(int)(tmp_x / BLOCKSIZE)] == 16384)
-		{
 			collided = 1;
-			//fprintf(juub, "!COLLIDED!1\n");
-			//circlefill(fieldbuff, tmp_x, tmp_y, 11, makecol(0,0,255));
-			//circlefill(fieldbuff, tmp_x - field_width, tmp_y, 11, makecol(0,0,255));
-		}
+
 		if (map[(int)(lw_y / BLOCKSIZE)][(int)(lw_x / BLOCKSIZE)] == 16384)
-		{
 			collided = 1;
-			//fprintf(juub, "!COLLIDED!2\n");
-		}
+
 		if (map[(int)(rw_y / BLOCKSIZE)][(int)(rw_x / BLOCKSIZE)] == 16384)
+			collided = 1;
+
+		/* temp added */
+		if (map[(int)((tmp_y - (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x - (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
 		{
 			collided = 1;
-			//fprintf(juub, "!COLLIDED!3\n");
 		}
-/* temp added */
-if (map[(int)((tmp_y - (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x - (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
-{
-	collided = 1;
-}
-if (map[(int)((tmp_y - (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
-{
-	collided = 1;
-}
-if (map[(int)((tmp_y + (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
-{
-	collided = 1;
-}
-if (map[(int)((tmp_y + (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x - (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
-{
-	collided = 1;
-}
-/* /end */
-		/*if (map[(int)((tmp_y + (BLOCKSIZE / 2)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 2)) / BLOCKSIZE)] == 16384)
+		if (map[(int)((tmp_y - (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
+		{
 			collided = 1;
-		if (map[(int)((lw_y + (BLOCKSIZE / 2)) / BLOCKSIZE)][(int)((lw_x + (BLOCKSIZE / 2)) / BLOCKSIZE)] == 16384)
+		}
+		if (map[(int)((tmp_y + (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
+		{
 			collided = 1;
-		if (map[(int)((rw_y + (BLOCKSIZE / 2)) / BLOCKSIZE)][(int)((rw_x + (BLOCKSIZE / 2)) / BLOCKSIZE)] == 16384)
+		}
+		if (map[(int)((tmp_y + (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x - (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
+		{
 			collided = 1;
-			*/
+		}
 
 		cur_x = tmp_x;
 		cur_y = tmp_y;
 
 		if (collided == 1)
-			return 1;
-
-		
-
-			//map_draw_path2();
-
+			return 1;	
 	}
 
-	//fprintf(juub, "RETURNING\n");
 	return 0;
 }
 

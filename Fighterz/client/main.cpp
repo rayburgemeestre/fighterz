@@ -19,6 +19,7 @@
 ****************************************************/
 
 MIDI *bg_music;
+MIDI *intro_music;
 /* (sub)bitmap buffers */
 BITMAP *tmpscreen; /**< Primary bitmap screen buffer used to draw everything on */
 BITMAP *fieldbuff; /**< Screen bitmap buffer used to draw the field to once (after that this 
@@ -37,8 +38,8 @@ int MOVE_STEPW; /**< Amount of times to move will be multiplied by this. So
                      i recommend you to let this stay @ 1. But if you make it 2
                      all the ships  shall go twice as fast, because instead of
                      moving the ships 1 time, it will be done 2 times. */
-double SPEED; /**< ship/bot: pixels to move every step :) 
-                   should be in sync with clients, example: 0.20 (pixels) */
+//DEPR: double SPEED; /**< ship/bot: pixels to move every step :) 
+                   //should be in sync with clients, example: 0.20 (pixels) */
 double B_SPEED; /**< bullet: pixels to move every step :) 
 					 should be in sync with clients, example: 0.40 (pixels) */
 /* ON SCREEN: example; if you are zoomed in everything should move twice as fast 
@@ -185,84 +186,104 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 	char *ptr, *ip, *port;
 	int ret, skip_options;
 
-#if DEBUG == 1
-	if ((dbug = fopen("debug.log", "w+")) == NULL)
-	{	perror("SLDKFj");
-		terminate();
-	}
-#endif
-
-	initialize_vars();
-
-	init(); /* initialize stuff */
-    
-	config( (strlen(lpszArgument) == 0 ? 0 : 1 ) );
-	/* TEMPORARY: */
-	FULLSCREEN = 0;
-
-	ptr = NULL; port = NULL;
-	ptr = lpszArgument;
-	/* 11 = strlen of: fighterz:// */
-	if (strlen(ptr) >= 11)
+	while (!key[KEY_ESC])
 	{
-		ptr += 11;
-		if (ptr != NULL)
+#if DEBUG == 1
+		if ((dbug = fopen("debug.log", "w+")) == NULL)
+		{	perror("SLDKFj");
+			terminate();
+		}
+#endif
+		initialize_vars();
+
+		init(); /* initialize stuff */
+
+		config( (strlen(lpszArgument) == 0 ? 0 : 1 ) );
+		/* TEMPORARY: */
+		FULLSCREEN = 0;
+
+		ptr = NULL; port = NULL;
+		ptr = lpszArgument;
+		/* 11 = strlen of: fighterz:// */
+		if (strlen(ptr) >= 11)
 		{
-			/* ptr now contains ip :) */
-			ip = ptr;
-			ptr = NULL;
-			ptr = strchr(ip, ':');
+			ptr += 11;
 			if (ptr != NULL)
 			{
-				/* er zou nog een port moeten zijn */
-				*ptr = '\0';
-				ptr++;
+				/* ptr now contains ip :) */
+				ip = ptr;
+				ptr = NULL;
+				ptr = strchr(ip, ':');
 				if (ptr != NULL)
 				{
-					/* er zit hier iets */
-					port = ptr;
-					ptr = strchr(ptr, '/');
+					/* er zou nog een port moeten zijn */
+					*ptr = '\0';
+					ptr++;
 					if (ptr != NULL)
 					{
-						*ptr = '\0'; /* weg met die crap */
+						/* er zit hier iets */
+						port = ptr;
+						ptr = strchr(ptr, '/');
+						if (ptr != NULL)
+						{
+							*ptr = '\0'; /* weg met die crap */
+						}
+						tport = atoi(port);
 					}
-					tport = atoi(port);
 				}
+				strcpy(taddr, ip);
+				skip_options = 0;
 			}
-			strcpy(taddr, ip);
-			skip_options = 1;
 		}
+
+		if (skip_options != 1)
+		{
+			clear_to_color(screen, makecol(0,0,0));
+			play_midi(intro_music, TRUE);
+			textprintf_centre(screen, (FONT *)dataf[ARCADE].dat, SCREEN_X / 2, 
+				SCREEN_Y / 2, makecol(0,255,128), "Tachyon Fighterz");
+			Sleep(4000);
+			ret = getoptions();
+			stop_midi();
+			play_midi(bg_music, TRUE);
+		}
+		else
+			ret = 0;
+
+		TXTPTR = 0;
+
+		switch (ret)
+		{
+			case 0:
+				start();
+				mainloop(); /* activate the main loop */
+				break;
+			case 1:
+				start();
+				mainloop(); /* activate the main loop */
+				break;
+			case 2:
+				break;
+			default:
+				break;
+		}
+
+			WSACleanup();
+#if DEBUG == 1
+			fclose(dbug);
+#endif DEBUG
+
+		// we need a de_initiatlize_vars here
+			// to free linked lists etc,
+			// if we let the while continue, the program crashes, so:
+			break;
 	}
 
-	if (skip_options != 1 && 0 == 1) /* temp */
-		ret = getoptions();
-	else
-		ret = 0;
-
-	TXTPTR = 0;
-
-	switch (ret)
-	{
-		case 0:
-			start();
-			mainloop(); /* activate the main loop */
-			break;
-		case 1:
-			start();
-			mainloop(); /* activate the main loop */
-			break;
-		case 2:
-			break;
-		default:
-			break;
-	}
+	destroy_midi(bg_music);
+	destroy_midi(intro_music);
 
 	/* exit program */
 	allegro_exit(); 
-	WSACleanup();
-#if DEBUG == 1
-	fclose(dbug);
-#endif DEBUG
 	return 0; 
 }	 
 // END_OF_MAIN();

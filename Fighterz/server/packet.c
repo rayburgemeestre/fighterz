@@ -329,6 +329,35 @@ size_t len;
 	{
 		// TODO: send nick back ;))
 	}
+	else if (!strcmp(cmd, "addbot"))
+	{
+		struct data *bot;
+		// findpath(head);
+		bot = add_bot();
+		notify_of_newuser(EVERYONE, NULL, bot);
+		
+		notify_of_respawn(EVERYONE, NULL, bot);
+		flyto((bot_id - 1), REDFLAG.x, REDFLAG.y);
+	}
+	else if (!strcmp(cmd, "delall"))
+	{
+		LINK x;
+again:
+		x = head;
+		while (x != NULL)
+		{
+			if (x->bot == 1)
+			{
+				x->errmsg = strdup("Removed from botnet");
+				quit_player(x, x->errmsg);
+				del_tha_player(x);
+				goto again;
+			}
+
+			x = x->next;
+		}
+		return;
+	}
 }
 
 static void m_say(struct data *client, char *txt)

@@ -2,7 +2,7 @@
 *  VARIABLES
 ****************************************************/
 
-extern double SPEED;
+//DEPRECATED: extern double SPEED;
 extern struct timeb t; 
 extern struct timeb started; 
 #if WINDOWS != 1

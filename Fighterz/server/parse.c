@@ -234,15 +234,16 @@ void parse2(int sock_id, char *stuff)
 
 				return;
 			}
-#if 1 == 2
 			if (!strcmp(ptr, ".addbot"))
 			{
-				add_bot();
-				notify_of_newuser(bot_id - 1);
-				flyto((bot_id - 1), REDFLAG.x, REDFLAG.y); /* hehe */
+/*				add_bot();
+				//asdfasdfvoid notify_of_newuser(struct data *client, struct data *except, struct data *current)
+				LINK our_bot = getplayer_byid(bot_id - 1);
+				notify_of_newuser(EVERYONE, our_bot);
+
+				flyto((bot_id - 1), REDFLAG.x, REDFLAG.y); *//* hehe */
 				return;
 			}
-#endif
 			if (!strcmp(ptr, ".delall"))
 			{
 				LINK x;

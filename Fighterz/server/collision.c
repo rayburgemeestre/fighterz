@@ -64,38 +64,6 @@ int collidecheck2(struct data *ptr, int nobounce)
 		//if (field[py][px] == 1)
 		//	collided = true;
 
-	// old code
-	// --
-	if (0 == 1)
-	{
-		/* BLOCKSIZE / 4 down the ship */
-		if ((py - 1) > 0)
-		{
-			qy = (int) ((y - (BLOCKSIZE / 4)) / BLOCKSIZE);
-			if (field[qy][px] == '1') collided = 1;
-		}
-		/* BLOCKSIZE / 4 above the ship */
-		if ( (py + 1) <= Y_BLOCKS )
-		{
-			qy = (int)( (y + (BLOCKSIZE / 4) ) / BLOCKSIZE);
-			if (field[qy][px] == '1') collided = 1;
-		}
-		/* BLOCKSIZE / 4 on the right of the ship */
-		if ( (px + 1) <= Y_BLOCKS )
-		{
-			qx = (int)( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE);
-			if (field[py][qx] == '1') collided = 1;
-		} 
-		/* BLOCKSIZE / 4 on the left of the ship */
-		if ( (px - 1) >= 0 )
-		{
-			qx = (int)( ( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE) - 0.5); // dunno why i had to add the - 0.5
-																	// in the VB version it wasn't necessary
-			if (field[py][qx] == '1') {
-				collided = 1;
-			}
-		}
-	}
 	// --
 	// new code
 	// --
@@ -103,7 +71,7 @@ int collidecheck2(struct data *ptr, int nobounce)
 	// --
 	// --
 	// --
-	rdemp = (dabs(current->speed) / SPEED) * (demp_max - demp_min);
+	rdemp = (dabs(current->speed) / current->max_speed) * (demp_max - demp_min);
 	rdemp = (demp_max - demp_min) - rdemp;
 	rdemp = (rdemp > 0 ? rdemp : 1) + demp_min;
 

@@ -331,26 +331,26 @@ if (!our_node)
 					large_text("Normal!");
 					BOUNCING_BULLETS = 0;
 					BULLET_MAX = 10;
-					SPEED = 0.20;
+					//FIX!!!!!!!! SPEED = 0.20;
 					B_SPEED = 0.40;
 	                BULLET_TTL = 3000;
 	                BULLET_RE = 150;
 					// local test (temp):
-					if (our_node->speed < SPEED)
-						our_node->speed = SPEED;
+					if (our_node->speed < our_node->max_speed)
+						our_node->speed = our_node->max_speed;
 				}
 				else
 				{
 					large_text("Bullet time!");
 					BOUNCING_BULLETS = 1;
 					BULLET_MAX = 20;
-					SPEED = 0.05;
+					//SPEED = 0.05;
 					B_SPEED = 0.10;
 	                BULLET_TTL = 6000; /* was 3000; */
 	                BULLET_RE = 600;
 					// local test (temp):
-					if (our_node->speed > SPEED)
-						our_node->speed = SPEED;
+					if (our_node->speed > our_node->max_speed)
+						our_node->speed = our_node->max_speed;
 				}
 			}
 			if ( k == KEY_F1 )
@@ -599,8 +599,8 @@ void drawfps()
 		);
 */
 		textprintf(tmpscreen, font, 2, 2, makecol(128, 128, 128), 
-			"FPS: %d LAG: %2.2f       ", 
-			fps, current_lag()
+			"FPS: %d LAG: %2.2f VEL: %d SPEED: %.2f of %.2f    ", 
+			fps, current_lag(), our_node->velocity, our_node->speed, our_node->max_speed
 		);
 	}
 }
@@ -616,9 +616,9 @@ void show_graphics()
 
 //	if (STARTED == 1)
 //	{
-		acquire_screen();
+		//acquire_screen();
 		blit (tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
-		release_screen();
+		//release_screen();
 //	}
 	if (HIGH_GRAPHICS == 1)
 	{

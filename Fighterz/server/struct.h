@@ -29,7 +29,8 @@ struct data {
 	unsigned int move; /**< pending amount of times this ship should be moved */
 	// unsigned int direction = 1; | direction, 0 = back, 1 = forward
 	// ^ now we use velocity for this
-	double speed; /**< speed of object (between -0.20 and 0.20) */
+	double speed; /**< speed of object (between -0.20 and 0.20 (0.20 defined in max_speed!!!!) */
+	double max_speed;
 	TIME vel_time; /**< used to calculate the thrust speed etc, 
 								 this is (just as 't') all relative to time ever 
 	                             X millisecs increase speed with X etc.. */

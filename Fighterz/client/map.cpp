@@ -190,12 +190,12 @@ void drawmap() {
 		{
 			if (field[cnt2][cnt] == '1')
 			{
-				rectfill(fieldbuff, (cnt * BLOCKSIZE_2), (cnt2 * BLOCKSIZE_2), 
-				((cnt + 1) * BLOCKSIZE_2), ((cnt2 + 1) * BLOCKSIZE_2), 
-				( grid ? makecol(40, 45, 87) : makecol(128, 128, 128)) ); // was blauw
-				
-				if (!grid)
-				draw_sprite(fieldbuff, (BITMAP *)dataf[WALL].dat, (cnt * BLOCKSIZE_2), (cnt2 * BLOCKSIZE_2) );
+				if (grid)
+					rectfill(fieldbuff, (cnt * BLOCKSIZE_2), (cnt2 * BLOCKSIZE_2), 
+					((cnt + 1) * BLOCKSIZE_2), ((cnt2 + 1) * BLOCKSIZE_2), 
+					( grid ? blauw : makecol(128, 128, 128)) ); // was blauw, nu weer :)
+				else
+					draw_sprite(fieldbuff, (BITMAP *)dataf[WALL].dat, (cnt * BLOCKSIZE_2), (cnt2 * BLOCKSIZE_2) );
 			}
 			/* Draw red team spawn location */
 			if (field[cnt2][cnt] == '2') 

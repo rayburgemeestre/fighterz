@@ -3,6 +3,7 @@
 ****************************************************/
 
 extern MIDI *bg_music;
+extern MIDI *intro_music;
 extern BITMAP *tmpscreen;
 extern BITMAP *fieldbuff;
 extern BITMAP *shipbuff;  
@@ -16,7 +17,7 @@ extern int FULLSCREEN;
 extern int HIGH_GRAPHICS;
 extern int BOUNCING_BULLETS;
 extern int MOVE_STEPW;
-extern double SPEED; 
+//extern double SPEED; 
 extern double B_SPEED;
 extern double SPEED_2; 
 extern double B_SPEED_2;

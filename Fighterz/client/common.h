@@ -51,4 +51,4 @@
 /* needed for current working directory: 
    #include <direct.h> */
 
-#include <aldumb.h> // for XM etc
+// not using: #include <aldumb.h> // for XM etc

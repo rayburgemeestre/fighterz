@@ -35,95 +35,91 @@ double rw_x, rw_y; /* rightwing x,y */
 
 			if (current->bot == 1)
 			{
-				ret = (PI / 180) * (current->deg - 90);
-				pos_x = fbX(current->id);
-				pos_y = fbY(current->id);
+				if (grid)
+				{
+					ret = (PI / 180) * (current->deg - 90);
+					pos_x = fbX(current->id);
+					pos_y = fbY(current->id);
 
-				circle(shipbuff, current->x, current->y, BLOCKSIZE / 4, color);
-				line(shipbuff, current->x, current->y, pos_x, pos_y, color);
-
+					circle(shipbuff, current->x, current->y, BLOCKSIZE / 4, color);
+					line(shipbuff, current->x, current->y, pos_x, pos_y, color);
+				}
  				/* Also draw them on radar */
 				circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + current->x / RADAR_SCALE, current->y / RADAR_SCALE, 1, color);
 			} else {
 
-				/**********************
-				 **   CALCULATIONS   **
-				 **********************/
-
-				/* ship coordinates */
-				ret = (PI / 180) * (current->deg - 90);
-
-				pos_x = cos(ret);
-				pos_x = pos_x * (radius - (BLOCKSIZE_2 / 4));
-				pos_x = pos_x + radius;
-				pos_x = pos_x + current->x2 - (BLOCKSIZE_2 / 2);
-
-				pos_y = sin(ret);
-				pos_y = pos_y * (radius - (BLOCKSIZE_2 / 4));
-				pos_y = pos_y + radius;
-				pos_y = pos_y + current->y2 - (BLOCKSIZE_2 / 2);
-
-		/*		fill_x = cos(ret);
-				fill_x = fill_x * (radius - (BLOCKSIZE_2 / 2)+1);
-				fill_x = fill_x + radius;
-				fill_x = fill_x + current->x2 - (BLOCKSIZE_2 / 2);
-				fill_y = sin(ret);
-				fill_y = fill_y * (radius - (BLOCKSIZE_2 / 2)+1);
-				fill_y = fill_y + radius;
-				fill_y = fill_y + current->y2 - (BLOCKSIZE_2 / 2);				
-
-				/* wing coordinates */
-				left_wing_deg = current->deg + 120;
-				right_wing_deg = current->deg - 120;
-
-				/* left wing */
-				ret = (PI / 180) * (left_wing_deg - 90);
-				lw_x = cos(ret);
-				lw_x = lw_x * radius;
-				lw_x = lw_x + radius;
-				lw_x = lw_x + current->x2 - (BLOCKSIZE_2 / 2);
-
-				lw_y = sin(ret);
-				lw_y = lw_y * radius;
-				lw_y = lw_y + radius;
-				lw_y = lw_y + current->y2 - (BLOCKSIZE_2 / 2);
-
-				/* right wing */
-				ret = (PI / 180) * (right_wing_deg - 90);
-				rw_x = cos(ret);
-				rw_x = rw_x * radius;
-				rw_x = rw_x + radius;
-				rw_x = rw_x + current->x2 - (BLOCKSIZE_2 / 2);
-
-				rw_y = sin(ret);
-				rw_y = rw_y * radius;
-				rw_y = rw_y + radius;
-				rw_y = rw_y + current->y2 - (BLOCKSIZE_2 / 2);
-
-				/**********************
-				 **     DRAW SHIP    **
-				 **********************/
-				
-				// polygon test
+				if (grid)
 				{
-					int points[8] = {
-						pos_x, pos_y,
-						lw_x, lw_y,
-						current->x2, current->y2,
-						rw_x, rw_y
-					};
-					int *p = points;
+					/**********************
+					 **   CALCULATIONS   **
+					 **********************/
 
-					polygon(shipbuff, 4, p, makecol(0, 0, 0));
+					/* ship coordinates */
+					ret = (PI / 180) * (current->deg - 90);
+
+					pos_x = cos(ret);
+					pos_x = pos_x * (radius - (BLOCKSIZE_2 / 4));
+					pos_x = pos_x + radius;
+					pos_x = pos_x + current->x2 - (BLOCKSIZE_2 / 2);
+
+					pos_y = sin(ret);
+					pos_y = pos_y * (radius - (BLOCKSIZE_2 / 4));
+					pos_y = pos_y + radius;
+					pos_y = pos_y + current->y2 - (BLOCKSIZE_2 / 2);
+
+					/* wing coordinates */
+					left_wing_deg = current->deg + 120;
+					right_wing_deg = current->deg - 120;
+
+					/* left wing */
+					ret = (PI / 180) * (left_wing_deg - 90);
+					lw_x = cos(ret);
+					lw_x = lw_x * radius;
+					lw_x = lw_x + radius;
+					lw_x = lw_x + current->x2 - (BLOCKSIZE_2 / 2);
+
+					lw_y = sin(ret);
+					lw_y = lw_y * radius;
+					lw_y = lw_y + radius;
+					lw_y = lw_y + current->y2 - (BLOCKSIZE_2 / 2);
+
+					/* right wing */
+					ret = (PI / 180) * (right_wing_deg - 90);
+					rw_x = cos(ret);
+					rw_x = rw_x * radius;
+					rw_x = rw_x + radius;
+					rw_x = rw_x + current->x2 - (BLOCKSIZE_2 / 2);
+
+					rw_y = sin(ret);
+					rw_y = rw_y * radius;
+					rw_y = rw_y + radius;
+					rw_y = rw_y + current->y2 - (BLOCKSIZE_2 / 2);
+
+					/**********************
+					 **     DRAW SHIP    **
+					 **********************/
+					
+					// polygon test
+					{
+						int points[8] = {
+							pos_x, pos_y,
+							lw_x, lw_y,
+							current->x2, current->y2,
+							rw_x, rw_y
+						};
+						int *p = points;
+
+						polygon(shipbuff, 4, p, makecol(0, 0, 0));
+					}
+					/* ship base */
+					// line(shipbuff , current->x2, current->y2, pos_x, pos_y, color);
+					/* left wing */
+					line(shipbuff , pos_x, pos_y, lw_x, lw_y, color);
+					line(shipbuff , current->x2, current->y2, lw_x, lw_y, color);
+					/* right wing */
+					line(shipbuff , pos_x, pos_y, rw_x, rw_y, color);
+					line(shipbuff , current->x2, current->y2, rw_x, rw_y, color);
 				}
-				/* ship base */
-				// line(shipbuff , current->x2, current->y2, pos_x, pos_y, color);
-				/* left wing */
-				line(shipbuff , pos_x, pos_y, lw_x, lw_y, color);
-				line(shipbuff , current->x2, current->y2, lw_x, lw_y, color);
-				/* right wing */
-				line(shipbuff , pos_x, pos_y, rw_x, rw_y, color);
-				line(shipbuff , current->x2, current->y2, rw_x, rw_y, color);
 
 				if (RADAR_SHOW == 1)
 					/* Also draw them on radar */
@@ -136,6 +132,24 @@ double rw_x, rw_y; /* rightwing x,y */
             else if (current->invincible == 2)
 			    rect(shipbuff, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), 
 			    	current->x + (BLOCKSIZE / 2), current->y + (BLOCKSIZE / 2), makecol(255,128,0));				
+
+			if (!grid)
+			{
+				if (current->bot == 0) //test 
+				{
+#ifdef NOT_DEFINED
+					LINK f;
+					for (f = head; f != our_node; f=f->next)
+					{
+						if (f->bot == 1)
+							line(shipbuff, f->x, f->y, our_node->x, our_node->y, makecol(0,0,64));
+					}
+#endif
+					rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS1].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+				}
+				else
+					rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS4].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+			}
 
 			if (show_names == 1)
 			{
@@ -257,7 +271,7 @@ void moveship(unsigned int id2, unsigned long t2)
 			{
 				if (current->velocity == 1)
 				{ 
-					if (current->speed < SPEED)
+					if (current->speed < current->max_speed)
 						current->speed += 0.01;
 				}
 				else if (current->velocity == 0.00)
@@ -278,7 +292,7 @@ void moveship(unsigned int id2, unsigned long t2)
 				}
 				else if (current->velocity == -1)
 				{
-					if (current->speed > (-1 * SPEED))
+					if (current->speed > (-1 * current->max_speed))
 						current->speed -= 0.01;
 				}
 				else

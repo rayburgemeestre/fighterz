@@ -79,7 +79,7 @@ int deg_diff_max = 50,
 	if ( !(px > X_BLOCKS) && !(px < 0) && 
 		!(py > Y_BLOCKS) && !(py < 0) )
 	{
-	rdemp = (dabs(current2->speed) / SPEED) * (demp_max - demp_min);
+	rdemp = (dabs(current2->speed) / current2->max_speed) * (demp_max - demp_min);
 	rdemp = (demp_max - demp_min) - rdemp;
 	rdemp = (rdemp > 0 ? rdemp : 1) + demp_min;
 
@@ -357,7 +357,7 @@ int deg_diff_max = 50,
 				if (0)
 				{
 				int retval = -1; // make args compatible ;)
-					process_bounce(current2, &retval, SPEED);
+					process_bounce(current2, &retval, current2->max_speed);
 
 				} else {
 					//addtext("C: collided at velocity: %d", our_node->velocity);

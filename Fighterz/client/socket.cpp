@@ -765,6 +765,7 @@ void m_spawnready()
 	requested_spawn = 0;
 	our_node = getplayer_byid(our_id);
 	our_node->dead = 2;
+
 	set_window_title("Fighterz -- Hit fire to respawn");
 	large_text("Connected, spawn to join");
 }
@@ -825,6 +826,7 @@ void m_newuser(int id, double x, double y, double deg,
 	head->turn_t = ourtime; /* CHK */
 	head->velocity = accel;
 	head->speed = speed;
+	head->max_speed = (head->bot == 1 ? 0.10 : 0.20);
 	// not yet used: head->alive = alive; /* seconds in the game*/
 	head->kills = frags;
 
