@@ -632,7 +632,6 @@ void m_ping(unsigned int servertime)
 
 void m_lag(double diff)
 {
-	printff_direct("SMSG_LAG: %f (avg lag now: %2.2f)", diff, current_lag());
 //	if (!STARTED && can_spawn == 0)
 		//play_sample((SAMPLE *)df_snd[TUSCH].dat, 255, 128, 1000, 0);
 	int i = 0;
@@ -642,6 +641,8 @@ void m_lag(double diff)
 		i++;
 	}
 	lag[i] = diff;
+
+	printff_direct("smsg_lag diff=%f avg_lag=%2.2f OK", diff, current_lag());
 }
 
 void m_clearfield()
@@ -701,11 +702,16 @@ void m_blockinfo(int w, int h, int size)
 	RADAR_Y = FIELD_Y + (MAP_H - RADAR_H);
 
 	RADAR = create_sub_bitmap(tmpscreen, RADAR_X, RADAR_Y, RADAR_W, RADAR_H);
-	clear_to_color(RADAR, 0);
+	//clear_to_color(RADAR, makecol(255,0,0));
+	draw_sprite(RADAR, (BITMAP *)dataf[RADARBG].dat, 0, 0);
 
 //
 	destroy_bitmap(fieldbuff);
-	shipbuff = create_bitmap(field_width + 1, field_height + 1);
+	/* TEST44 */
+	// shipbuff = create_bitmap(field_width + 1, field_height + 1);
+	// shipbuff = tmpscreen;
+	// het moet gewoon een subbitmap zijn:
+	shipbuff = create_sub_bitmap(tmpscreen, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 
 	destroy_bitmap(talkbuff);
 	talkbuff = create_sub_bitmap(tmpscreen, CSCREEN_X, CSCREEN_Y, MAP_W, CSCREEN_H);
@@ -739,6 +745,8 @@ void m_fieldend()
 {
 	verbose("Map download: Completed");
 	drawmap();
+	STARTED = 1;
+	large_text("Map download complete.");
 }
 void m_kick( unsigned int id, char *reason )
 {
@@ -791,7 +799,7 @@ void m_spawnready()
 
 	set_window_title("Fighterz -- Hit fire to respawn");
 	set_map_coords();
-	large_text("Connected, spawn to join");
+	large_text("Received ship - Fire to spawn!");
 }
 
 // *lag*

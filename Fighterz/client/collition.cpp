@@ -505,7 +505,8 @@ int old_px, old_py;
 				ptr->move, ourtime, ptr->deg, ptr->x, ptr->y);
 
 
-	circlefill(fieldbuff, ptr->x, ptr->y, 2, makecol(255, 0, 0));
+	// circlefill(fieldbuff, ptr->x, ptr->y, 2, makecol(255, 0, 0));
+
 	old_px = (int)(ptr->x / BLOCKSIZE);
 	old_py = (int)(ptr->y / BLOCKSIZE);
 	px = (int)(x / BLOCKSIZE);

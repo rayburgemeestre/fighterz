@@ -6,6 +6,7 @@ extern MIDI *bg_music;
 extern MIDI *intro_music;
 extern BITMAP *tmpscreen;
 extern BITMAP *fieldbuff;
+extern BITMAP *radarbuff;
 extern BITMAP *shipbuff;  
 extern BITMAP *talkbuff;
 extern BITMAP *ulistbuff;
@@ -125,3 +126,11 @@ extern struct bg_imgs bg_imgs_data[32];
 extern int bg_imgs_data_index;
 extern int midi_track;
 extern int bg_music_on;
+
+//map.cpp
+extern double scale;
+extern int radar_w, radar_h; // RADAR_W = from RADAR bitmap (smaller)
+
+//genproc.cpp
+extern int radar_padding_x;
+extern int radar_padding_y;

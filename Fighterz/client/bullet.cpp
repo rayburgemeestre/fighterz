@@ -208,7 +208,7 @@ void drawbullets()
 			 **     DRAW BULLET  **
 			 **********************/
 			
-			circlefill(shipbuff , current->x2, current->y2, 1, makecol(255, 255, 0));
+			circlefill(shipbuff , current->x2 - MAP_X, current->y2 - MAP_Y, 1, makecol(255, 255, 0));
 		}
 		/* next ship */
 		current = current->next;

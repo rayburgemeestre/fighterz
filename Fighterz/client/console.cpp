@@ -9,7 +9,9 @@ void drawconsole()
  	int i = 0;
 	int cur_pos = 0;
 	int temp;
-	
+
+	clear_to_color(CONSOLE, 0);
+
 	while (i < MAX_C_LINES)
 	{
 		temp = 0;
@@ -101,10 +103,10 @@ void large_text_draw()
 	if (strlen(large_text_msg) == 0)
 		return;
 
-	textprintf_centre(
+	textprintf(
 		tmpscreen, 
 		(FONT *)dataf[ARCADE].dat, 
-		SCREEN_X / 2, 
+		50, 
 		400, 
 		makecol(255, 0, 0), 
 		large_text_msg	

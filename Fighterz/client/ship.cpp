@@ -14,6 +14,8 @@ double pos_x, pos_y; /* ship's x,y */
 double left_wing_deg, right_wing_deg; 
 double lw_x, lw_y; /* leftwing x,y */
 double rw_x, rw_y; /* rightwing x,y */
+double current_x, current_y;
+double current_x2, current_y2;
 
 //	double fill_x, fill_y;
 
@@ -22,6 +24,11 @@ double rw_x, rw_y; /* rightwing x,y */
 	current = head;
 	while (current != NULL)
 	{
+current_x = current->x - MAP_X;
+current_y = current->y - MAP_Y;
+current_x2 = current->x2 - MAP_X;
+current_y2 = current->y2 - MAP_Y;
+
 		if (current->bullet != 1 && current->dead != 1)
 		{
 			if (current->impact == 1)
@@ -41,12 +48,9 @@ double rw_x, rw_y; /* rightwing x,y */
 					pos_x = fbX(current->id);
 					pos_y = fbY(current->id);
 
-					circle(shipbuff, current->x, current->y, BLOCKSIZE / 4, color);
-					line(shipbuff, current->x, current->y, pos_x, pos_y, color);
+					circle(shipbuff, current_x, current_y, BLOCKSIZE / 4, color);
+					line(shipbuff, current_x, current_y, pos_x, pos_y, color);
 				}
-				if (RADAR_SHOW == 1)
- 					/* Also draw them on radar */
-					circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + current->x / RADAR_SCALE, current->y / RADAR_SCALE, 1, color);
 			} else {
 
 				if (grid)
@@ -61,12 +65,12 @@ double rw_x, rw_y; /* rightwing x,y */
 					pos_x = cos(ret);
 					pos_x = pos_x * (radius - (BLOCKSIZE_2 / 4));
 					pos_x = pos_x + radius;
-					pos_x = pos_x + current->x2 - (BLOCKSIZE_2 / 2);
+					pos_x = pos_x + current_x2 - (BLOCKSIZE_2 / 2);
 
 					pos_y = sin(ret);
 					pos_y = pos_y * (radius - (BLOCKSIZE_2 / 4));
 					pos_y = pos_y + radius;
-					pos_y = pos_y + current->y2 - (BLOCKSIZE_2 / 2);
+					pos_y = pos_y + current_y2 - (BLOCKSIZE_2 / 2);
 
 					/* wing coordinates */
 					left_wing_deg = current->deg + 120;
@@ -77,24 +81,24 @@ double rw_x, rw_y; /* rightwing x,y */
 					lw_x = cos(ret);
 					lw_x = lw_x * radius;
 					lw_x = lw_x + radius;
-					lw_x = lw_x + current->x2 - (BLOCKSIZE_2 / 2);
+					lw_x = lw_x + current_x2 - (BLOCKSIZE_2 / 2);
 
 					lw_y = sin(ret);
 					lw_y = lw_y * radius;
 					lw_y = lw_y + radius;
-					lw_y = lw_y + current->y2 - (BLOCKSIZE_2 / 2);
+					lw_y = lw_y + current_y2 - (BLOCKSIZE_2 / 2);
 
 					/* right wing */
 					ret = (PI / 180) * (right_wing_deg - 90);
 					rw_x = cos(ret);
 					rw_x = rw_x * radius;
 					rw_x = rw_x + radius;
-					rw_x = rw_x + current->x2 - (BLOCKSIZE_2 / 2);
+					rw_x = rw_x + current_x2 - (BLOCKSIZE_2 / 2);
 
 					rw_y = sin(ret);
 					rw_y = rw_y * radius;
 					rw_y = rw_y + radius;
-					rw_y = rw_y + current->y2 - (BLOCKSIZE_2 / 2);
+					rw_y = rw_y + current_y2 - (BLOCKSIZE_2 / 2);
 
 					/**********************
 					 **     DRAW SHIP    **
@@ -105,7 +109,7 @@ double rw_x, rw_y; /* rightwing x,y */
 						int points[8] = {
 							pos_x, pos_y,
 							lw_x, lw_y,
-							current->x2, current->y2,
+							current_x2, current_y2,
 							rw_x, rw_y
 						};
 						int *p = points;
@@ -113,26 +117,22 @@ double rw_x, rw_y; /* rightwing x,y */
 						polygon(shipbuff, 4, p, makecol(0, 0, 0));
 					}
 					/* ship base */
-					// line(shipbuff , current->x2, current->y2, pos_x, pos_y, color);
+					// line(shipbuff , current_x2, current_y2, pos_x, pos_y, color);
 					/* left wing */
 					line(shipbuff , pos_x, pos_y, lw_x, lw_y, color);
-					line(shipbuff , current->x2, current->y2, lw_x, lw_y, color);
+					line(shipbuff , current_x2, current_y2, lw_x, lw_y, color);
 					/* right wing */
 					line(shipbuff , pos_x, pos_y, rw_x, rw_y, color);
-					line(shipbuff , current->x2, current->y2, rw_x, rw_y, color);
+					line(shipbuff , current_x2, current_y2, rw_x, rw_y, color);
 				}
-
-				if (RADAR_SHOW == 1)
-					/* Also draw them on radar */
-					circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + current->x / RADAR_SCALE, current->y / RADAR_SCALE, 1, color);
-				
+			
 			}
             if (current->invincible == 1)
-			    rect(shipbuff, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), 
-			    	current->x + (BLOCKSIZE / 2), current->y + (BLOCKSIZE / 2), makecol(255,0,0));				
+			    rect(shipbuff, current_x - (BLOCKSIZE / 2), current_y - (BLOCKSIZE / 2), 
+			    	current_x + (BLOCKSIZE / 2), current_y + (BLOCKSIZE / 2), makecol(255,0,0));				
             else if (current->invincible == 2)
-			    rect(shipbuff, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), 
-			    	current->x + (BLOCKSIZE / 2), current->y + (BLOCKSIZE / 2), makecol(255,128,0));				
+			    rect(shipbuff, current_x - (BLOCKSIZE / 2), current_y - (BLOCKSIZE / 2), 
+			    	current_x + (BLOCKSIZE / 2), current_y + (BLOCKSIZE / 2), makecol(255,128,0));				
 
 			if (!grid && current->dead == 0)
 			{
@@ -143,31 +143,31 @@ double rw_x, rw_y; /* rightwing x,y */
 					for (f = head; f != our_node; f=f->next)
 					{
 						if (f->bot == 1)
-							line(shipbuff, f->x, f->y, our_node->x, our_node->y, makecol(0,0,64));
+							line(shipbuff, f->x, f->y, our_node->x - MAP_X, our_node->y - MAP_Y, makecol(0,0,64));
 					}
 #endif
 					
 					switch (current->shiptype)
 					{
 						case 1:
-							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS1].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS1].dat, current_x - (BLOCKSIZE / 2), current_y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
 							break;
 						case 2:
-							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS1].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS2].dat, current_x - (BLOCKSIZE / 2), current_y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
 							break;
 						case 3:
-							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS3].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS3].dat, current_x - (BLOCKSIZE / 2), current_y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
 							break;
 						case 4:
-							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS4].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS4].dat, current_x - (BLOCKSIZE / 2), current_y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
 							break;
 						case 5:
-							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS5].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS5].dat, current_x - (BLOCKSIZE / 2), current_y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
 							break;
 					}
 				}
 				else
-					rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS4].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+					rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS4].dat, current_x - (BLOCKSIZE / 2), current_y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
 
 				if (show_names == 1)
 				{
@@ -175,8 +175,8 @@ double rw_x, rw_y; /* rightwing x,y */
 					char tmpstr[128];
 					// sprintf(tmpstr, "%s [%d] [%2.2f] [%d]", current->nick, current->velocity, current->speed, current->freeze);
 					sprintf(tmpstr, "%s", current->nick);
-					textprintf_centre(shipbuff, (FONT *)dataf[NOKIA].dat, current->x, 
-						current->y + BLOCKSIZE, makecol(192,192,192), tmpstr);
+					textprintf_centre(shipbuff, (FONT *)dataf[NOKIA].dat, current_x, 
+						current_y + BLOCKSIZE, makecol(192,192,192), tmpstr);
 				}
 			}
 
@@ -665,11 +665,15 @@ int rexplosion(struct data2 *ptr)
 void drawexplosions() 
 {
 	int diff, tmp, times, cnt;
+	double current_x, current_y;
 	LINK2 current;
 	current = e_head;
 
 	while (current != NULL)
 	{
+		current_x = current->x - MAP_X;
+		current_y = current->y - MAP_Y;
+
 		/* Also check here if radius should change */
 			diff = (ourtime - current->t);
 			
@@ -693,7 +697,7 @@ void drawexplosions()
 				continue;
 			}
 
-		circle(shipbuff, current->x, current->y, current->radius, current->color);
+		circle(shipbuff, current_x, current_y, current->radius, current->color);
 		current = current->next;
 	}
 }

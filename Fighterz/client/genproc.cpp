@@ -1,5 +1,8 @@
 #include "common.h"
 
+int radar_padding_x = 0;
+int radar_padding_y = 0;
+
 /********************************************
 *  PROCEDURES
 ****************************************************/
@@ -96,9 +99,6 @@ play_rand_bg_music();
 	clear_to_color(tmpscreen, makecol(0,0,0));
 	blit (tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
 
-	//destroy_bitmap(tmpscreen);
-	//tmpscreen = create_bitmap(SCREEN_X, SCREEN_Y);
-	
 	time_proc();
 	
 	printff_direct("Loading map: %s", map2);
@@ -464,10 +464,48 @@ void initialize_vars()
 	buffer = (char *)malloc(8192);
 }
 
+void blit_field() 
+{
+	// Draw (cached) fieldbuffer on tmpscreen
+	blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
+	// Draw Radar on screen
+	if (RADAR_SHOW == 1)
+		draw_sprite(tmpscreen, (BITMAP *)dataf[RADARBG].dat, RADAR_X, RADAR_Y - 1);
+}
+
+void blit_radar()
+{
+	if (RADAR_SHOW == 0)
+		return;
+	else
+	{
+	int LEFT = (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + 1;
+	int radar_scale = BLOCKSIZE / scale;
+	double field_w = field_width / RADAR_SCALE - 2; // RADAR_SCALE is nog gebruikt in de berekeningen
+	double field_h = field_height / RADAR_SCALE - 2; // van RADAR_W = etc.. en dus anders van de daadwerkelijke
+	double map_x = (our_node == NULL ? 1 : our_node->x2) - field_width / 2;								 // 'scale'!!
+	double map_y = (our_node == NULL ? 1 : our_node->y2) - field_height / 2;
+	double pad_x = map_x / radar_scale + scale;
+	double pad_y = map_y / radar_scale + scale;
+
+		if (pad_x < -1 ) pad_x = -1;
+		if (pad_y < -1 ) pad_y = -1;
+		if (pad_x > 1+ ((double)radar_w - field_w)) pad_x = (double)radar_w - field_w + 1;
+		if (pad_y > 1+ ((double)radar_h - field_h)) pad_y = (double)radar_h - field_h + 1;
+		//addtext("%.2f %.2f %.2f", pad_x, field_w, );
+
+		// Draw (cached) radarbuffer on tmpscreen
+		blit(radarbuff, tmpscreen, (int)pad_x, (int)pad_y, RADAR_X + LEFT, RADAR_Y, (int)field_w, (int)field_h);
+
+		radar_padding_x = pad_x;
+		radar_padding_y = pad_y;
+	}
+}
+
 int mainloop()
 {
 /********** mainloop init **********/
-	drawmap();
+	//drawmap();
 
 /********** mainloop **********/
 	while(!key[KEY_F12] && !terminate_request) 
@@ -487,10 +525,9 @@ int mainloop()
 			continue; /* Don't do graphics */
 
 /********** graphics **********/
-clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
-if (RADAR_SHOW == 1)
-clear_to_color(RADAR, 0);
-clear_to_color(CONSOLE, 0);
+// clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
+
+
 
 		fps_proc();
 		moveships();
@@ -503,12 +540,16 @@ clear_to_color(CONSOLE, 0);
 
 // actual drawing
 		set_map_coords();
-		blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
+		
+		blit_field();
+		blit_radar();
+
 		drawfps();
 		drawconsole();
 		drawexplosions();
 		drawships();
 		drawbullets();
+		
 		drawradar();
 		draw_talk_box();
 		show_graphics();
@@ -554,6 +595,7 @@ void play_rand_bg_music()
 
 	if (midi_track == 7)
 		midi_track = 1;
+
 	switch (midi_track)
 	{
 		case 1:

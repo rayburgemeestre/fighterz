@@ -24,6 +24,7 @@ MIDI *intro_music;
 BITMAP *tmpscreen; /**< Primary bitmap screen buffer used to draw everything on */
 BITMAP *fieldbuff; /**< Screen bitmap buffer used to draw the field to once (after that this 
                         bitmap will be constantly blitted to tmpscreen )*/
+BITMAP *radarbuff; /**< TODO */
 BITMAP *shipbuff; /**< Screen bitmap buffer where the ships/bullets are drawn to */
 BITMAP *talkbuff; /**< sub bitmap buffer on tmpscreen used to print the (chat) messages on */ 
 BITMAP *ulistbuff; /**< sub bitmap buffer on tmpscreen used to print the userlists on */ 
@@ -235,6 +236,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 				skip_options = 0;
 			}
 		}
+		//skip_options = 1;
 
 		if (skip_options != 1)
 		{

@@ -1,5 +1,8 @@
 #include "common.h"
 
+double scale = BLOCKSIZE / RADAR_SCALE;
+int radar_w, radar_h;
+
 /********************************************
 *  MAP FUNCTIONS
 ****************************************************/
@@ -103,7 +106,8 @@ DATAFILE *df;
 }
 
 /* procedure to draw map on screen */
-void drawmap() {
+void drawmap() 
+{
 	int cnt, cnt2;
 	int x = 0, length, length2;
 
@@ -111,11 +115,12 @@ void drawmap() {
 	int blauw = makecol(0,128,255);
 	int grijs = makecol(128,128,128);
 
-	// if (fieldbuff != NULL) 
-	// 	destroy_bitmap(fieldbuff); <-- todo check if (bitmap) dan destroy.. lakjdsf
+	destroy_bitmap(fieldbuff);
 	fieldbuff = create_bitmap(field_width_2 + 1, field_height_2 + 1);
-	//fieldbuff = create_sub_bitmap(tmpscreen, FIELD_X, FIELD_Y, MAP_W, MAP_H);
+//	radarbuff = create_bitmap(RADAR_W, RADAR_H);
+
 	clear_to_color(fieldbuff, 0);
+//	clear_to_color(radarbuff, 0);
 	clear_to_color(tmpscreen, 0);
 
 	/*	
@@ -211,121 +216,172 @@ void drawmap() {
 				rect(fieldbuff, cnt * BLOCKSIZE + 1, cnt2 * BLOCKSIZE + 1, (cnt + 1) * BLOCKSIZE - 1, (cnt2 + 1) * BLOCKSIZE - 1, makecol(0,128,255));
 		}
 	}
+
+	addtext("RADAR_SCALE = %.2f", RADAR_SCALE);
+	addtext("RADAR_SCALE -> %d", (int)RADAR_SCALE);
+	// DRAW RADARBUFF
+	{
+	scale = BLOCKSIZE / RADAR_SCALE;
+	
+		scale = 1.0;
+
+		radar_w = (X_BLOCKS+1) * scale;
+		radar_h = (Y_BLOCKS+1) * scale;
+
+		radarbuff = create_bitmap(radar_w, radar_h);
+		clear_to_color(radarbuff, makecol(0,0,0));
+		//RADARBG 
+
+		addtext("scale = %.2f, %d", scale, (int)scale);
+
+		for (cnt=0; cnt<X_BLOCKS; cnt++) 
+		{
+			for (cnt2=0; cnt2<Y_BLOCKS; cnt2++)
+			{
+				if (field[cnt2][cnt] == '1') 
+				{
+					rectfill(radarbuff, cnt * scale,  cnt2 * scale, 
+						(cnt + 1) * scale, (cnt2 + 1) * scale, 
+						makecol(53, 18, 22));
+				}
+			}
+		}
+	}
 }
 
 void drawradar()
 {
 	if (RADAR_SHOW != 1)
+	{
 		return;
-	int cnt, cnt2, color;
+	}
+	else
+	{
+	int color;
 	int LEFT = (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2);
 	int grijs = makecol(0,255,128);
 	int c1 = makecol(255, 0, 0);
 	int c2 = makecol(255, 128, 0);
 	int c3 = makecol(255, 255, 0);
-	LINK x;
+	LINK tmp;
 
-	double _power, _bullets, _guessed_power;
+		double _power, _bullets, _guessed_power;
 
-	if (!our_node)
-		return;
+		if (!our_node)
+			return;
 
-	rectfill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + 1, 
-		1, RADAR_W - 2, RADAR_H - 2, makecol(0, 0, 0));
+		// clear_to_color(RADAR, 0);
 
-	for (cnt=0; cnt<X_BLOCKS; cnt++) 
-		for (cnt2=0; cnt2<Y_BLOCKS; cnt2++)
-			if (field[cnt2][cnt] == '1') 
-				rectfill(RADAR, LEFT + (cnt * BLOCKSIZE) / RADAR_SCALE, 
-					(cnt2 * BLOCKSIZE) / RADAR_SCALE, 
-					LEFT + ((cnt + 1) * BLOCKSIZE) / RADAR_SCALE, 
-					((cnt2 + 1) * BLOCKSIZE) / RADAR_SCALE, grijs);
-	
+//6		rectfill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + 1, 
+//			1, RADAR_W - 2, RADAR_H - 2, makecol(0, 0, 255));
+
+/*		for (cnt=0; cnt<X_BLOCKS; cnt++) 
+			for (cnt2=0; cnt2<Y_BLOCKS; cnt2++)
+				if (field[cnt2][cnt] == '1') 
+					rectfill(RADAR, LEFT + (cnt * BLOCKSIZE) / RADAR_SCALE, 
+						(cnt2 * BLOCKSIZE) / RADAR_SCALE, 
+						LEFT + ((cnt + 1) * BLOCKSIZE) / RADAR_SCALE, 
+						((cnt2 + 1) * BLOCKSIZE) / RADAR_SCALE, grijs);
+		*/
 
 
-	rect(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2), 
-		0, RADAR_W - 1, RADAR_H - 1, makecol(69, 69, 69));
-	
+//		rect(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2), 
+//			0, RADAR_W - 1, RADAR_H - 1, makecol(69, 69, 69));
+		
+		_power = (our_node->power * 100) / MAX_HITS;
+		_guessed_power = (guessed_power * 100) / MAX_HITS;
+		_bullets = ((BULLET_MAX - BULLET_COUNT) * 100) / BULLET_MAX;
 
-	
-	_power = (our_node->power * 100) / MAX_HITS;
-	_guessed_power = (guessed_power * 100) / MAX_HITS;
-	_bullets = ((BULLET_MAX - BULLET_COUNT) * 100) / BULLET_MAX;
+		/* Power indicator */
+		stretch_sprite(RADAR, (BITMAP *)dataf[RADAR_FILL].dat, 
+			1, 1, 9, 
+			((RADAR_H - 2) * (100.0 - _power)) / 100.0);
 
-	/* Power indicator */
-	rectfill(RADAR, 1, 1,
-		INDICATOR_WIDTH - 1,
-		((RADAR_H - 2) * (100.0 - _power)) / 100.0,
-		c1
-	);
-	rectfill(RADAR, 1, 
-		((RADAR_H - 2) * (100.0 - _power)) / 100.0,
-		INDICATOR_WIDTH - 1,
-		RADAR_H - 2,
-		c3
-	);
-	rectfill(RADAR, 1, 
-		((RADAR_H - 2) * (100.0 - _guessed_power)) / 100.0,
-		INDICATOR_WIDTH - 1,
-		RADAR_H - 2,
-		c2
-	);
+/*!!!	rectfill(RADAR, 1, 1,
+			INDICATOR_WIDTH - 1,
+			((RADAR_H - 2) * (100.0 - _power)) / 100.0,
+			c1
+		); */
 
-	rect(RADAR, 0, 0,
-		INDICATOR_WIDTH,
-		RADAR_H - 1,
-		grijs
-	);
+		
+		/*rectfill(RADAR, 1, 
+			((RADAR_H - 2) * (100.0 - _power)) / 100.0,
+			INDICATOR_WIDTH - 1,
+			RADAR_H - 2,
+			c3
+		);
+		rectfill(RADAR, 1, 
+			((RADAR_H - 2) * (100.0 - _guessed_power)) / 100.0,
+			INDICATOR_WIDTH - 1,
+			RADAR_H - 2,
+			c2
+		); */
 
-	/* Weapon indicator */
-	rectfill(RADAR, INDICATOR_DISTANCE_BETWEEN + INDICATOR_WIDTH + 1,
-		1,
-		(INDICATOR_WIDTH * 2) + INDICATOR_DISTANCE_BETWEEN - 1,
-		((RADAR_H - 2) * (100.0 - _bullets)) / 100.0,
-		c1
-	);
-	rectfill(RADAR, INDICATOR_DISTANCE_BETWEEN + INDICATOR_WIDTH + 1, 
-		((RADAR_H - 2) * (100.0 - _bullets)) / 100.0,
-		(INDICATOR_WIDTH * 2) + INDICATOR_DISTANCE_BETWEEN - 1,
-		RADAR_H - 2,
-		c2
-	);
-	rect(RADAR, INDICATOR_DISTANCE_BETWEEN + INDICATOR_WIDTH,
-		0,
-		(INDICATOR_WIDTH * 2) + INDICATOR_DISTANCE_BETWEEN,
-		RADAR_H - 1,
-		grijs
-	);
+		//rect(RADAR, 0, 0,
+		//	INDICATOR_WIDTH,
+		//	RADAR_H - 1,
+		//	grijs
+		//);
 
-	x = head;
-	while (x)
-	{
-		if (x->bullet != 1)
+		/* Weapon indicator */
+		stretch_sprite(RADAR, (BITMAP *)dataf[RADAR_FILL].dat, 
+			INDICATOR_DISTANCE_BETWEEN + INDICATOR_WIDTH + 1, 0, 9, 
+			((RADAR_H - 2) * (100.0 - _bullets)) / 100.0);
+
+		/*!!! ? rectfill(RADAR, INDICATOR_DISTANCE_BETWEEN + INDICATOR_WIDTH + 1,
+			1,
+			(INDICATOR_WIDTH * 2) + INDICATOR_DISTANCE_BETWEEN - 1,
+			((RADAR_H - 2) * (100.0 - _bullets)) / 100.0,
+			c1
+		); 
+		rectfill(RADAR, INDICATOR_DISTANCE_BETWEEN + INDICATOR_WIDTH + 1, 
+			((RADAR_H - 2) * (100.0 - _bullets)) / 100.0,
+			(INDICATOR_WIDTH * 2) + INDICATOR_DISTANCE_BETWEEN - 1,
+			RADAR_H - 2,
+			c2
+		); */
+		//rect(RADAR, INDICATOR_DISTANCE_BETWEEN + INDICATOR_WIDTH,
+		//	0,
+		//	(INDICATOR_WIDTH * 2) + INDICATOR_DISTANCE_BETWEEN,
+		//	RADAR_H - 1,
+		//	grijs
+		//);
+
 		{
+		int x, y;
+		int radar_scale = BLOCKSIZE / scale;
 
-			if (x->id == our_id)
-				color = makecol(255,255,255);
-			else
-				color = makecol(128,255,128);
+			tmp = head;
+			while (tmp)
+			{
+				x = (tmp->x / radar_scale) - radar_padding_x;
+				y = (tmp->y / radar_scale) - radar_padding_y;
 
-			
-			if (x->bot == 1)
-				circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + x->x / RADAR_SCALE, x->y / RADAR_SCALE, 1, color);
-			else 
-				circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + x->x / RADAR_SCALE, x->y / RADAR_SCALE, 1, color);
+				if (tmp->bullet != 1)
+				{
 
+					if (tmp->id == our_id)
+						color = makecol(255,255,255);
+					else
+						color = makecol(128,255,128);
+
+					circlefill(RADAR, LEFT + x, y, 1, color);
+				}
+				tmp = tmp->next;
+			}
 		}
-		x = x->next;
 	}
 }
 
 unsigned long map_scroll;
 void set_map_coords()
 {
-if (!our_node)
-	return;
+//if (our_node == NULL)
+//	return;
 
-	if (our_node->dead == 2)
+	if (  ((our_node == NULL) && (STARTED == 1)) ||
+		  ((our_node != NULL) && (our_node->dead == 2))
+	   )
 	{
 		if ((ourtime - map_scroll) >= 10)
 		{
@@ -405,6 +461,11 @@ retry:
 
 	drawmap();
 	
+#ifdef NOT_DEFINED
+// Als zoom wel gebruikt gaat worden klopt het onderste stuk niet meer:
+// shipbuff is inmiddels al een sub_bitmap.. 
 	destroy_bitmap(shipbuff);
-	shipbuff = create_bitmap(field_width_2 + 1, field_height_2 + 1);
+	//shipbuff = create_bitmap(field_width_2 + 1, field_height_2 + 1);
+	shipbuff = tmpscreen; /* TEST44 */
+#endif
 }

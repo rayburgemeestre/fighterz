@@ -50,15 +50,51 @@ if (!our_node)
 
 	if (our_node->dead == 0 || our_node->invincible == 1) 
 	{
-		if (key[KEY_LCONTROL] && our_node->invincible != 1 && 
+		// left ctrl or 'z' for fire
+		if ((key[KEY_LCONTROL]||key[KEY_Z]) && our_node->invincible != 1 && 
 			our_node->dead != 2)
 		{	/* Requesting fire */
 			if ( (bullet_time == 0) || ((ourtime - bullet_time) >= (unsigned)BULLET_RE) )
-			{	bullet_time = ourtime;
-				if (BULLET_COUNT < BULLET_MAX)
+			{	
+				bullet_time = ourtime;
+
+				// SUPER FIRE (5 BULLETS)
+				if (key[KEY_Z] && (BULLET_COUNT < BULLET_MAX) && (BULLET_COUNT <= 5))
+				{
+				struct data* pRet;
+				int i;
+					BULLET_RE = 1200;
+
+					for (i=0; i<5; i++)
+					{
+					int deg = our_node->deg + 360;
+					#define TWIST 4
+
+						switch (i) {
+							case 0: deg -= TWIST*2; break;
+							case 1: deg -= TWIST; break;
+							case 2: break;
+							case 3: deg += TWIST; break;
+							case 4: deg += TWIST*2; break;
+						}
+						
+						deg = deg % 360;
+
+						pRet = add_bullet(our_node, our_node->x, our_node->y, deg, ourtime);						
+						send_newbullet(pRet->x, pRet->y, pRet->deg);
+					}
+					bullet_time = ourtime;
+					
+					BULLET_COUNT += 5;
+					
+					play_sample((SAMPLE *)df_snd[SHOOT].dat, 50, 128, 1000, 0);
+				}
+				// NORMAL FIRE
+				else if (key[KEY_LCONTROL] && (BULLET_COUNT < BULLET_MAX))
 				{	
 					struct data* pRet;
 					/* add */
+					BULLET_RE = 150;
 
 #if NOSOUND != 1
 					if (USE_SOUND == 1)
@@ -73,8 +109,11 @@ if (!our_node)
 				}
 			} 
 		} else {
-			if ( (ourtime - bullet_time) < (unsigned)BULLET_RE)
-				bullet_time = 0;
+			// UNCOMMENT THE FOLLOWING IF BULLET_RE SHOULD BE RESET ON
+			// FIRE KEY RELEASE::::::::::::::
+
+			/* if ( (ourtime - bullet_time) < (unsigned)BULLET_RE)
+				bullet_time = 0; */
 		}
 
 
@@ -618,22 +657,19 @@ void drawfps()
 void show_graphics()
 {
 	large_text_draw();
-	masked_blit(shipbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
-		/* ^- if hardware supports this, then this goes fast */
 
 	// show_mouse(tmpscreen);
 	poll_mouse();	
 
-//	if (STARTED == 1)
-//	{
-		//acquire_screen();
-		blit (tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
-		//release_screen();
-//	}
+	//acquire_screen();
+	blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);
+	//release_screen();
+
 	if (HIGH_GRAPHICS == 1)
 	{
-		rest(8);
-		vsync(); /* wait for vertical retrace (can reduce flickering) */
+		// rest(8);
+		vsync(); /* wait for vertical retrace (can reduce flickering) 
+					though a few fps slower :( */
 	}
 	/* poll_keyboard(); *//* This shouldn't be necessary in Windows. */
 }
