@@ -234,6 +234,7 @@ int bmp_df_h, bmp_df_w;
             blit(tussen, screen, 0, 0, SCREEN_X - RIGHT + 1, 285,
                 SIZE_X, SIZE_Y
             );
+			destroy_bitmap(tussen);
         }
 
         blit(scrn_field, sub_field, x_offset, y_offset, 0, 0,
