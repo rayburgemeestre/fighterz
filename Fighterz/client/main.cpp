@@ -234,7 +234,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 		}
 	}
 
-	if (skip_options != 1 && 1 == 1) /* temp */
+	if (skip_options != 1 && 0 == 1) /* temp */
 		ret = getoptions();
 	else
 		ret = 0;

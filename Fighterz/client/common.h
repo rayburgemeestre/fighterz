@@ -50,3 +50,5 @@
 #include "variables.h"
 /* needed for current working directory: 
    #include <direct.h> */
+
+#include <aldumb.h> // for XM etc

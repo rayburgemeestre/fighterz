@@ -587,6 +587,8 @@ void lag_proc(char *lag_char, char *servertime_char)
 
 }
 
+
+
 void m_hi(unsigned int sver, unsigned int oid)
 {
 	// verbose("SMSG_HI: %d %d", sver, oid);
@@ -767,11 +769,13 @@ void m_spawnready()
 	large_text("Connected, spawn to join");
 }
 
+// *lag*
 void m_newuser(int id, double x, double y, double deg,
 	signed char accel, unsigned int alive, signed short frags, unsigned int pending_moves,
 	signed char turn, unsigned char type, double speed,
 	char *nick)
 {
+	unsigned long clag;
 /*	verbose("---------------------- adding new user ----------------------");
 	verbose("id: %d x: %2.2f y: %2.2f deg: %2.2f accel: %d, alive: %d", 
 	         id, x, y, deg, (int)accel, alive);
@@ -809,9 +813,14 @@ void m_newuser(int id, double x, double y, double deg,
 	head->y = y;
     setsec(head); /* secondary coordinates for this struct */
 	head->deg = deg;
-	head->t = ourtime;
+#if IGNORE_LAG == 1
+	clag = 0;
+#else
+	clag = (unsigned long)current_lag();
+#endif
+	head->t = ourtime - clag;
 	head->move = 0;
-	head->freeze = 0; /* CHK */
+	head->freeze = 0;
 	head->turn = turn;
 	head->turn_t = ourtime; /* CHK */
 	head->velocity = accel;
@@ -859,15 +868,23 @@ void m_kill(unsigned int victimid, unsigned int evilid, char *killstr)
 	}
 }
 
+// *lag*
 void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, double deg)
 {
+	unsigned long clag;
+
+#if IGNORE_LAG == 1
+	clag = 0;
+#else
+	clag = (unsigned long)current_lag();
+#endif
 	// *the entire `unsigned int id` var isn't used
 	
 	//verbose("New bullet id: [!], ownerid: %d, x: %2.2f, y: %2.2f, deg: %2.2f\n",
 	//	ownerid, x, y, deg);
 
 	play_sample((SAMPLE *)df_snd[SHOOT].dat, 255, 128, 1000, 0);
-	add_bullet( getplayer_byid(ownerid), (int)x, (int)y, (double)deg, ourtime);
+	add_bullet( getplayer_byid(ownerid), (int)x, (int)y, (double)deg, ourtime - clag);
 
 	return;
 }
@@ -945,9 +962,11 @@ void m_hit()
 		our_node->power--;
 }
 
+// *lag*
 void m_accel(unsigned int id, double x, double y, signed char accel, double speed)
 {
 	LINK current;
+	unsigned long clag;
 	// verbose("SMSG_ACCEL %d %2.2f %2.2f %d %2.2f", id, x, y, (int)accel, speed);
 	current = getplayer_byid(id);
 	if (!current)
@@ -959,6 +978,13 @@ void m_accel(unsigned int id, double x, double y, signed char accel, double spee
 	current->y = y;
 	current->velocity = (int)accel;
 	current->speed = speed;
+#if IGNORE_LAG == 1
+	clag = 0;
+#else
+	clag = (unsigned long)current_lag();
+#endif
+	current->t = ourtime - clag;
+
 	return;
 }
 
@@ -978,6 +1004,7 @@ void m_invincible(unsigned int id, unsigned char yesno, unsigned int t)
 	node->invincibility_t2 = ourtime + clag;
 }
 
+// *lag*
 void m_turn(unsigned int id, double x, double y, signed char turn, double deg)
 {
 LINK current;

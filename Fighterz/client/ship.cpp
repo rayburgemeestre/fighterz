@@ -269,15 +269,12 @@ void moveship(unsigned int id2, unsigned long t2)
 							current->speed = 0.00;
 					}
 					else if (current->speed > 0.001) // ***
-					{
 						current->speed -= 0.01;
-					}
 					/* 
 						*** De doubles zijn nogal gaar, intern afgerond ofzo?
 						0.0000 is tegenwoordig al groter dan 0.00 ofzo
 						dus ehm, vandaar die vage extra 0.001 steeds.....
 					*/
-					send_accel(9);
 				}
 				else if (current->velocity == -1)
 				{

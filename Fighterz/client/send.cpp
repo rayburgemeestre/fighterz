@@ -80,7 +80,7 @@ void send_accel(int from)
 	unsigned short len = 0;
 	if (!our_node)
 		return;
-	// verbose("CMSG_ACCEL(%d): %d", from, time);
+	verbose("CMSG_ACCEL(%d): %d", from, time);
 	
 	put_u16(CMSG_ACCEL, &p, &len);
 	put_dbl(our_node->x, &p, &len);

@@ -47,8 +47,14 @@ int deg_diff_max = 50,
 		current2 = current2->next;
 	}
 
-old_deg = current2->deg;
-#define BOUNCE_POSSIBLE_OR_RESTORE if (collidecheck2(current2->id, 0, 1) != 1) { collided = 0; } else { current2->deg = old_deg;}
+	old_deg = current2->deg;
+	#define BOUNCE_POSSIBLE_OR_RESTORE \
+		if (collidecheck2(current2->id, 0, 1) != 1) \
+		{ \
+			collided = 0; \
+		} else { \
+			current2->deg = old_deg; \
+		}
 
 	/* TODO: This is weird, change this */
     if (current2->speed != 0.00)
@@ -302,8 +308,7 @@ old_deg = current2->deg;
 					) {
 						current2->deg = (360 - current2->deg) / rdemp;
 						// Need to know if it won't collide now..
-						if (collidecheck2(current2->id, 0, 1) != 1)
-							collided = 0;
+						BOUNCE_POSSIBLE_OR_RESTORE
 					}
 					// Vooruit tegen de linkerkant muur (van rechts)
 					else if (
@@ -313,8 +318,7 @@ old_deg = current2->deg;
 					) {
 						current2->deg = 180 - ( (current2->deg - 180) / rdemp );
 						// Need to know if it won't collide now..
-						if (collidecheck2(current2->id, 0, 1) != 1)
-							collided = 0;
+						BOUNCE_POSSIBLE_OR_RESTORE
 					}
 					// Achterruit tegen de linkerkant muur (van rechts!)
 					else if (
@@ -324,8 +328,7 @@ old_deg = current2->deg;
 					) {
 						current2->deg = 180 + ( (180 - current2->deg) / rdemp );
 						// Need to know if it won't collide now..
-						if (collidecheck2(current2->id, 0, 1) != 1)
-							collided = 0;
+						BOUNCE_POSSIBLE_OR_RESTORE
 					}
 					// Achterruit tegen de rechterkant muur (van links!)
 					else if (
@@ -351,12 +354,6 @@ old_deg = current2->deg;
 		{	/* our ship */
 			if (current2->speed != 0.0)
 			{	
-/*
-*sough*
-this is really bitching (there's distance between the
-center of the ship and the collition point. And the collision
-point itself is also not known exactly..
-*/
 				if (0)
 				{
 				int retval = -1; // make args compatible ;)
