@@ -4,9 +4,11 @@
 void drawconsole()
 {
 	int i = 0;
-	int c_top = TOP + field_height + 10 - 200;
+	// int c_top = TOP + field_height + 10 - 200;
+	int c_top = TOP + SCREEN_Y + 10 - 200;
 	int cur_pos = c_top;
 
+	// AL_INLINE(void, rectfill, (BITMAP *bmp, int x1, int y1, int x2, int y2, int color),
 	while (i < MAX_C_LINES)
 	{
 		putpixel(tmpscreen, 0, cur_pos, 42);

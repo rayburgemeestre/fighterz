@@ -22,7 +22,7 @@ extern void moveships();
 extern void moveship(unsigned int id2, TIME t2);
 extern double dabs(double x);
 extern void collidecheck();
-extern void collidecheck2(struct data *ptr);
+extern int collidecheck2(struct data *ptr, int nobounce);
 extern double futureX(struct data *ptr);
 extern double futureY(struct data *ptr);
 extern double fbX(unsigned int id2);

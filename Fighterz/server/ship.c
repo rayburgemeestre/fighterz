@@ -208,10 +208,21 @@ for (cnt=0; cnt<times; cnt++)
 				if (current->t > t2)
 				{	/* time is not synched correctly */
 					/* todo: call function to sync again*/
+					addtext("ERROR: Time out of sync for client: %d", current->id);
 					return;
 				}
 				diff = (servertime - current->t);
 				
+			// added
+			// --
+				if (current->freeze == 1)
+				{
+					current->t = servertime + diff;
+					return;
+					/* we don't move because we THINK (and are probably right)
+					   that this person has collided with some wall.. */
+				}
+			// --
 				//if ( (current->velocity == 1) || (current->velocity == -1) )
 				//{
 				//	//tmp = MOVE_INTERVAL * 2;
@@ -347,11 +358,15 @@ for (cnt=0; cnt<times; cnt++)
 						//printf("Checking id: %d (bot: %d)\n", current->id, current->bot);
 						//fflush(stdout);
 						//fflush(stdin);
-						collidecheck2(current);
+						collidecheck2(current, 0);
 						// heh foutje @ collidecheck2b(current);
+					} // if (current->bot == 1)
+					else if (current->bot == 0)
+					{
+						collidecheck2(current, 0);
 					}
 
-					/* collidecheck2(current->id);
+					/* collidecheck2(current);
 					do not collide check at the server, stuff could
 					be out of sync, and that would mess up some things */
 						

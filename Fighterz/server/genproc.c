@@ -185,8 +185,6 @@ void drawgraphics()
 	/* calc fps */
 	fps_proc();
 
-	drawconsole();
-
 	/* draw ships */
 	drawships();
 	drawbullets();	
@@ -212,6 +210,8 @@ void drawgraphics()
 	if (show_fps == 1 && head != NULL) 
 		textprintf(tmpscreen, font, 1, 1, 15, "FPS: %d spd:%.2f lg:%2.2f bc:%du", fps, (head != NULL?head->speed:0.0), (head != NULL?current_lag(head->id):0.0), head->bulletcnt);
 			/* shows: fps, speed, lag, bulletcount.. */
+
+	drawconsole();
 
 	/* ! tmpscreen -> screen */
 	blit (tmpscreen, screen, 0, 0, 0, 0, SCREEN_X, SCREEN_Y);

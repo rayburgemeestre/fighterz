@@ -108,6 +108,9 @@ struct data {
 	                           invincibility drops. */
 
 	int dead; /**< 0=no, 1 = yes, 2=yes and ready to respawn */
+	int freeze; /**< 1= using the servers calculations this user has collided, 
+					 the user won't be moved any longer, but we do not change velocity/speed
+					 variables */
 	TIME died; /**< time player/bot died, used for the respawn delay */
 	char *errmsg; /**< Error msg to be sent */
     struct data *next; /**< next object in list */

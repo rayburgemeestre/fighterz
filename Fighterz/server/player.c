@@ -57,6 +57,7 @@ struct data *add_player(ID sock_fd)
 	head->buffer = malloc(8192);
 	memset(head->buffer, 'X', 8192);
 	head->inlen = 0;
+	head->freeze = 0;
 
 	head->type = T_PLAYER;
 	
@@ -133,6 +134,7 @@ struct data *add_bot()
 	head->path[PATH_MAX_-1][1] = 0;
 
 	head->type = T_BOT;
+	head->freeze = 0;
 	
 	//head->target_x = BLUEFLAG.x + (BLOCKSIZE / 2);
 	//head->target_y = BLUEFLAG.y + (BLOCKSIZE / 2);

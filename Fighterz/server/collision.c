@@ -11,24 +11,44 @@ void collidecheck()
 	current = head;
 	while (current!= NULL)
 	{
-		collidecheck2(current);
+		collidecheck2(current, 0);
 		current = current->next;
 	}
 }
 
-void collidecheck2(struct data *ptr)
+int collidecheck2(struct data *ptr, int nobounce)
 {
 	LINK current = head;
 	int collided = 0; /* 0=no, 1=yes */
-	double x, y;
+	double x, y, old_deg;
 	int px, py, qx, qy;
 
-	while (current != NULL)
+	// added
+	// --
+	int deg_diff_max = 50, 
+		demp_min = 10,
+		demp_max = 25,
+		rdemp;
+	#define BOUNCE_POSSIBLE_OR_RESTORE \
+		if (collidecheck2(current, 1) != 1) { \
+			collided = 0; \
+			addtext("collide word toch gewoon op nul gezet of niet dan ej?"); \
+			/* fucking thing still collides? FUCK THAT */ \
+			return collided; \
+		} else { \
+			current->deg = old_deg; \
+		}
+
+	current = ptr;
+	old_deg = current->deg;
+	// --
+
+	/* while (current != NULL)
 	{
 		if ((struct data *)current == ptr)
 			break;
 		current = current->next;
-	}
+	} */
 
 	x = futureX(current);
 	y = futureY(current);	
@@ -44,6 +64,10 @@ void collidecheck2(struct data *ptr)
 		//if (field[py][px] == 1)
 		//	collided = true;
 
+	// old code
+	// --
+	if (0 == 1)
+	{
 		/* BLOCKSIZE / 4 down the ship */
 		if ((py - 1) > 0)
 		{
@@ -72,12 +96,263 @@ void collidecheck2(struct data *ptr)
 			}
 		}
 	}
+	// --
+	// new code
+	// --
+	// --
+	// --
+	// --
+	// --
+	rdemp = (dabs(current->speed) / SPEED) * (demp_max - demp_min);
+	rdemp = (demp_max - demp_min) - rdemp;
+	rdemp = (rdemp > 0 ? rdemp : 1) + demp_min;
 
-	if (collided == 1)
+		/* center of the ship */
+		if (field[py][px] == '1')
+		{
+			collided = 1;
+		}
+
+		/* BLOCKSIZE / 4 above the ship - tested */
+		if ((py - 1) >= 0)
+		{
+			qy = (int) ((y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+			if (field[qy][px] == '1') 
+			{
+				collided = 1;
+				if (!nobounce && dabs(current->speed) > 0.05) // static minimal speed required
+				{
+// --
+// -- Afkaatsen				
+// --
+					// Vooruit tegen de bovenkant muur (van links)
+					if (
+						current->deg >= (90 - deg_diff_max) 
+							&& 
+						current->deg <= 90
+					) {
+						current->deg = ( (90 - current->deg) / rdemp ) + 90;
+						BOUNCE_POSSIBLE_OR_RESTORE
+						
+					}
+					// Vooruit tegen de bovenkant muur (van rechts)
+					else if (
+						current->deg >= 270
+							&& 
+						current->deg <= (270 + deg_diff_max)
+					) {
+						current->deg = 270 - ( (current->deg - 270) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de bovenkant muur (van rechts!)
+					else if (
+						current->deg >= 90
+							&& 
+						current->deg <= (90 + deg_diff_max)
+					) {
+						current->deg = 90 - ( (current->deg - 90) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de bovenkant muur (van links!)
+					else if (
+						current->deg >= (270 - deg_diff_max)
+							&& 
+						current->deg <= 270
+					) {
+						current->deg = 270 + ( (270 - current->deg) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+// --
+// --
+// --
+				}
+			}
+		}
+		/* BLOCKSIZE / 4 down the ship - tested */
+		if ( (py + 1) <= Y_BLOCKS )
+		{
+			qy = (int)( (y + (BLOCKSIZE / 4) ) / BLOCKSIZE);
+			if (field[qy][px] == '1') 
+			{
+				collided = 1;
+				if (!nobounce && dabs(current->speed) > 0.05) // static minimal speed required
+				{
+// --
+// -- Afkaatsen				
+// --
+					// Vooruit tegen de onderkant muur (van links)
+					if (
+						current->deg >= (270 - deg_diff_max)
+							&& 
+						current->deg <= 270
+					) {
+						current->deg = 270 + ( (270 - current->deg) / rdemp );
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Vooruit tegen de onderkant muur (van rechts)
+					else if (
+						current->deg >= 90
+							&& 
+						current->deg <= (90 + deg_diff_max)
+					) {
+						current->deg = 90 - ( (current->deg - 90) / rdemp );
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de onderkant muur (van rechts!)
+					else if (
+						current->deg >= (90 - deg_diff_max)
+							&& 
+						current->deg <= 90
+					) {
+						current->deg = 90 + ( (90 - current->deg) / rdemp );
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de onderkant muur (van links!)
+					else if (
+						current->deg >= 270
+							&& 
+						current->deg <= (270 + deg_diff_max)
+					) {
+						current->deg = 270 - ( (current->deg - 270) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+// --
+// --
+// --
+				}
+			}
+		}
+		/* BLOCKSIZE / 4 on the right of the ship - tested*/
+		if ( (px + 1) <= (X_BLOCKS))
+		{
+			qx = (int)( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE);
+			if (field[py][qx] == '1') 
+			{
+				collided = 1;
+				if (!nobounce && dabs(current->speed) > 0.05) // static minimal speed required
+				{
+// --
+// -- Afkaatsen				
+// --
+					// Vooruit tegen de rechterkant muur (van links)
+					if (
+						current->deg >= (180 - deg_diff_max)
+							&& 
+						current->deg <= 180
+					) {
+						current->deg = ( (180 - current->deg) / rdemp) + 180;
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Vooruit tegen de rechterkant muur (van rechts)
+					else if (
+						current->deg >= 0
+							&& 
+						current->deg <= deg_diff_max
+					) {
+						current->deg = 360 - ( current->deg / rdemp );
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de rechterkant muur (van rechts!)
+					else if (
+						current->deg >= 180
+							&& 
+						current->deg <= (180 + deg_diff_max)
+					) {
+						current->deg = 180 - ( (current->deg - 180) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de rechterkant muur (van links!)
+					else if (
+						current->deg >= (360 - deg_diff_max)
+							&& 
+						current->deg <= 360
+					) {
+						current->deg = ( (360 - current->deg) / rdemp);
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+// --
+// --
+// --
+				}
+			}
+		}
+		/* BLOCKSIZE / 4 on the left of the ship - tested*/
+		if ( (px - 1) >= 0 )
+		{
+			qx = (int)( ( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE) - 0.5); // dunno why i had to add the - 0.5
+																	// in the VB version it wasn't necessary
+			if (field[py][qx] == '1') 
+			{														// TODO; find out why :)
+				collided = 1;
+				if (!nobounce && dabs(current->speed) > 0.05) // static minimal speed required
+				{
+// --
+// -- Afkaatsen				
+// --
+					// Vooruit tegen de linkerkant muur (van links)
+					if (
+						current->deg >= (360 - deg_diff_max)
+							&& 
+						current->deg <= 360
+					) {
+						current->deg = (360 - current->deg) / rdemp;
+						// Need to know if it won't collide now..
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Vooruit tegen de linkerkant muur (van rechts)
+					else if (
+						current->deg >= 180
+							&& 
+						current->deg <= (180 + deg_diff_max)
+					) {
+						current->deg = 180 - ( (current->deg - 180) / rdemp );
+						// Need to know if it won't collide now..
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de linkerkant muur (van rechts!)
+					else if (
+						current->deg >= (180 - deg_diff_max)
+							&& 
+						current->deg <= (180 + deg_diff_max)
+					) {
+						current->deg = 180 + ( (180 - current->deg) / rdemp );
+						// Need to know if it won't collide now..
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+					// Achterruit tegen de rechterkant muur (van links!)
+					else if (
+						current->deg >= 0
+							&& 
+						current->deg <= deg_diff_max
+					) {
+						current->deg = 360 - (current->deg / rdemp);
+						// Need to know if it won't collide now..
+						BOUNCE_POSSIBLE_OR_RESTORE
+					}
+// --
+// --
+// --
+				}
+			}
+		}
+	// --
+	// --
+	// --
+	// --
+	// --
+	}
+
+	if (collided == 1 && 0 == 1)
 	{
+		// added
+		// --
+		current->freeze = 1;
+		return collided;
+		// --
 		current->velocity = 0;
 		// current->speed = 0.0;
 	}
+	return collided;
 }
 
 double futureX(struct data *ptr)

@@ -111,6 +111,7 @@ static void m_spawn(struct data *client)
 		return; /* Not allowed to respawn (yet), ignore */
 
 	client->dead = 0;
+	client->freeze = 0;
 
 	client->invincible = 1;
 	client->invincibility_t = 5000;
@@ -125,12 +126,18 @@ static void m_spawn(struct data *client)
 		(signed char)client->turn, (unsigned char)client->type, client->speed);
 }
 
+// *lag*
 static void m_accel(struct data *client, double x, double y, signed char accel, double speed)
 {
 unsigned int clag;
 	verbose("CMSG_ACCEL %2.2f %2.2f %d %2.2f", x, y, (int)accel, speed);
 
+#if IGNORE_LAG != 1
 	clag = (unsigned int)current_lag(client->id);
+#else
+	clag = 0
+#endif
+
 	/* ajust our db */
 	client->x = x;
 	client->y = y;
@@ -138,6 +145,7 @@ unsigned int clag;
 	client->vel_time = (servertime - clag);
 	client->speed = speed;
 	client->t = (servertime - clag);
+	client->freeze = 0;
 	
 	/* move ship to the position we think it SHOULD be */
 #if IGNORE_LAG != 1
@@ -146,11 +154,18 @@ unsigned int clag;
 	send_accel(EVERYONE, client, client->id, client->x, client->y, (signed char)client->velocity, client->speed);
 }
 
+// *lag*
 static void m_turn(struct data *client, double x, double y, signed char turn, double deg)
 {
 unsigned int clag;
 printf("x: %d, y: %d, deg: %2.2f\n", x, y, deg);
+
+#if IGNORE_LAG != 1
 	clag = (unsigned int)current_lag(client->id);
+#else
+	clag = 0
+#endif
+
 	/* ajust our db */
 	client->x = x;
 	client->y = y;
@@ -158,6 +173,7 @@ printf("x: %d, y: %d, deg: %2.2f\n", x, y, deg);
 	client->deg = deg;
 	client->t = (servertime - clag);
 	client->turn_t = (servertime - clag);
+	client->freeze = 0;
 
 	/* move ship to the position we think it SHOULD be */
 #if IGNORE_LAG != 1
@@ -166,12 +182,17 @@ printf("x: %d, y: %d, deg: %2.2f\n", x, y, deg);
 	send_turn(EVERYONE, client, client->id, client->x, client->y, (signed char)client->turn, client->deg);
 }
 
+// *lag*
 static void m_newbullet(struct data *client, double x, double y, double deg)
 {
 unsigned int clag;
 struct data *bullet;
 
+#if IGNORE_LAG != 1
 	clag = (unsigned int)current_lag(client->id);
+#else
+	clag = 0
+#endif
 	
 	if (client->bulletcnt == (unsigned)BULLET_MAX)
 	{
