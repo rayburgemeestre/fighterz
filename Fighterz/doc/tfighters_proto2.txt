@@ -1,0 +1,181 @@
+$Id: tfighters_proto2.txt,v 1.1 2003/08/30 23:36:29 trigen Exp $
+=============
+
+server->client:     0-32767 (0x0000 - 0x7FFF)
+client->server: 32768-65535 (0x8000 - 0xFFFF)
+
+[len (u16)][type (u16)][data...]
+len = length of packet including type field ^_^
+
+== RANGE (hex) ==
+-- server->client --
+0000-00FF: pre-auth/init		version, "motd", lag
+0100-01FF: map info			map info
+0200-02FF: pre-start			ready signalling, mmm ?
+0300-03FF: object updates		all object update msgs (speed/turn/x/y/etc)
+0400-04FF: field updates		field updates (ex: new flag position)
+0500-05FF: user messaging		say, teamsay
+0600-06FF: misc events			kills, deaths, flagscore
+0700-07FF: replies			nick ok/failed, etc
+
+-- client->server --
+8000-80FF: pre-auth/init		version, nick, pass, lag
+8100-81FF: map info			NOT USED
+8200-82FF: pre-start			ready signalling, mmm ?
+8300-83FF: object updates		my own object update msgs (speed/turn/x/y/etc)
+8400-84FF: field updates		NOT USED (?)
+8500-85FF: user messaging		say, teamsay
+8600-86FF: misc events			NOT USED (?)
+
+== DETAILS ==
+-- legend --
+u32: unsigned 32 bit integer, u16: unsigned 16 bit integer (short), u8: unsigned 8 bit integer (char)
+s32: signed 32 bit integer, s16: signed 16 bit integer (short), s8: signed 8 bit integer (char)
+str: nul terminated string, dbl: XXX.XX sent as XXX.XX*100 signed integer, realdbl: a real double (8 bytes)
+
+-- client->server --
+0x8000: CMSG_VERSION <myversion (u32)>
+ [new]
+0x8001: CMSG_PASS <pass (str)>
+ [new]
+0x8002: CMSG_NICK <nick (str)>
+ OLDPROTO: N
+0x8003: CMSG_PONG <servertime (u32)>
+ Returns servertime
+ OLDPROTO: 1
+
+0x8200: CMSG_SPAWN
+ I wanna spawn! Sent back after SMSG_SPAWNREADY
+ [new]
+
+0x8300: CMSG_ACCEL <x (dbl)> <y (dbl)> <accel (s8)> <speed (dbl)>
+ Acceleration update with X/Y coordinates, accel can be -1/0/+1.
+ OLDPROTO: 2
+0x8301 CMSG_TURN <x (dbl)> <y (dbl)> <turn (s8)> <deg (dbl)>
+ Direction update with X/Y coordinates, turn can be -4/-2/0/+2/+4
+ OLDPROTO: 3
+0x8302 CMSG_NEWBULLET <x (dbl)> <y (dbl)> <deg (dbl)>
+ New bullet
+ OLDPROTO: 4
+
+0x8500: CMSG_CMD <text (str)>
+ Command, like "addbot".
+ [new]
+0x8501: CMSG_SAY <text (str)>
+ Simple say
+ OLDPROTO: T
+0x8502: CMSG_TEAMSAY <text (str)>
+ Teamsay
+ [new]
+
+-- server->client --
+0x0000: SMSG_HI <myversion (u32)> <uwid (u32)
+ [new]
+0x0001: SMSG_MOTD <text including \n's (str)>
+ OLDPROTO: 0
+0x0002: SMSG_PING <time (u32)>
+ Server time
+ OLDPROTO: 1
+0x0003: SMSG_LAG <diff (s32)>
+ The lag calculated at server (this value is already calculated 
+ as one-way between server <-> client)
+ OLDPROTO: 2
+
+0x0200: SMSG_SPAWNREADY
+ Ready to respawn, send CMSG_SPAWN back to get respawned
+ OLDPROTO: a bit like empty "R"
+
+0x0400: SMSG_ACCEL <id (u32)> <x (dbl)> <y (dbl)> <accel (s8)> <speed (dbl)>
+ Acceleration update
+ OLDPROTO: 6
+ CHANGES: accel now int (was dbl)
+0x0401: SMSG_TURN <id (u32)> <x (dbl)> <y (dbl)> <turn (s8)> <deg (dbl)>
+ Turn update
+ OLDPROTO: 7
+ CHANGES: swapped turn <-> deg!
+
+0x0402: SMSG_INVINCIBLE <id (u32)> <yesno (u8)> <invincibility_t (u32)>
+ Invincibility update
+ oldproto: 9
+
+0x0403: SMSG_HIT <victimid (u32)> <evilid (u32)> <newpower (u8)>
+ victimid has been hit by evilid, new power is newpower.
+ evilid can be 0 if it's not a bullet, otherwise destroy id.
+ OLDPROTO: H/D
+ CHANGES: major change. Now broadcasted.
+
+0x0500: SMSG_SAY <id (u32)> <text (str)>
+ Simple say
+ OLDPROTO: T (?)
+
+0x0501: SMSG_TEAMSAY <id (u32)> <text (str)>
+ Teamsay
+ [new]
+
+0x0600: SMSG_NEWUSER  <id (u32)> <x (dbl)> <y (dbl)> <deg (dbl)>
+                      <accel (s8)> <alive (u32)> <frags (s16)>
+                      <turn (s8)> <type (u8)> <speed (dbl)>
+                      <nick (str)>
+ userlist/new user, sent for every player if just connected, also broadcasted
+ to everyone in case a new player joins.
+ CHANGES: bot has been changed to TYPE, dropped move&kill_avg, deaths/kills dropped, now frags
+ OLDPROTO: 5
+
+0x0601: SMSG_DELOBJ <id (u32)>
+ Object deleted
+ OLDPROTO: D
+
+0x0602: SMSG_KILL <victimid (u32)> <evilid (u32)> <killtxt (str)>
+ Kill message for victimid by evilid. if killtxt is nul then a default kill
+ message is shown.
+ OLDPROTO: K
+ CHANGES: added killtxt
+
+0x0603: SMSG_NEWBULLET <id (u32)> <ownerid (u32)> <x (dbl)> <y (dbl)> <deg (dbl)>
+ New bullet
+ OLDPROTO: 8
+ CHANGES: added id field
+
+0x0604: SMSG_NICK <id (u32)> <newnick (u32)>
+ Nick change
+ OLDPROTO: N
+
+0x0605: SMSG_SPAWN <id (u32)> <x (dbl)> <y (dbl)> <deg (dbl)>
+                      <accel (s8)> <alive (u32)> <frags (s16)>
+                      <turn (s8)> <type (u8)> <speed (dbl)>
+ A (re)spawn message, used when player has joined or respawn-after-death
+ OLDPROTO: R
+ CHANGES: dropped move/dead/nick/kills_avg, dropped oldproto empty 'R' message, kills->frags
+
+0x0606: SMSG_QUIT <id (u32)> <text (str)>
+ Persoon die wegrent
+
+0x0607: SMSG_KICK <id (u32)> <text (str)>
+ Persoon kicked door server of admin
+
+0x0700: SMSG_NICKREPLY <goodorbad (u8)> <text (str)>
+ Reply if NICK was succesfull or not, goodorbad=1 or 0 in case of failure.
+ text is nul in case of succes.
+
+=====================================================================================
+HANDSHAKE:
+->C: SMSG_HI
+->S: CMSG_VERSION
+->S: CMSG_NICK
+->C: SMSG_NICKREPLY
+->C: SMSG_NEWUSER (x keer [voor elke user])
+->ALL: SMSG_NEWUSER <-- user joined da game (positie @ -100,-100)
+<< vanaf nu krijg je msgs van anderen etc >>
+->C: SMSG_PING <- ping = servertime
+->S: CMSG_PONG <- client paast 't terug
+->C: SMSG_LAG <- client krijgt te weten wat 't verschil was
+->C: SMSG_PING ( en dat dus X keer )
+->S: CMSG_PONG
+->C: SMSG_LAG
+->C: SMSG_PING
+->S: CMSG_PONG
+->C: SMSG_LAG
+[etc]
+->C: SMSG_SPAWNREADY
+->S: CMSG_SPAWN
+->C: SMSG_SPAWN <uwid> etcetc
