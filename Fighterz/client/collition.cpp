@@ -34,7 +34,7 @@ int px, py, qx, qy;
 /* the fucked up stuff */
 double direction, old_deg;
 int step = 1; /* Will only use this nonsense temporary */
-int deg_diff_max = 40, 
+int deg_diff_max = 50, 
 	demp_min = 10,
 	demp_max = 25,
 	rdemp;

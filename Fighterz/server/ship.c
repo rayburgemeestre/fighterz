@@ -117,6 +117,42 @@ while (diff >= tmp)
 
 for (cnt=0; cnt<times; cnt++)
 {
+
+	if (current->velocity == 1)
+	{ 
+		if (current->speed < SPEED)
+			current->speed += 0.01;
+	}
+	else if (current->velocity == 0.00)
+	{
+		if (current->speed < -0.001)  // we don't want -0.00 to valid this statement
+		{
+			current->speed += 0.01;
+			if (current->speed == 0.00)
+				current->speed = 0.00;
+		}
+		else if (current->speed > 0.001) // ***
+		{
+			current->speed -= 0.01;
+		}
+		/* 
+			*** De doubles zijn nogal gaar, intern afgerond ofzo?
+			0.0000 is tegenwoordig al groter dan 0.00 ofzo
+			dus ehm, vandaar die vage extra 0.001 steeds.....
+		*/
+	}
+	else if (current->velocity == -1)
+	{
+		if (current->speed > (-1 * SPEED))
+			current->speed -= 0.01;
+	}
+	else
+		;
+
+/*
+---
+--- Start: Old
+---
 	//addtext("XXXXXXXXXXXXXXXXXXXXXXX");
 	if (current->velocity == 1)
 	{ 
@@ -134,6 +170,11 @@ for (cnt=0; cnt<times; cnt++)
 	}
 //	else
 //		; // current->vel_time += diff;
+
+---
+--- End: Old
+---
+*/
 	/*
 	if (current->velocity == 0)
 	{

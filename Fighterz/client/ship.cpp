@@ -242,13 +242,30 @@ void moveship(unsigned int id2, unsigned long t2)
 
 			for (cnt=0; cnt<times; cnt++)
 			{
-				//addtext("XXXXXXXXXXXXXXXXXXXXXXX");
 				if (current->velocity == 1)
 				{ 
 					if (current->speed < SPEED)
 						current->speed += 0.01;
 				}
-				if (current->velocity == -1)
+				else if (current->velocity == 0.00)
+				{
+					if (current->speed < -0.001)  // we don't want -0.00 to valid this statement
+					{
+						current->speed += 0.01;
+						if (current->speed == 0.00)
+							current->speed = 0.00;
+					}
+					else if (current->speed > 0.001) // ***
+					{
+						current->speed -= 0.01;
+					}
+					/* 
+						*** De doubles zijn nogal gaar, intern afgerond ofzo?
+						0.0000 is tegenwoordig al groter dan 0.00 ofzo
+						dus ehm, vandaar die vage extra 0.001 steeds.....
+					*/
+				}
+				else if (current->velocity == -1)
 				{
 					if (current->speed > (-1 * SPEED))
 						current->speed -= 0.01;

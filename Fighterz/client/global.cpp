@@ -309,6 +309,11 @@ int newturn = 0;
 					verbose(field[i]);
 				}
 			}
+			if ( k == KEY_F8 )
+			{
+				// pauze				
+				alert("w00ted?", "", "", "Ok", NULL, 0, 0);
+			}
 			if ( k == KEY_F11 /*&& false*/ )
 			{
 				if (BOUNCING_BULLETS == 1)
@@ -574,12 +579,14 @@ void debug()
 void drawfps()
 {
 	if (show_fps == 1) 
+	{
 		textprintf(tmpscreen, font, 2, 2, makecol(255,255,255), 
 			"FPS: %d LAG: %2.2f VEL: %d SPD: %.2f FRE:%d POW:%d SOCK:%d map-w:%d h:%d             ", 
 			fps, current_lag(), our_node->velocity, our_node->speed, 
 			our_node->freeze, our_node->power, theSocket,
 				field_width, field_height
 		);
+	}
 }
 
 void show_graphics()
