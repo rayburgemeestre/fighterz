@@ -26,7 +26,7 @@ void init()
 	set_window_close_hook(closereq);
 
 	init_screen();	
-	clear_to_color(screen, makecol(0, 0, 255));
+	clear_to_color(screen, makecol(0, 0, 0));
 	center_window();
 
 	datafile = strdup(BASE_DATAFILE);
@@ -377,7 +377,7 @@ void draw_talk_box()
 			)
 		)
 	);
-	textprintf(talkbuff, font, (CSCREEN_H / 2) - 10, (CSCREEN_H / 2) - 10, makecol(255, 255, 255), msg);
+	textprintf(talkbuff, (FONT *)dataf[NOKIA].dat, (CSCREEN_H / 2) - 10, (CSCREEN_H / 2) - 10, makecol(255, 255, 255), msg);
 }
 
 void read_config()
@@ -417,7 +417,7 @@ void initialize_vars()
 	fps = 0; 
 	fps_count = 0;
 	show_fps = 1;
-	show_names = 1;
+	show_names = 0;
 	show_ulist = 1;
 	ourtime = 0;
 	our_id = -1;

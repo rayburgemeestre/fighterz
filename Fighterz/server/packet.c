@@ -72,7 +72,8 @@ struct data *c;
 		send_newuser(EVERYONE, client,
 			client->id, client->x, client->y, client->deg,
 			(signed char)client->velocity, client->alive, client->frags, client->move,
-			(signed char)client->turn, (unsigned char)client->type, client->speed, client->nick);
+			(signed char)client->turn, (unsigned char)client->type, client->speed, client->shiptype,
+			client->nick);
 
 		/* Start tha lag calc */
 		SetLag(client);
@@ -223,6 +224,12 @@ struct data *bullet;
 		send_newbullet(EVERYONE, client, bullet->id, client->id, x, y, deg);
 }
 
+static void m_newship(struct data *client, int shiptype)
+{
+	client->shiptype = shiptype;
+	send_newship(client);
+}
+
 static void m_cmd(struct data *client, char *cmd)
 {
 size_t len;
@@ -358,6 +365,11 @@ again:
 		}
 		return;
 	}
+	else if (!strcmp(cmd, "ship1")) { client->shiptype = 1; send_newship(client); }
+	else if (!strcmp(cmd, "ship2")) { client->shiptype = 2; send_newship(client); }
+	else if (!strcmp(cmd, "ship3")) { client->shiptype = 3; send_newship(client); }
+	else if (!strcmp(cmd, "ship4")) { client->shiptype = 4; send_newship(client); }
+	else if (!strcmp(cmd, "ship5")) { client->shiptype = 5; send_newship(client); }
 }
 
 static void m_say(struct data *client, char *txt)
@@ -471,6 +483,16 @@ void dopacket(struct data *client, unsigned short xtype, unsigned short len, cha
 				goto fatal;
 
 			m_newbullet(client, x, y, deg);
+			return;
+		}
+		case CMSG_NEWSHIP:
+		{
+			int shiptype;
+
+			if (!get_s32(&shiptype, &dta, &len))
+				goto fatal;
+
+			m_newship(client, shiptype);
 			return;
 		}
 		case CMSG_CMD:

@@ -23,8 +23,8 @@ extern void moveship(unsigned int id2, TIME t2);
 extern double dabs(double x);
 extern void collidecheck();
 extern int collidecheck2(struct data *ptr, int nobounce);
-extern double futureX(struct data *ptr);
-extern double futureY(struct data *ptr);
+extern double futureX(struct data *ptr, double angle, double speed);
+extern double futureY(struct data *ptr, double angle, double speed);
 extern double fbX(unsigned int id2);
 extern double fbY(unsigned int id2);
 extern void loadmap();
@@ -128,8 +128,9 @@ extern void send_hit(struct data *client, struct data *except,
 extern void send_newuser(struct data *client, struct data *except,
     ID id, double x, double y, double deg, signed char accel, 
 	unsigned int alive, signed short frags, unsigned int pending_moves,
-    signed char turn, unsigned char type, double speed,
+    signed char turn, unsigned char type, double speed, int shiptype,
     char *nick);
+extern void send_newship(struct data *client);
 extern void send_delobj(struct data *client, struct data *except, ID id);
 extern void send_kill(struct data *client, struct data *except,
     ID victimid, ID evilid, char *killstr);

@@ -47,8 +47,8 @@ extern void debug();
 extern void addtext(char *pattern, ...);
 extern void collidecheck();
 extern int collidecheck2(unsigned int id, int variation, int nobounce);
-extern double futureX(struct data *ptr, double speed);
-extern double futureY(struct data *ptr, double speed);
+extern double futureX(struct data *ptr, double angle, double speed);
+extern double futureY(struct data *ptr, double angle, double speed);
 extern double fbX(unsigned int id2);
 extern double fbY(unsigned int id2);
 extern struct data *add_bullet(struct data *_id, int _x, int _y, double _deg, unsigned long _time);
@@ -75,6 +75,7 @@ extern struct data *getplayer_byid(unsigned int id);
 extern void dopacket(int xtype, unsigned short len, char *dta);
 extern void verbose(char *pattern, ...);
 extern void m_hi(unsigned int sver, unsigned int oid);
+extern void m_shiptype(unsigned int id, int newshiptype);
 extern void m_ping(unsigned int servertime);
 extern void m_lag(double diff);
 extern void m_nickreply(unsigned char acceptance, char *msg);
@@ -96,7 +97,7 @@ extern void m_respawn(unsigned int id);
 extern void m_newuser(int id, double x, double y, double deg,
 					  signed char accel, unsigned int alive, signed short frags,
 					  unsigned int pending_moves, signed char turn, unsigned char type, 
-					  double speed, char *nick);
+					  double speed, int shiptype, char *nick);
 extern void m_hit();
 extern void m_accel(unsigned int id, double x, double y, signed char accel, double speed);
 extern void m_invincible(unsigned int id, unsigned char yesno, unsigned int t);
@@ -110,3 +111,4 @@ extern void send_say(char *msg);
 extern void send_cmd(char *cmd);
 extern void send_turn();
 extern void send_newbullet(double, double, double);
+extern void send_newship();

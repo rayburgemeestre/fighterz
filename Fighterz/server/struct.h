@@ -114,6 +114,8 @@ struct data {
 					 variables */
 	TIME died; /**< time player/bot died, used for the respawn delay */
 	char *errmsg; /**< Error msg to be sent */
+	int shiptype;
+
     struct data *next; /**< next object in list */
 };
 

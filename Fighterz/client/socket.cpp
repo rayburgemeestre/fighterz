@@ -259,6 +259,19 @@ void dopacket(int xtype, unsigned short len, char *dta)
 	/* Other msgs here */
 	switch(xtype)
 	{
+		case SMSG_NEWSHIP:
+		{
+			unsigned int id;
+			int newshiptype;
+			
+			if (!get_u32(&id, &dta, &len))
+				goto fatal;
+			if (!get_s32(&newshiptype, &dta, &len))
+				goto fatal;
+
+			m_shiptype(id, newshiptype);
+			return;
+		}
 		case SMSG_ACCEL:
 		{
 			unsigned int id;
@@ -352,6 +365,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			signed char accel, turn;
 			unsigned char type;
 			signed short frags;
+			int shiptype;
 			char nick[64];
 
 			if (!get_u32(&id, &dta, &len))
@@ -376,6 +390,8 @@ void dopacket(int xtype, unsigned short len, char *dta)
 				goto fatal;
 			if (!get_dbl(&speed, &dta, &len))
 				goto fatal;
+			if (!get_s32(&shiptype, &dta, &len))
+				goto fatal;
 			if (!get_str(nick, &dta, &len, sizeof(nick)))
 				goto fatal;
 			
@@ -383,7 +399,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 
 			// strcpy(nick, "TEMPPPP");
 			
-			m_newuser(id, x, y, deg, accel, alive, frags, pending_moves, turn, type, speed, nick);
+			m_newuser(id, x, y, deg, accel, alive, frags, pending_moves, turn, type, speed, shiptype, nick);
 			// alert("newua", "", "", "", "", 0, 0);
 			return;
 		}
@@ -601,6 +617,13 @@ void m_hi(unsigned int sver, unsigned int oid)
 	send_nickname();
 }
 
+void m_shiptype(unsigned int id, int newshiptype)
+{
+	LINK node = getplayer_byid( id );
+	node->shiptype = newshiptype;
+	addtext("id new type: %d %d", node->id, newshiptype);
+}
+
 void m_ping(unsigned int servertime)
 {
 	// verbose("SMSG_PING: %d", servertime);
@@ -767,13 +790,14 @@ void m_spawnready()
 	our_node->dead = 2;
 
 	set_window_title("Fighterz -- Hit fire to respawn");
+	set_map_coords();
 	large_text("Connected, spawn to join");
 }
 
 // *lag*
 void m_newuser(int id, double x, double y, double deg,
 	signed char accel, unsigned int alive, signed short frags, unsigned int pending_moves,
-	signed char turn, unsigned char type, double speed,
+	signed char turn, unsigned char type, double speed, int shiptype,
 	char *nick)
 {
 	unsigned long clag;
@@ -835,6 +859,7 @@ void m_newuser(int id, double x, double y, double deg,
 	head->invincibility_t2 = ourtime;
 	head->hit_t = ourtime;
 	head->impact = 0;
+	head->shiptype = shiptype;
 	strcpy(head->nick, nick);
 
 // dbg 

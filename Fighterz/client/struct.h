@@ -64,6 +64,7 @@ struct data {
 							   if ( (servertime - invincibility_t2) > invincibility_t ) then
 	                           invincibility drops. */
 	int dead; /**< 1 = yes, and therefore invisible on map */
+	int shiptype; 
     struct data *next; /**< next object in list */
 };
 

@@ -8,6 +8,8 @@
    char buf[512] could be overflowed */
 void printff_direct(char *pattern, ...) 
 {
+int clr = makecol(0,255,0);
+
 	if (STARTED == 1 || can_spawn == 1)
 		return;
 
@@ -28,9 +30,9 @@ void printff_direct(char *pattern, ...)
 	}
 
 	if (TXTPTR == 0) { 
-		textprintf(screen, font, 10, 1, makecol(255,255,255), buf);
+		textprintf(screen, font, 10, 1, clr, buf);
 	} else { 
-		textprintf(screen, font, 10, TXTPTR, makecol(255,255,255), buf);
+		textprintf(screen, font, 10, TXTPTR, clr, buf);
 	}
 
 	release_screen();
@@ -114,7 +116,7 @@ if (!our_node)
 
 				ret = collidecheck2(our_node->id, 1, 0);
 
-				if (ret != 1) 
+				if (ret != 1 || DONT_LOSE_VELOCITY_AT_COLLISION) 
 				{ 
 					/* this wouldn't cause a collition*/
 					if (our_node->velocity == -1) our_node->velocity = 0;
@@ -140,7 +142,7 @@ if (!our_node)
 
 				ret = collidecheck2(our_node->id, 1, 0);
 
-				if (ret != 1) 
+				if (ret != 1 || DONT_LOSE_VELOCITY_AT_COLLISION)
 				{ 
 					if (our_node->velocity == 1) our_node->velocity = 0;
 					else if (our_node->velocity == 0) our_node->velocity = -1;
@@ -288,12 +290,15 @@ if (!our_node)
 			}
 		} 
 		else {
+			if ( k == KEY_1 ) { our_node->shiptype = 1; send_newship(); }
+			if ( k == KEY_2 ) { our_node->shiptype = 2; send_newship(); }
+			if ( k == KEY_3 ) { our_node->shiptype = 3; send_newship(); }
+			if ( k == KEY_4 ) { our_node->shiptype = 4; send_newship(); }
+			if ( k == KEY_5 ) { our_node->shiptype = 5; send_newship(); }
+
 			if ( k == KEY_H )
 			{
-				//addtext("<%s> %s", our_node->nick, ".addbot");
-				//sockwrite("T test\n");
-				//msg[0] = '\0';
-				//talk = 0;
+				send_cmd("addbot");
 			}
 		//	if ( k == KEY_C )
 		//		while (1);
@@ -469,7 +474,7 @@ void printulist()
 	current = head;
 	clear_to_color(ulistbuff, makecol(0,0,0));
 	/* rect(ulistbuff, 0, 0, 150 - 1, (MAP_H + 5 + CSCREEN_H) - 1, makecol(27, 27, 27)); */
-	textprintf(ulistbuff, font, 1, 1, makecol(255,255,255), "Player List:");
+	textprintf(ulistbuff, (FONT *)dataf[NOKIA].dat, 1, 1, makecol(255,255,255), "Player List:");
 	while (current != NULL)
 	{
 		if (current->bullet != 1)
@@ -506,10 +511,10 @@ void printul(struct data *node)
 
 	if (TXTPTR2 == 0) { 
 		//textprintf(tmpscreen, font, LEFT_2, 1, 42, buf); /* 42 = makecol(255, 128, 0) (orange) */
-		textprintf(ulistbuff, font, 0, 1, color, buf); 
+		textprintf(ulistbuff, (FONT *)dataf[NOKIA].dat, 0, 1, color, buf); 
 	} else { 
 		//textprintf(tmpscreen, font, LEFT_2, TXTPTR2, 42, buf);
-		textprintf(ulistbuff, font, 0, TXTPTR2, color, buf);
+		textprintf(ulistbuff, (FONT *)dataf[NOKIA].dat, 0, TXTPTR2, color, buf);
 	}
 }
 
@@ -598,9 +603,9 @@ void drawfps()
 				field_width, field_height
 		);
 */
-		textprintf(tmpscreen, font, 2, 2, makecol(128, 128, 128), 
-			"FPS: %d LAG: %2.2f VEL: %d SPEED: %.2f of %.2f    ", 
-			fps, current_lag(), our_node->velocity, our_node->speed, our_node->max_speed
+		textprintf(tmpscreen, (FONT *)dataf[NOKIA].dat, 2, 2, makecol(128, 128, 128), 
+			"FPS: %d LAG: %2.2f    ", 
+			fps, current_lag()
 		);
 	}
 }

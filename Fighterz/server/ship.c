@@ -58,6 +58,9 @@ LINK current = head;
 		current = current->next;
 	}
 }
+
+#define TURN_SPEED  18
+#define ACCEL_SPEED 30
 void moveship(unsigned int id2, TIME t2)
 {								/* t2 wasn't needed :} */
 	long int diff = 0, cnt;
@@ -78,7 +81,7 @@ void moveship(unsigned int id2, TIME t2)
 
 				/* NEW */
 				diff = (servertime - current->turn_t);
-				tmp = 10;
+				tmp = TURN_SPEED; /* Turn speed */
 				while (diff >= tmp)
 				{
 					diff -= tmp;
@@ -107,7 +110,7 @@ void moveship(unsigned int id2, TIME t2)
 
 
 diff = (servertime - current->vel_time);
-tmp = 50;
+tmp = ACCEL_SPEED; /* Accel speed */
 times = 0;
 while (diff >= tmp)
 {
@@ -286,8 +289,8 @@ for (cnt=0; cnt<times; cnt++)
 
 							/* We're following a path :) */
 							
-							fx = futureX(current);
-							fy = futureY(current);
+							fx = futureX(current, current->deg, current->speed);
+							fy = futureY(current, current->deg, current->speed);
 							
 							diffx1 = dabs(current->bot_x - tx);
 							diffx2 = dabs(fx - tx);

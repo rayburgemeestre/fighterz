@@ -69,7 +69,19 @@ unsigned short len = 0;
 	put_u32(client->id, &p, &len);
 	send_packet(client, NULL, packet, len);
 }
+void send_newship(struct data *client)
+{
+char *p = packet;
+unsigned short len = 0;
+	verbose("SMSG_NEWSHIP: <args>");
 
+	put_u16(SMSG_NEWSHIP, &p, &len);
+	
+	put_u32(client->id, &p, &len);
+	put_s32(client->shiptype, &p, &len);
+
+	send_packet(NULL, NULL, packet, len);
+}
 void send_servertime(struct data *client)
 {
 char *p = packet;
@@ -222,7 +234,7 @@ unsigned short len = 0;
 void send_newuser(struct data *client, struct data *except,
 	ID id, double x, double y, double deg,	signed char accel, 
 	unsigned int alive, signed short frags, unsigned int pending_moves,
-	signed char turn, unsigned char type, double speed,
+	signed char turn, unsigned char type, double speed, int shiptype,
 	char *nick)
 {
 char *p = packet;
@@ -241,6 +253,7 @@ unsigned short len = 0;
 	put_s8(turn, &p, &len);
 	put_u8(type, &p, &len);
 	put_dbl(speed, &p, &len);
+	put_s32(shiptype, &p, &len);
 	put_str(nick, &p, &len);
 	send_packet(client, except, packet, len);
 }

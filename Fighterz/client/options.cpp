@@ -1,10 +1,18 @@
 #include "common.h"
 
+#include "cube.h"
+
 int getoptions()
 {
 int i;
 unsigned long flicker_time;
 #define FLICKER_DELAY 100
+// for cube:
+BITMAP *buffer;
+PALLETE pal;
+int c, w, h;
+int last_retrace_count;
+//--
 
 	time_proc();
 
@@ -35,17 +43,38 @@ unsigned long flicker_time;
 	option[2].b = 255;
 	option[0].flicker = 0;
 
-	clear_to_color(tmpscreen, makecol(0,0,0));
-	draw_sprite(tmpscreen, (BITMAP *)dataf[MAINMENU].dat, 0, 0);
-
 	play_sample((SAMPLE *)df_snd[FAST_CONFIRM].dat, 255, 128, 1000, 0);
 
 	flicker_time = ourtime;
+
+
+	// cube stuff:
+    /* set up the viewport for the perspective projection */
+    set_projection_viewport(0, 0, SCREEN_W, SCREEN_H);
+    /* initialise the bouncing shapes */
+    init_shape();
+    last_retrace_count = retrace_count;
+	//--
 	while (1)
 	{
 		char k;
 
+		clear_to_color(tmpscreen, makecol(0,0,0));
 		time_proc();
+
+		//cube
+		while (last_retrace_count < retrace_count)
+		{
+			animate_shape();
+			last_retrace_count++;
+		}
+		translate_shape();
+		draw_shape(tmpscreen);
+
+		draw_sprite(tmpscreen, (BITMAP *)dataf[MAINMENU].dat, 0, 0);
+
+		//blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H); 
+		//--
 
 		if (ourtime - flicker_time <= FLICKER_DELAY)
 		{

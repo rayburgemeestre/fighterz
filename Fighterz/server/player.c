@@ -60,6 +60,11 @@ struct data *add_player(ID sock_fd)
 	head->inlen = 0;
 	head->freeze = 0;
 
+	{
+		int rnd = 1+(int) (4.0*rand()/(RAND_MAX+1.0));
+		head->shiptype = rnd;
+	}
+
 	head->type = T_PLAYER;
 	
 	head->init_lag = 0;
@@ -244,7 +249,8 @@ void sendulist(struct data *client)
 		send_newuser(client, NULL,
 			current->id, current->x, current->y, current->deg,
 			(signed char)current->velocity, current->alive, current->frags, current->move,
-			(signed char)current->turn, (unsigned char)current->type, current->speed, current->nick);
+			(signed char)current->turn, (unsigned char)current->type, current->speed, current->shiptype,
+			current->nick);
 		// send_newuser(
 		if (current->invincible)
 		{
@@ -301,7 +307,8 @@ int diff = servertime - current->invincibility_t2;
 	send_newuser(client, except,
 		current->id, current->x, current->y, current->deg,
 		(signed char)current->velocity, current->alive, current->frags, current->move,
-		(signed char)current->turn, (unsigned char)current->type, current->speed, current->nick);
+		(signed char)current->turn, (unsigned char)current->type, current->speed, current->shiptype,
+		current->nick);
 	//send_newuser(
 
 	diff = servertime - current->invincibility_t2;

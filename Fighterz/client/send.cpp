@@ -151,3 +151,14 @@ unsigned short len = 0;
 
 	send_packet(packet, len);
 }
+
+void send_newship()
+{
+char *p = packet;
+unsigned short len = 0;
+
+	put_u16(CMSG_NEWSHIP, &p, &len);
+	put_s32(our_node->shiptype, &p, &len);
+
+	send_packet(packet, len);
+}

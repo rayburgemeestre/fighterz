@@ -23,7 +23,7 @@ void drawconsole()
 		textprintf
 		(
 			CONSOLE, 
-			font, 
+			(FONT *)dataf[NOKIA].dat, 
 			1, 
 			cur_pos + 1, 
 			(

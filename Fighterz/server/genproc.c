@@ -247,7 +247,7 @@ void initialize_vars()
 	// lag_check = 0;
 	player_nr = 0;
 	LAG_CHECKS = 5; 
-	LAG_DELAY = 100;
+	LAG_DELAY = 300;
 	LAG_DELAY_SECS = 2;
 	RESPAWN_DELAY = 5; /* secs */
 	MOVE_STEPW = 1;

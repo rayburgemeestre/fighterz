@@ -22,12 +22,13 @@ void collidecheck()
 	}
 }
 
+#define AFKAATSEN true
 int collidecheck2(unsigned int id, int variation, int nobounce) /* variation = only 1 when 
 								called in mainloop() at UP/DOWN stuff */
 {
 LINK current2;
 int collided = 0; /* 0=no, 1=yes */
-int cool = 1;
+int cool = 0;
 int clr = makecol(128, 128, 128);
 double x, y;
 int px, py, qx, qy;
@@ -56,7 +57,7 @@ int deg_diff_max = 50,
 			current2->deg = old_deg; \
 		}
 
-	/* TODO: This is weird, change this */
+	/* TODO: This is weird, change this?? */
     if (current2->speed != 0.00)
         if (current2->speed > -0.01)
             direction = step;
@@ -68,8 +69,8 @@ int deg_diff_max = 50,
         else
             direction = step * -1;
 
-	x = futureX(current2, direction);
-	y = futureY(current2, direction);
+	x = futureX(current2, current2->deg, direction);
+	y = futureY(current2, current2->deg, direction);
 
 //	addtext("After x:%.2f y:%.2f", x, y);
 
@@ -104,7 +105,7 @@ int deg_diff_max = 50,
 						clr
 					);
 
-				if (!nobounce && dabs(current2->speed) > 0.05) // static minimal speed required
+				if (!nobounce && dabs(current2->speed) > 0.05 && AFKAATSEN) // static minimal speed required
 				{
 // --
 // -- Afkaatsen				
@@ -168,7 +169,7 @@ int deg_diff_max = 50,
 
 				collided = 1;
 
-				if (!nobounce && dabs(current2->speed) > 0.05) // static minimal speed required
+				if (!nobounce && dabs(current2->speed) > 0.05 && AFKAATSEN) // static minimal speed required
 				{
 // --
 // -- Afkaatsen				
@@ -231,7 +232,7 @@ int deg_diff_max = 50,
 
 					collided = 1;
 
-				if (!nobounce && dabs(current2->speed) > 0.05) // static minimal speed required
+				if (!nobounce && dabs(current2->speed) > 0.05 && AFKAATSEN) // static minimal speed required
 				{
 // --
 // -- Afkaatsen				
@@ -295,7 +296,7 @@ int deg_diff_max = 50,
 
 				collided = 1;
 
-				if (!nobounce && dabs(current2->speed) > 0.05) // static minimal speed required
+				if (!nobounce && dabs(current2->speed) > 0.05 && AFKAATSEN) // static minimal speed required
 				{
 // --
 // -- Afkaatsen				
@@ -347,7 +348,7 @@ int deg_diff_max = 50,
 			}
 		}
 	}
-
+#ifdef OLD_CODE
 	if (collided == 1)
 	{
 		if (current2->id == our_id)
@@ -362,24 +363,42 @@ int deg_diff_max = 50,
 				} else {
 					//addtext("C: collided at velocity: %d", our_node->velocity);
 					//addtext("Set To 0");
-					current2->velocity = 0;
-					current2->speed = 0.0;
-					// current2->freeze = 1;
+					//current2->velocity = 0;
+					//current2->speed = 0.0;
+					current2->freeze = 1;
 					if (variation == 0)
 						send_accel(4);
 				}
-			}			
+			}
 		} else {
 			/* other ship */
 			/* mark as "do not move" */
 			current2->freeze = 1;
 			/* but don't modify velocity */
-		}		
+		}
 	}
+#else
+	if (collided == 1)
+	{
+// we lose speed here:
+		if (current2 == our_node && DONT_LOSE_VELOCITY_AT_COLLISION == false)
+		{
+			current2->velocity = 0;
+			current2->speed    = 0.0;
+			current2->freeze   = 1;
+			if (variation == 0)
+				send_accel(4);
+		}
+// until here..
+		current2->freeze = 1;
+	} else {
+		current2->freeze = 0;
+	}
+#endif
 	return collided;
 }
 
-
+#ifdef OLD_FUTURE_FUNCTIONS
 double futureX(struct data *ptr, double speed)
 {
     int radius;
@@ -429,7 +448,43 @@ double futureY(struct data *ptr, double speed)
 
 	return pos_y;
 }
+#else
+double futureX(struct data *ptr, double angle, double speed)
+{
+double radius;
+double rads;
+double pos_x;
 
+    radius = speed;
+	rads   = (PI * (angle-90) / 180);
+    pos_x  = (cos(rads) * radius) + ptr->x;
+
+    if (pos_x < 0)
+        pos_x = field_width - 1;
+    else if (pos_x > field_width)
+        pos_x = 1;
+
+    return pos_x;
+}
+
+double futureY(struct data *ptr, double angle, double speed)
+{
+double radius;
+double rads;
+double pos_y;
+
+	radius = speed;
+	rads   = (PI * (angle-90) / 180);
+	pos_y  = (sin(rads) * radius) + ptr->y;
+
+	if (pos_y < 0) 
+		pos_y = field_height - 1;
+	else if (pos_y > field_height)
+		pos_y = 1;
+
+	return pos_y;
+}
+#endif
 
 void process_bounce(struct data *ptr, int *retval, double speed)
 {
@@ -441,8 +496,8 @@ int a,b,c,d;
 int px, py;
 int old_px, old_py;
 
-	x = futureX(ptr, speed);
-	y = futureY(ptr, speed);
+	x = futureX(ptr, ptr->deg, speed);
+	y = futureY(ptr, ptr->deg, speed);
 
 			if (!fd) fd = fopen("collition.txt", "w");
 
@@ -655,14 +710,8 @@ int old_px, old_py;
 	{
 		err = 0;
 
-		x = futureX(current2, B_SPEED);
-		y = futureY(current2, B_SPEED);
-		/* was: 
-
-        x = futureB_X(current2);
-        y = futureB_Y(current2);
-
-		*/
+		x = futureX(current2, current2->deg, B_SPEED);
+		y = futureY(current2, current2->deg, B_SPEED);
 		
 		old_px = (int)(current2->x / BLOCKSIZE);
 		old_py = (int)(current2->y / BLOCKSIZE);
@@ -677,34 +726,45 @@ int old_px, old_py;
 			if (field[py][px] == '1')
 				collided = 1;
 
-	//		/* BLOCKSIZE / 4 down the ship */
-	//		if ((py - 1) > 0)
-	//		{
-	//			qy = (int) ((y - (BLOCKSIZE / 4)) / BLOCKSIZE);
-	//			if (field[qy][px] == '1') collided = 1;
-	//		}
-	//		/* BLOCKSIZE / 4 above the ship */
-	//		if ( (py + 1) <= Y_BLOCKS )
-	//		{
-	//			qy = (int)( (y + (BLOCKSIZE / 4) ) / BLOCKSIZE);
-	//			if (field[qy][px] == '1') collided = 1;
-	//		}
-	//		/* BLOCKSIZE / 4 on the right of the ship */
-	//		if ( (px + 1) <= Y_BLOCKS )
-	//		{
-	//			qx = (int)( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE);
-	//			if (field[py][qx] == '1') collided = 1;
-	//		} 
-	//		/* BLOCKSIZE / 4 on the left of the ship */
-	//		if ( (px - 1) >= 0 )
-	//		{
-	//			qx = (int)( ( (x + (BLOCKSIZE / 4) ) / BLOCKSIZE) - 0.5); // dunno why i had to add the - 0.5
-	//																	// in the VB version it wasn't necessary
-	//			if (field[py][qx] == '1') {								// TODO; find out why :)
-	//				collided = 1;
-	//			}
-	//		}
-
+#define MARGE (BLOCKSIZE / 8)
+								/* MARGE on the right of the bullet *** */
+								if ( (px + 1) <= (X_BLOCKS))
+								{
+									int qx;
+									qx = (int)( (x + MARGE ) / BLOCKSIZE);
+									if (field[py][qx] == '1') 
+									{
+										rectfill(
+											shipbuff, 
+											(qx * BLOCKSIZE_2), (py * BLOCKSIZE_2), 
+											((qx + 1) * BLOCKSIZE_2), ((py + 1) * BLOCKSIZE_2), 
+											makecol(255, 0, 255)
+										);
+										collided = 1;
+									}
+								}
+								/* MARGE on the left of the bullet *** */
+/*
+								if ( (px - 1) >= 0 )
+								{
+									int qx;
+									qx = (int)( ( (x + MARGE ) / BLOCKSIZE));
+									if (field[py][qx] == '1') 
+									{														// TODO; find out why :)
+										rectfill(
+											shipbuff, 
+											(qx * BLOCKSIZE_2), (py * BLOCKSIZE_2), 
+											((qx + 1) * BLOCKSIZE_2), ((py + 1) * BLOCKSIZE_2), 
+											makecol(255,0,0)
+										);
+										collided = 1;
+									}
+								} */
+								/* *** Should prevent bullets from going through walls like:  #
+																							   #
+																								#
+																								 #
+								*/
 		}
 
 		//if ( (collided == 1 && dabs(ourtime - current2->vel_time) > 100) )

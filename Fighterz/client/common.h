@@ -3,6 +3,8 @@
 ****************************************************/
 
 #define OPTION_COUNT 2
+#define ASTEROIDS_MODE 1 // asteroids like flying?
+#define DONT_LOSE_VELOCITY_AT_COLLISION false
 #define DEBUG 1
 #define MAX_F_LEN 81 /* max length, used when reading files (fgets buffer) */
 #define PORT 8099

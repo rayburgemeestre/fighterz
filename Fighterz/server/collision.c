@@ -50,8 +50,8 @@ int collidecheck2(struct data *ptr, int nobounce)
 		current = current->next;
 	} */
 
-	x = futureX(current);
-	y = futureY(current);	
+	x = futureX(current, current->deg, current->speed);
+	y = futureY(current, current->deg, current->speed);	
 
 	px = (int)(x / BLOCKSIZE);
 	py = (int)(y / BLOCKSIZE);
@@ -323,6 +323,7 @@ int collidecheck2(struct data *ptr, int nobounce)
 	return collided;
 }
 
+#ifdef USE_OLD_FUTURE_FUNCTIONS
 double futureX(struct data *ptr)
 {
 	int radius;
@@ -339,7 +340,6 @@ double futureX(struct data *ptr)
 
 	return pos_x;
 }
-
 double futureY(struct data *ptr)
 {
 	int radius;
@@ -356,6 +356,43 @@ double futureY(struct data *ptr)
 
 	return pos_y;
 }
+#else
+double futureX(struct data *ptr, double angle, double speed)
+{
+double radius;
+double rads;
+double pos_x;
+
+    radius = speed;
+	rads   = (PI * (angle-90) / 180);
+    pos_x  = (cos(rads) * radius) + ptr->x;
+
+    if (pos_x < 0)
+        pos_x = field_width - 1;
+    else if (pos_x > field_width)
+        pos_x = 1;
+
+    return pos_x;
+}
+
+double futureY(struct data *ptr, double angle, double speed)
+{
+double radius;
+double rads;
+double pos_y;
+
+	radius = speed;
+	rads   = (PI * (angle-90) / 180);
+	pos_y  = (sin(rads) * radius) + ptr->y;
+
+	if (pos_y < 0) 
+		pos_y = field_height - 1;
+	else if (pos_y > field_height)
+		pos_y = 1;
+
+	return pos_y;
+}
+#endif
 
 int collidecheck2b(struct data *ptr)
 {
@@ -373,8 +410,8 @@ int collidecheck2b(struct data *ptr)
 		current = current->next;
 	}
 
-	x = futureX(current);
-	y = futureY(current);	
+	x = futureX(current, current->deg, current->speed);
+	y = futureY(current, current->deg, current->speed);	
 
 	px = (int)(x / BLOCKSIZE);
 	py = (int)(y / BLOCKSIZE);
@@ -386,6 +423,16 @@ int collidecheck2b(struct data *ptr)
 		if (field[py][px] == '1')
 			collided = 1;
 	}
+
+#define MARGE (BLOCKSIZE / 8)
+								/* MARGE on the right of the bullet *** */
+								if ( (px + 1) <= (X_BLOCKS))
+								{
+									int qx;
+									qx = (int)( (x + MARGE ) / BLOCKSIZE);
+									if (field[py][qx] == '1') 
+										collided = 1;
+								}
 
 	if (collided == 1)
 	{

@@ -44,8 +44,9 @@ double rw_x, rw_y; /* rightwing x,y */
 					circle(shipbuff, current->x, current->y, BLOCKSIZE / 4, color);
 					line(shipbuff, current->x, current->y, pos_x, pos_y, color);
 				}
- 				/* Also draw them on radar */
-				circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + current->x / RADAR_SCALE, current->y / RADAR_SCALE, 1, color);
+				if (RADAR_SHOW == 1)
+ 					/* Also draw them on radar */
+					circlefill(RADAR, (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2) + current->x / RADAR_SCALE, current->y / RADAR_SCALE, 1, color);
 			} else {
 
 				if (grid)
@@ -133,7 +134,7 @@ double rw_x, rw_y; /* rightwing x,y */
 			    rect(shipbuff, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), 
 			    	current->x + (BLOCKSIZE / 2), current->y + (BLOCKSIZE / 2), makecol(255,128,0));				
 
-			if (!grid)
+			if (!grid && current->dead == 0)
 			{
 				if (current->bot == 0) //test 
 				{
@@ -145,20 +146,38 @@ double rw_x, rw_y; /* rightwing x,y */
 							line(shipbuff, f->x, f->y, our_node->x, our_node->y, makecol(0,0,64));
 					}
 #endif
-					rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS1].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+					
+					switch (current->shiptype)
+					{
+						case 1:
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS1].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							break;
+						case 2:
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS1].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							break;
+						case 3:
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS3].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							break;
+						case 4:
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS4].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							break;
+						case 5:
+							rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS5].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
+							break;
+					}
 				}
 				else
 					rotate_sprite(shipbuff, (BITMAP *)dataf[SHIPS4].dat, current->x - (BLOCKSIZE / 2), current->y - (BLOCKSIZE / 2), itofix( (int)((current->deg*256)/360)) );
-			}
 
-			if (show_names == 1)
-			{
-				int _bullets = ((BULLET_MAX - BULLET_COUNT) * 100) / BULLET_MAX;
-				char tmpstr[128];
-				// sprintf(tmpstr, "%s [%d] [%2.2f] [%d]", current->nick, current->velocity, current->speed, current->freeze);
-				sprintf(tmpstr, "%s", current->nick);
-				textprintf_centre(shipbuff, font, current->x, 
-					current->y + BLOCKSIZE, makecol(192,192,192), tmpstr);
+				if (show_names == 1)
+				{
+					int _bullets = ((BULLET_MAX - BULLET_COUNT) * 100) / BULLET_MAX;
+					char tmpstr[128];
+					// sprintf(tmpstr, "%s [%d] [%2.2f] [%d]", current->nick, current->velocity, current->speed, current->freeze);
+					sprintf(tmpstr, "%s", current->nick);
+					textprintf_centre(shipbuff, (FONT *)dataf[NOKIA].dat, current->x, 
+						current->y + BLOCKSIZE, makecol(192,192,192), tmpstr);
+				}
 			}
 
 		}
@@ -192,7 +211,7 @@ void moveships()
 		//	if ( (current->velocity == 1) || (current->velocity == 2) ||
 		//		 (current->velocity == -1) || (current->velocity == -2) || (current->velocity == 0) )
 		//	{
-				moveship(current->id, ourtime);
+ 				moveship(current->id, ourtime);
 		//	}
 
 			/* something to remove the 'red' glow of hit ships after 200 ms */
@@ -202,6 +221,9 @@ void moveships()
 		current = current->next;
 	}
 }
+
+#define TURN_SPEED  18
+#define ACCEL_SPEED 30
 void moveship(unsigned int id2, unsigned long t2)
 {
 	long int diff = 0, cnt;
@@ -223,7 +245,7 @@ void moveship(unsigned int id2, unsigned long t2)
 			if (current == our_node)
 			{
 				diff = (ourtime - our_node->turn_t);
-				tmp = 10; /* Turn speed */
+				tmp = TURN_SPEED; /* Turn speed */
 				while (diff >= tmp)
 				{
 					diff -= tmp;
@@ -258,7 +280,7 @@ void moveship(unsigned int id2, unsigned long t2)
 			diff = (ourtime - current->vel_time);
 			/*if (current == our_node)
 				addtext("dbg, diff: %d", diff); */
-			tmp = 50;
+			tmp = ACCEL_SPEED;
 			times = 0;
 			while (diff >= tmp)
 			{
@@ -328,7 +350,7 @@ void moveship(unsigned int id2, unsigned long t2)
 
 
 			diff = (ourtime - current->turn_t);
-			tmp = 10;
+			tmp = TURN_SPEED;
 			while (diff >= tmp)
 			{
 				diff -= tmp;
@@ -386,13 +408,13 @@ void moveship(unsigned int id2, unsigned long t2)
 			}
 			diff = (ourtime - current->t);
 			
-			if (current->freeze == 1)
-			{
-				current->t = ourtime + diff;
-				return;
-				/* we don't move because we THINK (and are probably right)
-				   that this person has collided with some wall.. */
-			}
+//moved:			if (current->freeze == 1)
+//moved:			{
+//moved:				current->t = ourtime + diff;
+//moved:				return;
+//moved:				/* we don't move because we THINK (and are probably right)
+//moved:				   that this person has collided with some wall.. */
+//moved:			}
 
 		
 			/*
@@ -443,13 +465,20 @@ void moveship(unsigned int id2, unsigned long t2)
 				//	direction = current->speed;
 				//}
 
-				pos_x = futureX(current, current->speed);
-				pos_y = futureY(current, current->speed);
+				ret = collidecheck2(current->id, 1, 0);
+				if (ret == 1)
+				{
+					// so dont move fuckers!!!
+					break;
+				}
+
+				pos_x = futureX(current, current->deg, current->speed );
+				pos_y = futureY(current, current->deg, current->speed );
 
 				current->x = pos_x;
 				current->y = pos_y;
 				
-				//ret = collidecheck2(current->id, 1, 0); /* OLD: stond bovenin dit blok */
+				
 				
 				/* did the ship fly out the field? */
 				if (current->y < 0) 

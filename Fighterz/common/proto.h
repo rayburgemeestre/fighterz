@@ -12,6 +12,7 @@ typedef signed long TIME;
 #define SMSG_MOTD		0x0001
 #define SMSG_PING		0x0002
 #define SMSG_LAG		0x0003
+#define SMSG_NEWSHIP	0x0004
 
 #define SMSG_SPAWNREADY	0x0200
 
@@ -53,6 +54,7 @@ typedef signed long TIME;
 #define CMSG_ACCEL		0x8300
 #define CMSG_TURN		0x8301
 #define CMSG_NEWBULLET	0x8302
+#define CMSG_NEWSHIP	0x8303
 
 #define CMSG_CMD		0x8500
 #define CMSG_SAY		0x8501
