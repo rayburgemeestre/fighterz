@@ -383,9 +383,8 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			// verbose("SMSG_NEWUSER");
 			unsigned int id;
 			unsigned int alive;
-			unsigned int pending_moves;
 			double x, y, deg, speed;
-			signed char accel, turn;
+			signed char accel, turn, team;
 			unsigned char type;
 			signed short frags;
 			int shiptype;
@@ -405,7 +404,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 				goto fatal;
 			if (!get_s16(&frags, &dta, &len))
 				goto fatal;
-			if (!get_u32(&pending_moves, &dta, &len))
+			if (!get_s8(&team, &dta, &len))
 				goto fatal;
 			if (!get_s8(&turn, &dta, &len))
 				goto fatal;
@@ -421,8 +420,9 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			// verbose("got nick: %s", nick);
 
 			// strcpy(nick, "TEMPPPP");
+			addtext("user_id=%d team=%d", id, (int)team);
 			
-			m_newuser(id, x, y, deg, accel, alive, frags, pending_moves, turn, type, speed, shiptype, nick);
+			m_newuser(id, x, y, deg, accel, alive, frags, team, turn, type, speed, shiptype, nick);
 			// alert("newua", "", "", "", "", 0, 0);
 			return;
 		}
@@ -806,9 +806,9 @@ void m_quit(unsigned int id, char *quit_msg)
 void m_spawnready()
 {
 	verbose("SMSG_SPAWNREADY");
+	our_node = getplayer_byid(our_id);
 	our_spawnstatus = 1;
 	our_spawnrequested = 0;
-	our_node = getplayer_byid(our_id);
 	our_node->dead = 2;
 
 	set_window_title("Fighterz -- Hit fire to respawn");
@@ -818,7 +818,7 @@ void m_spawnready()
 
 // *lag*
 void m_newuser(int id, double x, double y, double deg,
-	signed char accel, unsigned int alive, signed short frags, unsigned int pending_moves,
+	signed char accel, unsigned int alive, signed short frags, signed char team,
 	signed char turn, unsigned char type, double speed, int shiptype,
 	char *nick)
 {
@@ -882,6 +882,7 @@ void m_newuser(int id, double x, double y, double deg,
 	head->hit_t = ourtime;
 	head->impact = 0;
 	head->shiptype = shiptype;
+	head->team = team;
 	strcpy(head->nick, nick);
 
 // dbg 

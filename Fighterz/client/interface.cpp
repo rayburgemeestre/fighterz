@@ -47,7 +47,7 @@ int info_fps_x, info_fps_y; /* information: fps position */
 //more dynamic settings
 int show_fps = 1; /**< boolean: 0=don't,1=do show FPS */
 int show_scoreboard = 1; /**< boolean: 0=don't,1=do show scoreboard */
-int show_names = 0; /**< boolean: 0=don't,1=do show ingame nicknames */
+int show_names = 1; /**< boolean: 0=don't,1=do show ingame nicknames */
 int show_radar; /**< boolean: 0=don't,1=do show radar on screen */
 char console[CON_LINES][CON_LINE_LENGTH]; /**< buffer for lines of console */
 

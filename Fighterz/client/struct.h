@@ -63,6 +63,8 @@ struct data {
 	                           invincibility drops. */
 	int dead; /**< 1 = yes, and therefore invisible on map */
 	int shiptype; 
+	signed char team; /**< team 0=blue,1=red */
+
     struct data *next; /**< next object in list */
 };
 
@@ -84,6 +86,7 @@ struct data2 {
 	int speed; /**< The speed which the circle grows
 					(increase size every _speed_ milliseconds) */
 	unsigned long t; /**< Used to constrain speed of explosion to time */
+	signed char team; /**< team 0=blue,1=red */
 
     struct data2 *next; /**< Pointer to next circle in linked list */
 };

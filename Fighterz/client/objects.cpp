@@ -187,12 +187,13 @@ double current_x, current_y; /* x & y to draw on the bmp_shipfield
 			{
 			int _bullets = ((our_bullet_max - our_bullet_count) * 100) / our_bullet_max;
 			char tmpstr[128];
+			int teamcolor = current->team == 1 ? makecol(255, 64, 64) : makecol(0, 186, 255);
 
-				sprintf(tmpstr, "%s [%d] [%2.2f] [%d] [%2.2f]", current->nick, current->velocity, 
-							current->speed, current->freeze, current->deg);
-				//sprintf(tmpstr, "%s", current->nick);
+			//	sprintf(tmpstr, "%s [%d] [%2.2f] [%d] [%2.2f] [%d]", current->nick, current->velocity, 
+			//				current->speed, current->freeze, current->deg, (int)current->team);
+				sprintf(tmpstr, "%s", current->nick);
 				textprintf_centre(bmp_shipfield, (FONT *)dat_base[NOKIA].dat, current_x, 
-					current_y + (blocksize/2) + 3, makecol(192,192,192), tmpstr);
+					current_y + (blocksize/2) + 3, teamcolor, tmpstr);
 			}
 		}
 	}

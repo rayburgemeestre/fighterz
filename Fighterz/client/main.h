@@ -110,7 +110,7 @@ extern void m_spawn(unsigned int id, double x, double y, double deg, signed char
 extern void m_respawn(unsigned int id);
 extern void m_newuser(int id, double x, double y, double deg,
 					  signed char accel, unsigned int alive, signed short frags,
-					  unsigned int pending_moves, signed char turn, unsigned char type, 
+					  signed char team, signed char turn, unsigned char type, 
 					  double speed, int shiptype, char *nick);
 extern void m_hit();
 extern void m_accel(unsigned int id, double x, double y, signed char accel, double speed);

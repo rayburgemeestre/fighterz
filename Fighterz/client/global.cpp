@@ -497,37 +497,53 @@ void printulist()
 	draw_sprite(bmp_scoreboard, (BITMAP *)dat_base[GUI_SCOREBOARD_BG].dat, 0, 0);
 
 	scoreboard_current_y = scoreboard_padding_top;
-	current = head;
-	
-	while (current != NULL)
+
+	//blue
+	for (current=head; current; current=current->next)
 	{
+		if (current->team != 0)
+			continue;
+
 		if (current->bullet != 1)
 			printul(current);
-
-		current = current->next;
 	}
 	
+	scoreboard_current_y += 10; //10px between the teams
+
+	//red
+	for (current=head; current; current=current->next)
+	{
+		if (current->team != 1)
+			continue;
+
+		if (current->bullet != 1)
+			printul(current);
+	}
 }
 
 /* Used in printulist(); */
 void printul(struct data *node) 
 {
-	char buf[128];
-	/* again no snprintf().. arghl*/
-	if (strlen(node->nick) > 10) node->nick[10] = '\0'; /* frag >10 */
-
-	int color;
+char buf[128];
+int color;
 	
-	if (node->invincible == 2)
-		color = makecol(0, 135, 185); // invincible
-	else if (node->invincible == 1)
-		color = makecol(0, 156, 241); // respawned 
-	else if (node->dead == 1)
-		color = makecol(144, 144, 144); // dead
-	else if (node->dead == 3)
-		color = makecol(0, 49, 67); // spectate
-	else
-		color = makecol(0, 186, 255); // normal (alive)
+	if (strlen(node->nick) > 10) 
+		node->nick[10] = '\0'; /* frag >10 */
+
+	if (node->team == 0)
+	{	
+		if (node->invincible == 2) color = makecol(0, 135, 185); // invincible
+		else if (node->invincible == 1) color = makecol(0, 156, 241); // respawned 
+		else if (node->dead == 1) color = makecol(144, 144, 144); // dead
+		else if (node->dead == 3) color = makecol(0, 49, 67); // spectate
+		else color = makecol(0, 186, 255); // normal (alive)
+	} else {
+		if (node->invincible == 2) color = makecol(255, 122, 119); // invincible
+		else if (node->invincible == 1) color = makecol(255, 65, 60); // respawned 
+		else if (node->dead == 1) color = makecol(144, 144, 144); // dead
+		else if (node->dead == 3) color = makecol(183, 0, 0); // spectate
+		else color = makecol(255, 64, 64); // normal (alive)
+	}
 	
 	sprintf(buf, "%d", node->kills);
 
