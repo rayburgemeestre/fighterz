@@ -274,29 +274,10 @@ int collidecheck2b(struct data *ptr)
 				sprintf(tmp, "%d %d COLLITION AT DEG: %f X: %f Y: %f", 
 					current2->move, ourtime, current2->deg, current2->x, current2->y);
 				
-				// !!!!!!!! addtext("%s", tmp);
-				fprintf(fd, "%s\n", tmp);
-
-				// fclose(fd);
-				// alert(tmp, "","","","", 1,1);
-				//del_bullet(current2);
-				//retval = 1;
-				//return 1;
-				//alert("COLLIDE", "", "", "", "", 1, 1);
-				//addtext("COLLIDE");
-
-				// (int)(current2->start_x / BLOCKSIZE)
-				// (int)(current2->start_y / BLOCKSIZE)
 				a = (px > old_px?1:0);
 				b = (py > old_py?1:0);
 				c = (px < old_px?1:0);
 				d = (py < old_py?1:0);
-	//			a = (px > (int)(current2->start_x / BLOCKSIZE)?1:0);
-	//			b = (py > (int)(current2->start_y / BLOCKSIZE)?1:0);
-	//			c = (px < (int)(current2->start_x / BLOCKSIZE)?1:0);
-	//			d = (py < (int)(current2->start_y / BLOCKSIZE)?1:0);
-
-				// !!!!!!!!! addtext("%d %d %d %d", a, b, c, d);
 
 				if (a || b || c || d)
 				{
@@ -312,59 +293,75 @@ int collidecheck2b(struct data *ptr)
 					current2->deg += 90;
 				}
 
-				//if (current2->deg > 360)
-			//		current2->deg -= 90;
-
 				/* Lets bounce this bullet~~ */
 			
-	/*			if (a && 0 == 1)
-				{
-					addtext("MUUR = RECHTS");
-					del_bullet(current2);
-					retval = 1;
-				}
-				else if (b && 0 == 1)
-				{
-					addtext("MUUR = BENEDEN");
-					del_bullet(current2);
-					retval = 1; 
-				} */
-		/*		if (c && b)
+				if (c && b)
 				{	
 					addtext("MUUR = LINKS / BENEDEN");
 					addtext("status: %d %d %d %d", a, b, c, d);
-					current2->deg = 45;
+
+					if (py > 0 && field[py - 1][px] == '1')
+						current2->deg -= 90; // 1
+					else if (px < X_BLOCKS && field[py][px + 1] == '1')
+						current2->deg += 90; // 2
+					else
+						current2->deg -= 180; // 3
+
+					// ?? current2->deg = 45;
 					retval = 1;
 				}
 				else if (a && b)
 				{
 					addtext("MUUR = RECHTS / BENEDEN");
 					addtext("status: %d %d %d %d", a, b, c, d);
-					current2->deg = 315;
+
+					if (py > 0 && field[py - 1][px] == '1')
+						current2->deg += 90; // 1
+					if (px > 0 && field[py][px - 1] == '1')
+						current2->deg -= 90; // 2
+					else
+						current2->deg += 180; // 3
+
+					// ?? current2->deg = 315;
 					retval = 1;
 				}
 				else if (a && d)
 				{
 					addtext("MUUR = RECHTS / BOVEN");
 					addtext("status: %d %d %d %d", a, b, c, d);
-					current2->deg = 225;
+					
+					if (px > 0 && field[py][px - 1] == '1')
+						current2->deg += 90; // 1
+					if (py < Y_BLOCKS && field[py + 1][px] == '1')
+						current2->deg += 270; // 2
+					else
+						current2->deg += 180; // 3
+
+					// ?? current2->deg = 225;
 					retval = 1;
 				}
 				else if (c && d)
 				{
 					addtext("MUUR = LINKS / BOVEN");
 					addtext("status: %d %d %d %d", a, b, c, d);
-					current2->deg = 135;
+					
+					if (px < X_BLOCKS && field[py][px + 1] == '1')
+						current2->deg -= 90; // 1
+					if (py < Y_BLOCKS && field[py + 1][px] == '1')
+						current2->deg -= 270; // 2
+					else
+						current2->deg -= 180; // 3
+
+					// ?? current2->deg = 135;
 					retval = 1;
-				} */
-				if ( (c && d) ||
+				}
+
+				/* if ( (c && d) ||
 					 (a && b) ||
 					 (a && d) ||
 					 (c && d) )
 				{
 					err = 1;
-
-					addtext("OLE");
 
 					if (direction == -1)
 						if (current2->deg >= 180)
@@ -374,15 +371,13 @@ int collidecheck2b(struct data *ptr)
 
 					if (direction == 1)
 					{
-						addtext("INCREASING");
 						current2->deg++;
 					}
 					else
 					{
-						addtext("DECREASING");
 						current2->deg--;
 					}
-				}
+				} */
 				else if (a || c)
 				{
 				//	if (c) 
@@ -390,8 +385,6 @@ int collidecheck2b(struct data *ptr)
 				//	else 
 				//		addtext("MUUR = RECHTS");
 
-	//addtext("status: %d %d %d %d", a, b, c, d);
-	//addtext("xbefore deg: %2.2f", current2->deg);
 					if (current2->deg > 0 && current2->deg < 90)
 						current2->deg = 360.0 - current2->deg;
 					else if (current2->deg == 0)
@@ -415,7 +408,7 @@ int collidecheck2b(struct data *ptr)
 						current2->deg += 360;
 					if (current2->deg > 360)
 						current2->deg -= 360;
-	//addtext("xafter deg: %f x:%f y:%f", current2->deg, current2->x, current2->y);
+
 					retval = 1;
 				}
 				else if (b || d)
@@ -424,8 +417,6 @@ int collidecheck2b(struct data *ptr)
 				//		addtext("MUUR = BENEDEN");
 				//	else
 				//		addtext("MUUR = BOVEN");
-	//addtext("status: %d %d %d %d", a, b, c, d);
-	//addtext("abefore deg: %2.2f", current2->deg);
 					if (current2->deg > 0 && current2->deg < 90)
 						current2->deg = 180.0 - current2->deg;
 					else if (current2->deg == 0)
@@ -449,15 +440,9 @@ int collidecheck2b(struct data *ptr)
 						current2->deg += 360;
 					if (current2->deg > 360)
 						current2->deg -= 360;
-	//addtext("aafter deg: %f x:%f y:%f", current2->deg, current2->x, current2->y);
+
 					retval = 1;
 				}
-			
-
-
-				/* */
-				//del_bullet(current2);
-				//retval = 1;
 			} else {
 				/* A non bouncing bullet would die here */
 				explosion(current2->x, current2->y, 15, 10, makecol(0, 128, 255));
