@@ -57,7 +57,7 @@ void send_nickname()
 	if (strlen(nickname) < 1)
 		sprintf(nickname, "Unit%d", our_id);
 
-	verbose("CMSG_NICK: %s", nickname);
+	// verbose("CMSG_NICK: %s", nickname);
 	put_u16(CMSG_NICK, &p, &len);
 	put_str(nickname, &p, &len);
 	send_packet(packet, len);
@@ -88,6 +88,35 @@ void send_accel(int from)
 
 	send_packet(packet, len);
 }
+
+void send_say(char *msg)
+{
+	char *p = packet;
+	unsigned short len = 0;
+
+	if (strlen(msg) > MAX_C_LLENGTH)
+		*(msg + MAX_C_LLENGTH - 1) = '\0';
+
+	put_u16(CMSG_SAY, &p, &len);
+	put_str(msg, &p, &len);
+	
+	send_packet(packet, len);
+}
+
+void send_cmd(char *cmd)
+{
+	char *p = packet;
+	unsigned short len = 0;
+
+	if (strlen(cmd) > MAX_C_LLENGTH)
+		*(msg + MAX_C_LLENGTH - 1) = '\0';
+
+	put_u16(CMSG_CMD, &p, &len);
+	put_str(cmd, &p, &len);
+	
+	send_packet(packet, len);
+}
+
 //sockwrite("3 %.2f %.2f %.2f %d\n", our_node->x, our_node->y, 
 	//our_node->deg, our_node->turn);
 void send_turn()

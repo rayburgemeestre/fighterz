@@ -31,6 +31,7 @@ typedef signed long TIME;
 #define SMSG_SPAWN		0x0605
 #define SMSG_QUIT		0x0606
 #define SMSG_KICK		0x0607
+#define SMSG_RESPAWN	0x0608
 
 #define SMSG_NICKREPLY	0x0700
 

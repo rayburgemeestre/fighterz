@@ -390,7 +390,26 @@ void center_window()
 void draw_talk_box()
 {
 	clear_to_color(talkbuff, makecol(0, 0, 0));
-	rect(talkbuff, 0, 0, MAP_W - 1, CSCREEN_H - 1, (talk?makecol(0, 128, 255):makecol(192, 192, 192)));
+	rect(
+		talkbuff, 
+		0, 
+		0, 
+		MAP_W - 1, 
+		CSCREEN_H - 1, 
+		(
+			( talk == 1 )
+		? 
+			makecol(0, 128, 255)
+		:
+			(
+				( talk == 2 )
+			?
+				makecol(255, 128, 128)
+			:
+				makecol(192, 192, 192)
+			)
+		)
+	);
 	textprintf(talkbuff, font, (CSCREEN_H / 2) - 10, (CSCREEN_H / 2) - 10, makecol(255, 255, 255), msg);
 }
 
@@ -484,6 +503,7 @@ void mainloop()
 			continue; /* Don't do graphics */
 		
 /********** graphics **********/
+		blit(fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 		clear_to_color(shipbuff, makecol(255, 0, 255)); /* transparent */
 		clear_to_color(RADAR, 0);
 		clear_to_color(CONSOLE, 0);

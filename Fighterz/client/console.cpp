@@ -13,12 +13,35 @@ void drawconsole()
 	while (i < MAX_C_LINES)
 	{
 		temp = 0;
-		if (console[i][0] != '\0' && console[i][0] == '*')
-			if (console[i][1] != '\0' && console[i][1] == '*')
-				if (console[i][2] != '\0' && console[i][2] == '*')
-					temp = 1;
+		
+		if (!strncmp(console[i], "***", 3))
+			temp = 1;
+		
+		if (console[i][0] == '[')
+			temp = 2;
 
-		textprintf(CONSOLE, font, 1, cur_pos + 1, (temp==1?makecol(0,128,255):makecol(255,128,0)) , console[i]);
+		textprintf
+		(
+			CONSOLE, 
+			font, 
+			1, 
+			cur_pos + 1, 
+			(
+				temp == 1
+			?
+				makecol(0,128,255)
+			:
+				(
+					temp == 2
+				?
+					makecol(0, 64, 128)
+				:
+					makecol(192, 192, 192)
+				)
+			),
+			console[i]
+		);
+
 		cur_pos += 10;
 		i++;
 	}

@@ -227,7 +227,7 @@ void send_nick(struct data *client, struct data *except, ID id, char *newnick)
 {
 char *p = packet;
 unsigned short len = 0;
-	verbose("SMSG_NICK <args>");
+	// verbose("SMSG_NICK <args>");
 	put_u16(SMSG_NICK, &p, &len);
 	put_u32(id, &p, &len);
 	put_str(newnick, &p, &len);

@@ -97,58 +97,58 @@ int newturn = 0;
 
 		if (key[KEY_UP] || key[KEY_DOWN]) 
 		{
-				if (key[KEY_UP])
-				{
-					int oldvel;
-					int ret = 0;
-					
-					direction_is_up = 1;
+			if (key[KEY_UP])
+			{
+				int oldvel;
+				int ret = 0;
+				
+				direction_is_up = 1;
 
-					oldvel = our_node->velocity;
+				oldvel = our_node->velocity;
 
-					ret = collidecheck2(our_node->id, 1);
+				ret = collidecheck2(our_node->id, 1);
 
-					if (ret != 1) 
-					{ 
-						/* this wouldn't cause a collition*/
-						if (our_node->velocity == -1) our_node->velocity = 0;
-						else if (our_node->velocity == 0) our_node->velocity = 1;
+				if (ret != 1) 
+				{ 
+					/* this wouldn't cause a collition*/
+					if (our_node->velocity == -1) our_node->velocity = 0;
+					else if (our_node->velocity == 0) our_node->velocity = 1;
 
-						/* notify server */
-						if (oldvel != our_node->velocity)
-							send_accel(5);
+					/* notify server */
+					if (oldvel != our_node->velocity)
+						send_accel(5);
 
-					} else {
-						our_node->velocity = 0;
-						if (oldvel != our_node->velocity)
-							send_accel(6);
-					}
+				} else {
+					our_node->velocity = 0;
+					if (oldvel != our_node->velocity)
+						send_accel(6);
 				}
-				if (key[KEY_DOWN] && !key[KEY_UP])
-				{
-					int oldvel;
-					int ret = 0;
+			}
+			if (key[KEY_DOWN] && !key[KEY_UP])
+			{
+				int oldvel;
+				int ret = 0;
 
-					direction_is_up = 0;
-					oldvel = our_node->velocity;
+				direction_is_up = 0;
+				oldvel = our_node->velocity;
 
-					ret = collidecheck2(our_node->id, 1);
+				ret = collidecheck2(our_node->id, 1);
 
-					if (ret != 1) 
-					{ 
-						if (our_node->velocity == 1) our_node->velocity = 0;
-						else if (our_node->velocity == 0) our_node->velocity = -1;
+				if (ret != 1) 
+				{ 
+					if (our_node->velocity == 1) our_node->velocity = 0;
+					else if (our_node->velocity == 0) our_node->velocity = -1;
 
-						/* notify server */
-						if (oldvel != our_node->velocity)
-							send_accel(1);
+					/* notify server */
+					if (oldvel != our_node->velocity)
+						send_accel(1);
 
-					} else {
-						our_node->velocity = 0;
-						if (oldvel != our_node->velocity)
-							send_accel(2);
-					}
+				} else {
+					our_node->velocity = 0;
+					if (oldvel != our_node->velocity)
+						send_accel(2);
 				}
+			}
 		} else {
 			if (our_node->velocity != 0)
 			{
@@ -158,7 +158,7 @@ int newturn = 0;
 		}
 	}	
 
-	if (talk == 1)
+	if (talk == 1 || talk == 2)
 	{
 		if (key[KEY_ESC])
 		{
@@ -212,9 +212,8 @@ int newturn = 0;
 	if (key[KEY_STOP])
 		if (talk == 0)
 		{
-			talk = 1;
-			msg[0] = '.';
-			msg[1] = '\0';
+			talk = 2;
+			msg[0] = '\0';
 			clear_keybuf();
 		}
 
@@ -239,10 +238,34 @@ int newturn = 0;
 			{
 				if (strlen(msg) > 0)
 				{
-					if (msg[0] != '\0' && msg[0] != '.')
-						addtext("<%s> %s", our_node->nick, msg);
-
-					sockwrite("T %s\n", msg);
+					if (msg[0] != '\0')
+						send_say(msg);
+					msg[0] = '\0';
+					talk = 0;
+				}
+			}
+			else if (strlen(msg) < 60)
+			{
+				msg[strlen(msg) + 1] = '\0';
+				msg[strlen(msg)] = k2;
+			}
+		} 
+		else if (talk == 2)
+		{
+			if (k == KEY_BACKSPACE)
+			{
+				if (strlen(msg) > 0)
+					msg[strlen(msg)-1] = '\0';
+			}
+			else if ( k == KEY_ENTER )
+			{
+				if (strlen(msg) > 0)
+				{
+					if (msg[0] != '\0')
+					{
+						addtext("[%s@fighterz]# %s", our_node->nick, msg);
+						send_cmd(msg);
+					}
 					msg[0] = '\0';
 					talk = 0;
 				}
@@ -256,10 +279,10 @@ int newturn = 0;
 		else {
 			if ( k == KEY_H )
 			{
-				addtext("<%s> %s", our_node->nick, ".addbot");
-				sockwrite("T test\n");
-				msg[0] = '\0';
-				talk = 0;
+				//addtext("<%s> %s", our_node->nick, ".addbot");
+				//sockwrite("T test\n");
+				//msg[0] = '\0';
+				//talk = 0;
 			}
 		//	if ( k == KEY_C )
 		//		while (1);
@@ -414,7 +437,7 @@ void printulist()
 	{
 		if (current->bullet != 1)
 			printul((char *)(current->nick), (long int)(current->kills), 
-			(long int)(current->kills_avg), (unsigned int)current->id);
+				(unsigned int)current->id);
 
 		current = current->next;
 	}
@@ -422,12 +445,12 @@ void printulist()
 }
 
 /* Used in printulist(); */
-void printul(char *nick, long int one, long int two, unsigned int three) 
+void printul(char *nick, long int two, unsigned int three) 
 {
 	char buf[128];
 	/* again no snprintf().. arghl*/
 	if (strlen(nick) > 30) nick[30] = '\0'; /* frag >30 */
-	sprintf(buf, "%8s %4d %3d %3u", nick, one, two, three);
+	sprintf(buf, "%8s %4d %3u", nick, two, three);
 
 	TXTPTR2 = TXTPTR2 + 10;
 
@@ -526,7 +549,6 @@ void drawfps()
 
 void show_graphics()
 {
-	blit (fieldbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 	masked_blit(shipbuff, tmpscreen, MAP_X, MAP_Y, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 		/* ^- if hardware supports this, then this goes fast */
 

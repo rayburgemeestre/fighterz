@@ -47,7 +47,6 @@ void connect_socket()
 			  /* ^ Address of the server being inserted into the address field */
 	saServer.sin_port = htons(8099);
 
-	/* asdf */
 	if (setsockopt(theSocket, IPPROTO_TCP, TCP_NODELAY, (char*)&just_say_no,
 														sizeof just_say_no) == -1)
 	{
@@ -242,7 +241,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 				goto fatal;
 			if (!get_dbl(&deg, &dta, &len))
 				goto fatal;
-			verbose("SMSG_TURN");
+			// verbose("SMSG_TURN");
 			m_turn(id, x, y, turn, deg);
 			return;
 		}
@@ -253,14 +252,23 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		}
 		case SMSG_HIT:
 		{
-			verbose("SMSG_HIT");
+			// verbose("SMSG_HIT");
 
 			m_hit();			
 			return;
 		}
 		case SMSG_SAY:
 		{
-			verbose("SMSG_SAY");
+			// verbose("SMSG_SAY");
+			unsigned int id;
+			char msg[512];
+
+			if (!get_u32(&id, &dta, &len))
+				goto fatal;
+			if (!get_str(msg, &dta, &len, sizeof(msg)))
+				goto fatal;
+
+			m_say(id, msg);
 			return;
 		}
 		case SMSG_TEAMSAY:
@@ -270,7 +278,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		}
 		case SMSG_NEWUSER:
 		{
-			verbose("SMSG_NEWUSER");
+			// verbose("SMSG_NEWUSER");
 			unsigned int id;
 			unsigned int alive;
 			unsigned int pending_moves;
@@ -305,7 +313,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			if (!get_str(nick, &dta, &len, sizeof(nick)))
 				goto fatal;
 			
-			verbose("got nick: %s", nick);
+			// verbose("got nick: %s", nick);
 
 			// strcpy(nick, "TEMPPPP");
 			
@@ -323,7 +331,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			unsigned int victimid, evilid;
 			char *killstr = strdup("");
 
-			verbose("SMSG_KILL <victimid (u32)> <evilid (u32)> <killtxt (str)>");
+			// verbose("SMSG_KILL <victimid (u32)> <evilid (u32)> <killtxt (str)>");
 
 			if (!get_u32(&victimid, &dta, &len))
 				goto fatal;
@@ -339,7 +347,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		{
 			unsigned int id, ownerid;
 			double x, y, deg;
-			verbose("SMSG_NEWBULLET");
+			// verbose("SMSG_NEWBULLET");
 
 			if (!get_u32(&id, &dta, &len))
 				goto fatal;
@@ -351,15 +359,21 @@ void dopacket(int xtype, unsigned short len, char *dta)
 				goto fatal;
 			if (!get_dbl(&deg, &dta, &len))
 				goto fatal;
-			verbose("GOT OWNER ID: %ud", ownerid);
-			verbose("GOT OWNER ID: %ud", ownerid);
-			verbose("GOT OWNER ID: %ud", ownerid);
+
 			m_newbullet(id, ownerid, x, y, deg);
 			return;
 		}
 		case SMSG_NICK:
 		{
-			verbose("SMSG_NICK");
+			unsigned int id;
+			char nick[64];
+			// verbose("SMSG_NICK");
+			if (!get_u32(&id, &dta, &len))
+				goto fatal;
+			if (!get_str(nick, &dta, &len, sizeof(nick)))
+				goto fatal;
+
+			m_nick(id, nick);
 			return;
 		}
 		case SMSG_SPAWN:
@@ -371,9 +385,18 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			m_spawn(oid);
 			return;
 		}
+		case SMSG_RESPAWN:
+		{
+			unsigned int oid;
+			verbose("SMSG_RESPAWN");
+			if (!get_u32(&oid, &dta, &len))
+				goto fatal;
+			m_respawn(oid);
+			return;
+		}
 		case SMSG_QUIT:
 		{
-			verbose("SMSG_QUIT");
+			// verbose("SMSG_QUIT");
 			unsigned int id;
 			char quit_msg[64];
 
@@ -507,7 +530,18 @@ void m_quit(unsigned int id, char *quit_msg)
 		die("m_quit(): current cannot be NULL");
 
 	explosion(current->x, current->y, 500, 10, makecol(255, 128, 255));
-	del_player(id);
+	
+	if (current != our_node)
+	{
+		verbose("*** Quit: %s [%s]", current->nick, quit_msg);
+		del_player(id);
+	}
+	else
+	{
+		our_node->dead = 1;
+		verbose("*** Disconnected [%s]", quit_msg);
+		; // we dead ;)
+	}
 }
 
 void m_spawnready()
@@ -571,7 +605,7 @@ void m_newuser(int id, double x, double y, double deg,
 	head->speed = speed;
 	// not yet used: head->alive = alive; /* seconds in the game*/
 	head->kills = frags;
-	// fuck this: head->kills_avg = _killavg;
+
 	head->invincible = 0;
 	head->invincibility_t = 0;
 	head->invincibility_t2 = ourtime;
@@ -589,8 +623,6 @@ return;
 
 void m_kill(unsigned int victimid, unsigned int evilid, char *killstr)
 {
-	verbose("m_kill();");
-
 	LINK evil_node = getplayer_byid(evilid);
 	LINK victim_node = getplayer_byid(victimid);
 
@@ -626,9 +658,25 @@ void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, doub
 	return;
 }
 
+void m_nick(unsigned int id, char *nick)
+{
+	LINK node = getplayer_byid(id);
+	if (strlen(nick) > 64)
+		*(nick + 63) = '\0';
+	verbose("*** Nickchange: %s -> %s", node->nick, nick);
+	strcpy(node->nick, nick);
+}
+
+void m_say(unsigned int id, char *msg)
+{
+	// verbose("m_say");
+	LINK node = getplayer_byid(id);
+	addtext("<[%d]%s> %s", id, node->nick, msg);
+}
+
 void m_spawn(unsigned int oid)
 {
-	verbose("spawned with id: %d", oid);
+	// verbose("spawned with id: %d", oid);
 	if (oid == our_id)
 	{
 		/* sync our_node */
@@ -641,7 +689,13 @@ void m_spawn(unsigned int oid)
 
 		STARTED = 1;
 		our_node->dead = 0;
-	}
+	} 
+}
+
+void m_respawn(unsigned int id)
+{
+	LINK node = getplayer_byid(id);
+	node->dead = 0;
 }
 
 void m_hit()
@@ -653,7 +707,7 @@ void m_hit()
 void m_accel(unsigned int id, double x, double y, signed char accel, double speed)
 {
 	LINK current;
-	verbose("SMSG_ACCEL %d %2.2f %2.2f %d %2.2f", id, x, y, (int)accel, speed);
+	// verbose("SMSG_ACCEL %d %2.2f %2.2f %d %2.2f", id, x, y, (int)accel, speed);
 	current = getplayer_byid(id);
 	if (!current)
 		die("Error in SMSG_ACCEL.."); /* TODO: replace with some error function */
@@ -672,7 +726,7 @@ void m_turn(unsigned int id, double x, double y, signed char turn, double deg)
 LINK current;
 unsigned int clag;
 	current = getplayer_byid(id);
-	verbose("Got player id: %d, got deg: %2.2f", current->id, current->deg);
+	// verbose("Got player id: %d, got deg: %2.2f", current->id, current->deg);
 	if (!current)
 		return;
 

@@ -204,7 +204,38 @@ struct data *bullet;
 
 static void m_cmd(struct data *client, char *cmd)
 {
-	/* Bored... */
+size_t len;
+	cleanstr(cmd);
+	len = strlen(cmd);
+	if (len == 0)
+		return; /* Ignore empty msgs */
+	if (len > 512)
+		cmd[511] = '\0';
+
+	printf("[%s@fighterz] %s\n", client->nick, cmd);
+
+	if (!strcmp(cmd, "quit"))
+	{
+		quit_player(client, "Connection terminated, Client left.");
+		del_tha_player(client);
+	}
+	if (!strncmp(cmd, "nick ", 5))
+	{
+		if (strlen(cmd) > 5)
+		{
+			char *p = (cmd + 5);
+			if (strlen(p) > 64)
+				*(p + 63) = '\0';
+
+			strcpy(client->nick, p);
+
+			send_nick(EVERYONE, NULL, client->id, client->nick);
+		}
+	}
+	if (!strcmp(cmd, "whoami"))
+	{
+		// TODO: send nick back ;))
+	}
 }
 
 static void m_say(struct data *client, char *txt)
@@ -216,6 +247,7 @@ size_t len;
 		return; /* Ignore empty msgs */
 	if (len > 512)
 		txt[511] = '\0';
+
 	send_say(EVERYONE, NULL, client->id, txt);
 }
 

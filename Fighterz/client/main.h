@@ -27,7 +27,7 @@ extern void init();
 extern void start();
 extern void init_screen();
 extern void printulist();
-extern void printul(char *nick, long int one, long int two, unsigned int three);
+extern void printul(char *nick, long int two, unsigned int three);
 extern void connect_socket();
 extern void sockread();
 extern int sockwrite(char *pattern, ...);
@@ -77,9 +77,12 @@ extern void m_lag(double diff);
 extern void m_nickreply(unsigned char acceptance, char *msg);
 extern void m_spawnready();
 extern void m_kill(unsigned int victimid, unsigned int evilid, char *killstr);
+extern void m_nick(unsigned int id, char *nick);
+extern void m_say(unsigned int id, char *msg);
 extern void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, double deg);
 extern void m_quit(unsigned int id, char *quit_msg);
-extern void m_spawn(unsigned int oid);
+extern void m_spawn(unsigned int id);
+extern void m_respawn(unsigned int id);
 extern void m_newuser(int id, double x, double y, double deg,
 					  signed char accel, unsigned int alive, signed short frags,
 					  unsigned int pending_moves, signed char turn, unsigned char type, 
@@ -92,5 +95,7 @@ extern void send_nickname();
 extern void send_pong(unsigned int time);
 extern void send_ispawn();
 extern void send_accel(int from);
+extern void send_say(char *msg);
+extern void send_cmd(char *cmd);
 extern void send_turn();
 extern void send_newbullet(double, double, double);
