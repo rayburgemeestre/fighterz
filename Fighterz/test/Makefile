@@ -1,6 +1,6 @@
 #
 # Tachyon Fighters Makefile
-# $Id: Makefile,v 1.1 2003/08/30 23:36:29 trigen Exp $
+# $Id: Makefile,v 1.1.1.1 2003/08/30 23:36:29 trigen Exp $
 # =========================================================
 
 CC = gcc
