@@ -110,6 +110,12 @@ extern int set_sockopts(int s);
 /* send.c externs */
 extern void send_hi(struct data *client);
 extern void send_servertime(struct data *client);
+extern void send_clearfield(struct data *client);
+extern void send_fieldline(struct data *client, char *line);
+extern void send_background(struct data *client, int df_id, 
+	int pos_x, int pos_y, char *datfile);
+extern void send_fieldend(struct data *client);
+extern void send_blockinfo(struct data *client, int w, int h, int size);
 extern void send_lag(struct data *client, int diff);
 extern void send_accel(struct data *client, struct data *except,
     ID id, double x, double y, signed char accel, double speed);

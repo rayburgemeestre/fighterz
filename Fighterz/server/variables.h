@@ -87,3 +87,5 @@ extern int pops, pushes;
 extern int debug_level;
 extern int temprrr;
 extern int element;
+
+extern struct bg_imgs bg_imgs_data[32];

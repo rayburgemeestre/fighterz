@@ -81,6 +81,67 @@ unsigned short len = 0;
 	send_packet(client, NULL, packet, len);
 }
 
+void send_clearfield(struct data *client)
+{
+char *p = packet;
+unsigned short len = 0;
+	verbose("SMSG_CLEARFIELD");
+
+	put_u16(SMSG_CLEARFIELD, &p, &len);
+	send_packet(client, NULL, packet, len);
+}
+
+void send_blockinfo(struct data *client, int w, int h, int size)
+{
+char *p = packet;
+unsigned short len = 0;
+	verbose("SMSG_BLOCKINFO");
+
+	put_u16(SMSG_BLOCKINFO, &p, &len);
+	
+	put_s32(w, &p, &len);
+	put_s32(h, &p, &len);
+	put_s32(size, &p, &len);
+
+	send_packet(client, NULL, packet, len);
+}
+void send_fieldend(struct data *client)
+{
+char *p = packet;
+unsigned short len = 0;
+	verbose("SMSG_FIELDEND");
+
+	put_u16(SMSG_FIELDEND, &p, &len);
+	send_packet(client, NULL, packet, len);
+}
+void send_background(struct data *client, int df_id, 
+	int pos_x, int pos_y, char *datfile)
+{
+char *p = packet;
+unsigned short len = 0;
+	verbose("SMSG_BACKGROUND");
+
+	put_u16(SMSG_BACKGROUND, &p, &len);
+	put_s32(df_id, &p, &len);
+	put_s32(pos_x, &p, &len);
+	put_s32(pos_y, &p, &len);
+	put_str(datfile, &p, &len);
+
+	send_packet(client, NULL, packet, len);
+}
+
+void send_fieldline(struct data *client, unsigned int index, char *line)
+{
+char *p = packet;
+unsigned short len = 0;
+	verbose("SMSG_FIELDLINE: %s", line);
+
+	put_u16(SMSG_FIELDLINE, &p, &len);
+	put_u32(index, &p, &len);
+	put_str(line, &p, &len);
+	send_packet(client, NULL, packet, len);
+}
+
 void send_lag(struct data *client, int diff)
 {
 char *p = packet;
@@ -272,7 +333,7 @@ void send_kick(struct data *client, struct data *except, ID id, char *msg)
 {
 char *p = packet;
 unsigned short len = 0;
-	verbose("SMSG_KICK <args>");
+	verbose("SMSG_KICK %u %s", id, msg);
 	put_u16(SMSG_KICK, &p, &len);
 	put_u32(id, &p, &len);
 	put_str(msg, &p, &len);

@@ -112,17 +112,19 @@ typedef uint32_t in_addr_t;
 #define STATE_NEW			-100	/* Just connected */
 #define STATE_GOTVERSION	-99		/* CMSG_VERSION received */
 #define STATE_LAG			-98		/* CMSG_NICK received and succesfull, now calculating lag */
-#define STATE_OK			-97		/* Fully connected */
+#define STATE_SYNCHED		-97		/* lag check done */
+#define STATE_OK			-96		/* Map sent, ready for spawnage */
 
-#define READY_INT	-97
+#define READY_INT	-96
 
-#define IsRegistered(obj)	(obj->enabled >= STATE_LAG)
+#define IsRegistered(obj)	(obj->enabled >= STATE_OK)
 #define IsDead(obj)			(obj->bullet != 1 && obj->enabled <= STATE_DEAD)
 
 #define SetDeadSend(obj)	do { obj->enabled = STATE_DEADSEND; } while(0);
 #define SetDead(obj)		do { obj->enabled = STATE_DEAD; } while(0);
-#define SetOk(obj)			do { obj->enabled = STATE_OK; } while(0);
+#define SetSynched(obj)		do { obj->enabled = STATE_SYNCHED; } while(0);
 #define SetLag(obj)			do { obj->enabled = STATE_LAG; } while(0);
+#define SetGotField(obj)	do { obj->enabled = STATE_OK; } while(0);
 #define SetVersion(obj)		do { obj->enabled = STATE_GOTVERSION; } while(0);
 #define SetNew(obj)			do { obj->enabled = STATE_NEW; } while(0);
 

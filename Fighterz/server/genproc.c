@@ -48,10 +48,33 @@ void lag_check_proc()
 					current->init_lag--;
 
 					if (current->init_lag == 1)
-					{	/* init lag stuff done, ready to respawn! */
-						SetOk(current);
-						send_spawnready(current);
-						current->dead = 2; /* mark ready to respawn */
+					{	
+					int cnt;
+
+						/* do not respawn yet.. send map first */
+						SetSynched(current);
+						// send map
+						send_clearfield(current);
+						for (cnt=0; cnt<Y_BLOCKS; cnt++)
+						{
+							send_fieldline(current, cnt, field[cnt]);
+						}
+						
+						send_blockinfo(current, 
+							X_BLOCKS, Y_BLOCKS, BLOCKSIZE);
+						for (cnt=0; cnt<32; cnt++)
+						{
+							if (strlen(bg_imgs_data[cnt].datfile) > 0)
+								send_background(
+									current, 
+									bg_imgs_data[cnt].df_id, 
+									bg_imgs_data[cnt].pos_x,
+									bg_imgs_data[cnt].pos_y,
+									bg_imgs_data[cnt].datfile
+								);
+						}
+						send_fieldend(current);
+						SetGotField(current);
 					}
 				}
 			} else {
@@ -268,7 +291,7 @@ void initialize_vars()
 	
 
 	/* map */
-	strncpy(map3, "maps/lvl1.txt", 64);
+	strncpy(map3, "maps/lvl-x.txt", 64);
 	map3[64] = '\0';
 	return;
 }

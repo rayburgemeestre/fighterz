@@ -12,6 +12,7 @@ void loadmap() {
 	char *ptr;
 	int x_count = 0;
 	int cnt = 0;
+	int bg_imgs_data_index = 0;
 
 	char buff[500];
 
@@ -51,7 +52,25 @@ void loadmap() {
 			strcpy(buff, strtok(buff, "\n"));
 			ptr = &buff[2];
 			BLOCKSIZE = atoi((const char *) ptr);
-			// dbg. BLOCKSIZE = 40;
+		}
+		if ( (buff[0] == '3') ) 
+		{
+		int df_id, pos_x, pos_y;
+		char datafile[128];
+			strcpy(buff, strtok(buff, "\n"));
+			// ptr = &buff[2];
+			// Fuck it i totally trust our little mapfile :)
+			sscanf(buff, "3 %d %d %d %s", &df_id, &pos_x, &pos_y, &datafile);
+			printf("df_id: %d pos_x: %d pos_y: %d df: %s\n", 
+				df_id, pos_x, pos_y, datafile);
+			// BLOCKSIZE = atoi((const char *) ptr);
+
+			bg_imgs_data[bg_imgs_data_index].df_id = df_id;
+			bg_imgs_data[bg_imgs_data_index].pos_x = pos_x;
+			bg_imgs_data[bg_imgs_data_index].pos_y = pos_y;
+			strcpy(bg_imgs_data[bg_imgs_data_index].datfile, datafile);			
+			
+			bg_imgs_data_index++;
 		}
 		Y_BLOCKS = x_count;
 	}
