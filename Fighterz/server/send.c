@@ -99,6 +99,8 @@ void send_flagcarrier(ID carrier_id, unsigned int code)
 char *p = packet;
 unsigned short len = 0;
 
+	printf("flag carrier_id=%d,code=%d",carrier_id,code);
+
 	put_u16(SMSG_FLAGCARR, &p, &len);
 	put_u32(carrier_id, &p, &len);
 	put_u32(code, &p, &len);

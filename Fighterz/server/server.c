@@ -155,6 +155,9 @@ int red_y  = REDFLAG.y  + (BLOCKSIZE / 2);
 	LINK lnk;
 	for (lnk = head; lnk; lnk = lnk->next)
 	{
+		if (lnk->bot == 1 || lnk->bullet == 1)
+			continue;
+
 		if ( (id_has_redflag == -1 && lnk->id != id_has_blueflag) &&
 			((sqrt((lnk->x - red_x) * (lnk->x - red_x)+
 			 (lnk->y - red_y) * (lnk->y - red_y)) <= (BLOCKSIZE / 2))) )
