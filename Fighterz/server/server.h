@@ -23,6 +23,8 @@ extern void moveship(unsigned int id2, TIME t2);
 extern double dabs(double x);
 extern void collidecheck();
 extern int collidecheck2(struct data *ptr, int nobounce);
+extern double _futureX(double x, double angle, double speed);
+extern double _futureY(double y, double angle, double speed);
 extern double futureX(struct data *ptr, double angle, double speed);
 extern double futureY(struct data *ptr, double angle, double speed);
 extern double fbX(unsigned int id2);
@@ -32,8 +34,8 @@ extern void fillmap();
 extern void findpath(struct data *ptr, double x, double y);
 extern int printf_(char *pattern, ...);
 extern int valid_target(double x1, double y1, double x2, double y2, double precision);
-extern double vtX(double x, double deg);
-extern double vtY(double y, double deg);
+/* extern double vtX(double x, double deg);
+extern double vtY(double y, double deg); */
 #if DEBUG2 == 1
 extern void init();
 extern void init_screen();
@@ -147,3 +149,5 @@ extern void send_nickreply(struct data *client, unsigned char goodorbad, char *t
 extern void send_spawnready(struct data *client);
 extern void send_say(struct data *client, struct data *except, ID id, char *msg);
 extern void verbose(char *pattern, ...);
+
+extern void m_newbullet(struct data *client, double x, double y, double deg);

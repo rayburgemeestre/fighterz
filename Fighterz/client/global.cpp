@@ -4,11 +4,13 @@
 *  GLOBAL FUNCTIONS
 ****************************************************/
 
+int bg_music_on = 0;
+
 /* WARNING: vsnprintf() wasn't available 
    char buf[512] could be overflowed */
 void printff_direct(char *pattern, ...) 
 {
-int clr = makecol(0,255,0);
+int clr = makecol(0,128,255);
 
 	if (STARTED == 1 || can_spawn == 1)
 		return;
@@ -323,11 +325,13 @@ if (!our_node)
 			}
 			if ( k == KEY_F8 )
 			{
+				bg_music_on = 1;
 				stop_midi();
 			}
 			if ( k == KEY_F9 )
 			{
-				play_midi(bg_music, TRUE);
+				bg_music_on = 0;
+				stop_midi();
 			}
 			if ( k == KEY_F11 /*&& false*/ )
 			{
@@ -524,7 +528,8 @@ void printul(struct data *node)
 ****************************************************/
 
 /* exit program */
-void terminate() {
+void terminate()
+{
 	alert("Terminated", "", "", "Ok", NULL, 0, 0);
 	// delay(3);
 	allegro_exit();
@@ -604,8 +609,8 @@ void drawfps()
 		);
 */
 		textprintf(tmpscreen, (FONT *)dataf[NOKIA].dat, 2, 2, makecol(128, 128, 128), 
-			"FPS: %d LAG: %2.2f    ", 
-			fps, current_lag()
+			"FPS: %d LAG: %2.2f MIDItrack:%d   ", 
+			fps, current_lag(), midi_track
 		);
 	}
 }

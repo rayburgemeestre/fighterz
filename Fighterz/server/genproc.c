@@ -158,12 +158,13 @@ void init_screen()
 }
 void parse_input()
 {
-#if 1 == 2
+int i;
+#if 1 == 1
 	/* asdfasdf */
 	if (keypressed())			
 	{
 		char k = readkey() & 0xff;
-		if ( k == 'h')
+		if ( k == 'f')
 		{
 			struct data *bot;
 			// findpath(head);
@@ -172,6 +173,17 @@ void parse_input()
 			flyto(bot->id, REDFLAG.x, REDFLAG.y);
 			// addtext("2: %d", head->bot);
 			//}
+/*
+			//extreme debug
+			#define PATH_MAX_ 513
+			for (i=0; i<PATH_MAX_ && bot->path[i][0] != 0 && bot->path[i][1] != 0; i++)
+			{
+				int x = bot->path[i][0] * BLOCKSIZE,
+					y = bot->path[i][1] * BLOCKSIZE;
+
+				addtext("%d, %d", x, y);
+				circlefill(fieldbuff, x, y, 5, makecol(255, 0, 0));
+			} */
 		}
 	}
 	/* /asdfasdf*/
@@ -377,14 +389,14 @@ double deg, ret;
 	collided = 0;
 	i        = 0;
 
-
 	while (
 		(dabs(cur_x - x2) > precision || dabs(cur_y - y2) > precision )
     )
 	{
-		tmp_x = vtX(cur_x, deg);
-
-		tmp_y = vtY(cur_y, deg);
+		//tmp_x = vtX(cur_x, deg);
+		//tmp_y = vtY(cur_y, deg);
+		tmp_x = _futureX(cur_x, deg, B_SPEED);
+		tmp_y = _futureY(cur_y, deg, B_SPEED);
 		
 		/* We need some side coords */
 		left_wing_deg = deg + 90;

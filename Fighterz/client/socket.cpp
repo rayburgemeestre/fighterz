@@ -4,7 +4,7 @@
 *  SOCKET FUNCTIONS
 ****************************************************/
 
-void connect_socket()
+int connect_socket()
 {
 	WORD version = MAKEWORD(1,1);
 	WSADATA wsaData;
@@ -22,7 +22,7 @@ void connect_socket()
 	if (lpHostEntry == NULL) {
 		printff_direct("Error at gethostbyname()");
 		terminate();
-		return;
+		return -1;
 	}
 
 	/* Create the socket */
@@ -34,8 +34,8 @@ void connect_socket()
 	
 	if (theSocket == INVALID_SOCKET) {
 		printff_direct("Error at socket()");
-		terminate();
-		return;
+		//terminate();
+		return -1;
 	}
 
 	
@@ -61,8 +61,8 @@ void connect_socket()
 
 	if (nRet == SOCKET_ERROR) {
 		printff_direct("Error at connect()");
-		terminate();
-		return;
+		// terminate();
+		return -1;
 	}
 
 	/* Connected */
@@ -75,7 +75,7 @@ void connect_socket()
 	  /* make socket non-blocking */
 	ioctlsocket(theSocket, FIONBIO, &one);
 
-return; /* Fuck this shit i will only need one sockread anyway */
+return 0;
 }
 
 void sockread()
@@ -621,7 +621,7 @@ void m_shiptype(unsigned int id, int newshiptype)
 {
 	LINK node = getplayer_byid( id );
 	node->shiptype = newshiptype;
-	addtext("id new type: %d %d", node->id, newshiptype);
+	//addtext("id new type: %d %d", node->id, newshiptype);
 }
 
 void m_ping(unsigned int servertime)

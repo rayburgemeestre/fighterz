@@ -1,6 +1,15 @@
 #include "common.h"
 
-#include "cube.h"
+//cube
+extern void init_shape();
+extern void animate_shape();
+extern void translate_shape();
+typedef struct VTX		 /* vertex data */
+{
+    fixed x, y, z;
+} VTX;
+extern void quad(BITMAP *b, VTX *v1, VTX *v2, VTX *v3, VTX *v4);
+extern void draw_shape(BITMAP *b);
 
 int getoptions()
 {
@@ -36,7 +45,7 @@ int last_retrace_count;
 
 	option[2].x = 280;
 	option[2].y = 370;
-	strcpy(option[2].str, "OPTIONS *");
+	strcpy(option[2].str, "OPTIONS");
 	option[2].time = ourtime;
 	option[2].r = 255;
 	option[2].g = 255;

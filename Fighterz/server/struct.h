@@ -98,6 +98,7 @@ struct data {
 	unsigned int bulletcnt; /**< A player/bot its current amount of bullets in the field
 	                             (so when this is 5, 5 bullets are already floating. When these 
 								 stop bulletcount will be decreased again) */
+	unsigned long bullet_time;
 	
 	char *buffer;	/**< Client input buffer (used to store partially received data ) */
 	int inlen;		/**< Client input buffer length */

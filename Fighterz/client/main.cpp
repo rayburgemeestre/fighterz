@@ -251,44 +251,67 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
 			clear_to_color(screen, makecol(0,0,0));
 			textprintf_centre(screen, (FONT *)dataf[ARCADE].dat, SCREEN_X / 2, 
-				SCREEN_Y / 2, makecol(192, 192, 192), "2004");
-			Sleep(1000);
-
-			clear_to_color(screen, makecol(0,0,0));
-			textprintf_centre(screen, (FONT *)dataf[ARCADE].dat, SCREEN_X / 2, 
 				SCREEN_Y / 2, makecol(192, 192, 192), "www.fighterz.net");
 			Sleep(1000);
 
+		}
+
+while (!key[KEY_ESC])
+{
+	//alert("in while!", "", "", "OK", NULL, KEY_ENTER, 1);
+		if (skip_options != 1)
+		{
 			ret = getoptions();
-			stop_midi();
-			play_midi(bg_music, TRUE);
 		}
 		else
+		{
 			ret = 0;
+		}
 
 		TXTPTR = 0;
 
 		switch (ret)
 		{
 			case 0:
-				start();
-				mainloop(); /* activate the main loop */
+				if (-1 == start() ||
+					-1 == mainloop())
+				{
+					WSACleanup();
+#if DEBUG == 1
+					fclose(dbug);
+#endif DEBUG
+					initialize_vars();
+					play_midi(intro_music, TRUE);
+				}
 				break;
 			case 1:
-				start();
-				mainloop(); /* activate the main loop */
+				alert("Singleplayer does not yet exist", 
+					  "you are now being redirect to multiplayer", "", 
+					  "Thanks for the info", NULL, KEY_ENTER, 0);
+				if (-1 == start() ||
+					-1 == mainloop())
+				{
+					WSACleanup();
+#if DEBUG == 1
+					fclose(dbug);
+#endif DEBUG
+					initialize_vars();
+					play_midi(intro_music, TRUE);
+				}
 				break;
 			case 2:
+				getsettings();
 				break;
 			default:
 				break;
 		}
-
+}
+/*
 			WSACleanup();
 #if DEBUG == 1
 			fclose(dbug);
 #endif DEBUG
-
+*/
 		// we need a de_initiatlize_vars here
 			// to free linked lists etc,
 			// if we let the while continue, the program crashes, so:

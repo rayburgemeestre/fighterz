@@ -5,6 +5,7 @@
 ****************************************************/
 
 int terminate_request = 0;
+int midi_track = 0;
 
 void closereq()
 {
@@ -75,15 +76,18 @@ void init()
 
 	if (USE_SOUND == 1)
 	{
-		bg_music = (MIDI *)df_snd[BG_MUSIC].dat;
+		//play_rand_bg_music();
 		intro_music = (MIDI *)df_snd[METAMORPHOSIS4].dat;
 	}
 #endif
 }
 
-void start()
+int start()
 {
-	int i;
+int i;
+
+stop_midi();
+play_rand_bg_music();
 
 	//set_color_depth(16);
 	//init_screen();		
@@ -149,11 +153,13 @@ void start()
 		lag[i] = 0.0;
 	
 	printff_direct("Connecting socket to %s:%d", taddr, tport);
-	connect_socket();
+	if (-1 == connect_socket())
+		return -1;
 
 /* tests */
 	guessed_power = MAX_HITS;
 
+	return 0;
 }
 
 void init_screen()
@@ -398,6 +404,7 @@ double dabs(double x)
 void initialize_vars()
 {
 	/* Will eventually become dynamic etc :) */
+	can_spawn = 0;
 	SCREEN_Y = 600;
 	SCREEN_X = 800;
 	FULLSCREEN = 0;
@@ -457,7 +464,7 @@ void initialize_vars()
 	buffer = (char *)malloc(8192);
 }
 
-void mainloop()
+int mainloop()
 {
 /********** mainloop init **********/
 	drawmap();
@@ -506,9 +513,21 @@ clear_to_color(CONSOLE, 0);
 		draw_talk_box();
 		show_graphics();
 //
+
+		// MIDI
+		if (midi_pos < 0 && bg_music_on == 1)
+		{
+			play_rand_bg_music();
+		}
 	}
-	alert("end of mainloop", "", "", "", NULL, 0, 0);
+
+	// clean up
+	while (head != NULL)
+		del_player(head->id);
+
 	stop_midi();
+
+	return -1;
 }
 
 void die(char *s)
@@ -525,4 +544,36 @@ LINK current;
 		if (current->id == id)
 			return current;
 	return NULL;
+}
+
+
+void play_rand_bg_music()
+{
+	midi_track++;
+	//int j = 1+(int) (5*rand()/(RAND_MAX+1.0));
+
+	if (midi_track == 7)
+		midi_track = 1;
+	switch (midi_track)
+	{
+		case 1:
+			bg_music = (MIDI *)df_snd[BG_MUSIC ].dat;
+			break;
+		case 2:
+			bg_music = (MIDI *)df_snd[BG_MUSIC2].dat;
+			break;
+		case 3:
+			bg_music = (MIDI *)df_snd[BG_MUSIC3].dat;
+			break;
+		case 4:
+			bg_music = (MIDI *)df_snd[BG_MUSIC4].dat;
+			break;
+		case 5:
+			bg_music = (MIDI *)df_snd[BG_MUSIC5].dat;
+			break;
+		case 6:
+			bg_music = (MIDI *)df_snd[BG_MUSIC6].dat;
+			break;
+	}
+	play_midi(bg_music, FALSE);
 }

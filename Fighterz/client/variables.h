@@ -123,3 +123,5 @@ extern unsigned int large_text_display_time;
 
 extern struct bg_imgs bg_imgs_data[32];
 extern int bg_imgs_data_index;
+extern int midi_track;
+extern int bg_music_on;

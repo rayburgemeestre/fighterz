@@ -121,6 +121,14 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\agup\agup.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\agup\aphoton.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\bullet.cpp
 # End Source File
 # Begin Source File
@@ -134,6 +142,10 @@ SOURCE=..\config.cpp
 # Begin Source File
 
 SOURCE=..\console.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\cube.cpp
 # End Source File
 # Begin Source File
 
@@ -166,6 +178,10 @@ SOURCE=..\..\common\proto.c
 # Begin Source File
 
 SOURCE=..\send.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\settings.cpp
 # End Source File
 # Begin Source File
 

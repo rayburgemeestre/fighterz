@@ -357,15 +357,15 @@ double futureY(struct data *ptr)
 	return pos_y;
 }
 #else
-double futureX(struct data *ptr, double angle, double speed)
-{
+double _futureX(double x, double angle, double speed)
+{ 
 double radius;
 double rads;
 double pos_x;
 
     radius = speed;
 	rads   = (PI * (angle-90) / 180);
-    pos_x  = (cos(rads) * radius) + ptr->x;
+    pos_x  = (cos(rads) * radius) + x;
 
     if (pos_x < 0)
         pos_x = field_width - 1;
@@ -374,8 +374,7 @@ double pos_x;
 
     return pos_x;
 }
-
-double futureY(struct data *ptr, double angle, double speed)
+double _futureY(double y, double angle, double speed)
 {
 double radius;
 double rads;
@@ -383,7 +382,7 @@ double pos_y;
 
 	radius = speed;
 	rads   = (PI * (angle-90) / 180);
-	pos_y  = (sin(rads) * radius) + ptr->y;
+	pos_y  = (sin(rads) * radius) + y;
 
 	if (pos_y < 0) 
 		pos_y = field_height - 1;
@@ -392,6 +391,9 @@ double pos_y;
 
 	return pos_y;
 }
+//wrappers
+double futureX(struct data *ptr, double angle, double speed) { return _futureX(ptr->x, angle, speed); }
+double futureY(struct data *ptr, double angle, double speed) { return _futureY(ptr->y, angle, speed); }
 #endif
 
 int collidecheck2b(struct data *ptr)
@@ -642,7 +644,8 @@ double fbY(unsigned int id2)
 }
 
 
-/* 2 following functions are Used in valid_target() */
+/** WHY?
+/ 2 following functions are Used in valid_target() /
 double vtX(double x, double deg)
 {
 	int radius;
@@ -664,7 +667,7 @@ double vtX(double x, double deg)
 	return pos_x;
 
 }
-/* idem dito */
+/ idem dito /
 double vtY(double y, double deg)
 {
 	int radius;
@@ -679,9 +682,11 @@ double vtY(double y, double deg)
 	//direction = 1;
 
 	pos_y = sin(ret);
-	pos_y = pos_y * direction; /* ? */
+	pos_y = pos_y * direction; / ? /
 	pos_y = pos_y + radius;
 	pos_y = pos_y + y - (BLOCKSIZE / 2);
 
 	return pos_y;
 }
+
+*/

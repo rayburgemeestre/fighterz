@@ -19,6 +19,7 @@ CFG=tmpdev - Win32 Debug
 !MESSAGE 
 !MESSAGE "tmpdev - Win32 Release" (based on "Win32 (x86) Console Application")
 !MESSAGE "tmpdev - Win32 Debug" (based on "Win32 (x86) Console Application")
+!MESSAGE "tmpdev - Win32 Profile" (based on "Win32 (x86) Console Application")
 !MESSAGE 
 
 # Begin Project
@@ -78,12 +79,39 @@ LINK32=link.exe
 # ADD LINK32 alld.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib ole32.lib dinput.lib ddraw.lib dxguid.lib winmm.lib dsound.lib wsock32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"Debug/server.exe" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none
 
+!ELSEIF  "$(CFG)" == "tmpdev - Win32 Profile"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "tmpdev___Win32_Profile"
+# PROP BASE Intermediate_Dir "tmpdev___Win32_Profile"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "tmpdev___Win32_Profile"
+# PROP Intermediate_Dir "tmpdev___Win32_Profile"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FR /YX /J /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FR /YX /J /FD /c
+# ADD BASE RSC /l 0x409 /d "NDEBUG"
+# ADD RSC /l 0x409 /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 alleg.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386 /out:"Release/server.exe"
+# SUBTRACT BASE LINK32 /pdb:none
+# ADD LINK32 alleg.lib wsock32.lib allp.lib /nologo /subsystem:console /profile /machine:I386 /out:"Release/server.exe"
+
 !ENDIF 
 
 # Begin Target
 
 # Name "tmpdev - Win32 Release"
 # Name "tmpdev - Win32 Debug"
+# Name "tmpdev - Win32 Profile"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"

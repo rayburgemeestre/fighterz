@@ -59,7 +59,7 @@ LINK current = head;
 	}
 }
 
-#define TURN_SPEED  18
+#define TURN_SPEED  10// 18
 #define ACCEL_SPEED 30
 void moveship(unsigned int id2, TIME t2)
 {								/* t2 wasn't needed :} */
@@ -310,7 +310,7 @@ for (cnt=0; cnt<times; cnt++)
 
 								current->path[PATH_MAX_-1][1] = current->path[PATH_MAX_-1][1] + 1.0;
 
-								//addtext("Done path %.2f of %.2f", current->path[PATH_MAX-1][1], current->path[PATH_MAX-1][0]);
+								addtext("Done path %.2f of %.2f", current->path[PATH_MAX_-1][1], current->path[PATH_MAX_-1][0]);
 
 								//if (current->path[PATH_MAX-1][1] != current->path[PATH_MAX-1][0])
 								//{
@@ -339,6 +339,23 @@ for (cnt=0; cnt<times; cnt++)
 
 										/* Acceleration update */
 										send_accel(EVERYONE, NULL, current->id, current->x, current->y, (signed char)current->velocity, current->speed);
+#ifndef NOT_DEFINED
+										// flyto random place
+										{
+											int rand_x, rand_y, tx, ty;
+											int continue_loop = 0;
+											do
+											{
+												rand_x = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
+												rand_y = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
+
+												tx = (int) ((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
+												ty = (int) ((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+											} while (field[ty][tx] == '1');
+
+											flyto(current->id, rand_x, rand_y);
+										}
+#endif
 										/* XXXXXXZ */
 										//circlefill(fieldbuff, current->target_x, current->target_y, 20, makecol(255,255,255));
 										//circlefill(fieldbuff, current->target_x - field_width, current->target_y - field_height, 20, makecol(255,255,255));
@@ -589,6 +606,9 @@ void flyto(int id, double x, double y)
 	}
 
 	findpath(tmp, x, y);
+
+//return;
+// he no fly!
 
 	/* bot shall fly :) */
 	tmp->path[PATH_MAX_-1][1] = 0;

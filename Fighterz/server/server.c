@@ -315,6 +315,92 @@ int main(void)
 		
 		movebullets();
 
+		/* ***** ai_bots() ****** */
+		{
+		LINK humanoid, bot;
+		for (bot = head; bot; bot = bot->next)
+			if (bot->bot == 1 && bot->invincible != 1 && bot->dead == 0)
+				for (humanoid = head; humanoid; humanoid = humanoid->next)
+					if (humanoid->bot == 0 && humanoid->dead == 0 && humanoid->invincible == 0)
+						if (sqrt((bot->x - humanoid->x)*(bot->x - humanoid->x)+
+								 (bot->y - humanoid->y)*(bot->y - humanoid->y)) <= 300)
+						{
+							if ( (bot->bullet_time == 0) || ((servertime - bot->bullet_time) >= (unsigned)BULLET_RE) )
+							{	bot->bullet_time = servertime;
+								if (bot->bulletcnt < BULLET_MAX)
+								{	
+									LINK b;
+									double angle  = getangle(bot->x, bot->y, humanoid->x, humanoid->y) + 180;
+
+									//bot->velocity = 0;
+									//bot->speed    = 0.0;
+									//send_accel(EVERYONE, bot, bot->id, bot->x, bot->y, (signed char)bot->velocity, bot->speed);
+
+									b = add_bullet(bot, bot->x, bot->y, angle, servertime);									
+									//send_newbullet(EVERYONE, bot, b->id, bot->id, bot->x, bot->y, angle)
+									m_newbullet(bot, bot->x, bot->y, angle);
+									break;							
+								}
+							}
+						}
+		}
+//test
+		if (key[KEY_H])
+		{
+			struct data *bot;
+			// findpath(head);
+			bot = add_bot();
+			notify_of_newuser(EVERYONE, NULL, bot);
+			
+			notify_of_respawn(EVERYONE, NULL, bot);
+			flyto((bot_id - 1), REDFLAG.x, REDFLAG.y);
+/*
+			// flyto random place
+			{
+				int rand_x, rand_y, tx, ty;
+				int continue_loop = 0;
+				do
+				{
+					rand_x = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
+					rand_y = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
+
+					tx = (int) ((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
+					ty = (int) ((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+				} while (field[ty][tx] == '1');
+
+				flyto(bot_id - 1, rand_x, rand_y);
+			} */
+			while (key[KEY_H]);
+		}
+		if (key[KEY_G])
+		{
+			struct data *bot;
+			// findpath(head);
+			bot = add_bot();
+			notify_of_newuser(EVERYONE, NULL, bot);
+			
+			notify_of_respawn(EVERYONE, NULL, bot);
+			
+			{
+				int rand_x, rand_y, tx, ty;
+				int continue_loop = 0;
+				do
+				{
+					rand_x = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
+					rand_y = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
+
+					tx = (int) ((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
+					ty = (int) ((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+				} while (field[ty][tx] == '1');
+
+				flyto(bot->id, rand_x, rand_y);
+			}
+			while (key[KEY_G]);
+		}
+//test
+		
+		/* ********************** */
+
 #if DEBUG2 == 1
 		parse_input();
 

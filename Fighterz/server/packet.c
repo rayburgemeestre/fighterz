@@ -184,7 +184,7 @@ printf("x: %d, y: %d, deg: %2.2f\n", x, y, deg);
 }
 
 // *lag*
-static void m_newbullet(struct data *client, double x, double y, double deg)
+void m_newbullet(struct data *client, double x, double y, double deg)
 {
 unsigned int clag;
 struct data *bullet;
@@ -344,7 +344,23 @@ size_t len;
 		notify_of_newuser(EVERYONE, NULL, bot);
 		
 		notify_of_respawn(EVERYONE, NULL, bot);
-		flyto((bot_id - 1), REDFLAG.x, REDFLAG.y);
+		//flyto((bot_id - 1), REDFLAG.x, REDFLAG.y);
+
+		// flyto random place
+										{
+											int rand_x, rand_y, tx, ty;
+											int continue_loop = 0;
+											do
+											{
+												rand_x = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
+												rand_y = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
+
+												tx = (int) ((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
+												ty = (int) ((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+											} while (field[ty][tx] == '1');
+
+											flyto(bot_id - 1, rand_x, rand_y);
+										}
 	}
 	else if (!strcmp(cmd, "delall"))
 	{

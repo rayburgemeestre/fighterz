@@ -2,6 +2,9 @@
 *  COMMON DEFINES / HEADER FILES
 ****************************************************/
 
+#ifndef COMMON_H
+#define COMMON_H
+
 #define OPTION_COUNT 2
 #define ASTEROIDS_MODE 1 // asteroids like flying?
 #define DONT_LOSE_VELOCITY_AT_COLLISION false
@@ -45,6 +48,7 @@
 
 #include "data.h"
 #include "sound.h"
+#include "cube.h"
 #include "main.h"
 #include "../common/proto.h"
 #include "../common/sys.h"
@@ -54,3 +58,5 @@
    #include <direct.h> */
 
 // not using: #include <aldumb.h> // for XM etc
+
+#endif

@@ -102,6 +102,7 @@ struct data *add_bot()
 	head->bullet = 0;
 	head->bot = 1;
 	
+	head->bullet_time = servertime;
 	head->bulletcnt = 0;
 	head->enabled = 0;
 #if 0

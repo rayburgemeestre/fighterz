@@ -10,7 +10,7 @@
  #define WINDOWS 0
 #endif
 #define DEBUG 0   /*    log ship positions etc to debug.log */
-#define DEBUG2 0  /*    1= SHOW FIELD(console msgs are logged to a file)
+#define DEBUG2 1  /*    1= SHOW FIELD(console msgs are logged to a file)
 					    0= CONSOLE ONLY
 
 						if chosen 1: replace /subsystem:console with 
@@ -34,6 +34,7 @@
 #define DEBUG_FILE "output.txt"
 #define IGNORE_LAG 0
 #define PATH_MAX_ 513
+#define BULLET_RE 600
 
 #define SERVER_VERSION 0x000001			/**< Current server version (sent on connect) */
 #define MIN_CLIENT_VERSION 0x00000000	/**< Min. client version required (older=kick) */

@@ -222,7 +222,7 @@ void moveships()
 	}
 }
 
-#define TURN_SPEED  18
+#define TURN_SPEED  10//18
 #define ACCEL_SPEED 30
 void moveship(unsigned int id2, unsigned long t2)
 {
