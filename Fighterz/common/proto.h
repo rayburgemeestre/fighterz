@@ -38,6 +38,7 @@ typedef signed long TIME;
 
 #define SMSG_FLAGCARR   0x8000 /* Flag Carrier */
 #define SMSG_FLAGCAPT   0x8001 /* Flag Capturer */
+#define SMSG_FLAGREST   0x8002 /* Flag restorer */
 
 #define SMSG_CLEARFIELD 0x8100
 #define SMSG_FIELDLINE  0x8101
