@@ -50,6 +50,11 @@ typedef signed long TIME;
 #define CMSG_SAY		0x8501
 #define CMSG_TEAMSAY	0x8502
 
+#if defined (__cplusplus)
+extern "C"
+{
+#endif
+
 /* Extern stuff */
 extern int get_u32(unsigned int *val, char **p, unsigned short *len);
 extern int get_s32(signed int *val, char **p, unsigned short *len);
@@ -58,7 +63,7 @@ extern int get_s16(signed short *val, char **p, unsigned short *len);
 extern int get_u8(unsigned char *val, char **p, unsigned short *len);
 extern int get_s8(signed char *val, char **p, unsigned short *len);
 extern int get_dbl(double *val, char **p, unsigned short *len);
-extern int get_str(char *s, char **p, unsigned short *len, int max);
+extern int get_str(char *s, char **p, unsigned short *len, size_t max);
 extern int get_time(TIME *val, char **p, unsigned short *len);
 extern void put_u32(unsigned int val, char **p, unsigned short *len);
 extern void put_s32(signed int val, char **p, unsigned short *len);
@@ -70,3 +75,6 @@ extern void put_str(char *s, char **p, unsigned short *len);
 extern void put_dbl(double val, char **p, unsigned short *len);
 extern void put_length(char *header, unsigned short len);
 extern void put_time(TIME val, char **p, unsigned short *len);
+#if defined (__cplusplus)
+}
+#endif
