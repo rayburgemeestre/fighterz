@@ -1,0 +1,148 @@
+/*  _______         ____    __         ___    ___
+ * \    _  \       \    /  \  /       \   \  /   /     '   '  '
+ *  |  | \  \       |  |    ||         |   \/   |       .      .
+ *  |  |  |  |      |  |    ||         ||\  /|  |
+ *  |  |  |  |      |  |    ||         || \/ |  |       '  '  '
+ *  |  |  |  |      |  |    ||         ||    |  |       .      .
+ *  |  |_/  /        \  \__//          ||    |  |
+ * /_______/edicated  \____/niversal  /__\  /____\usic /|  .  . astardisation
+ *                                                    /  \
+ *                                                   / .  \
+ * release.txt - Release notes for DUMB.            / / \  \
+ *                                                 | <  /   \_
+ *                                                 |  \/ /\   /
+ *                                                  \_  /  > /
+ *                                                    | \ / /
+ *                                                    |  ' /
+ *                                                     \__/
+ */
+
+
+********************************************
+*** DUMB v0.8.1, released 11 August 2002 ***
+********************************************
+
+This is a minor release that fixes a few bugs. One of these bugs, however,
+was pretty serious. dumb_register_dat_xm() was never coded! It was prototyped
+in aldumb.h, so code would compile, but there would be an unresolved symbol
+at the linking stage. This has been fixed.
+
+Platforms other than Unix did not have a working 'make veryclean' target;
+this has been fixed. In addition, the makefiles now use 'xcopy' instead of
+'copy', since on some systems GNU Make seems to have trouble calling commands
+built in to the shell.
+
+Contrary to the errata that was on the DUMB website, the makeall.sh and
+makecore.sh scripts actually DID install in /usr. This has now been
+corrected, and regardless of whether you use these scripts or call make
+directly, the files will now be installed to /usr/local by default.
+
+The XM loader used to treat stereo samples as mono samples with the data for
+the right channel positioned after the data for the left channel. This
+generally resulted in an unwanted echo effect. This has been fixed.
+
+When playing XM files, specifying an invalid instrument would cause an old
+note on that channel to come back (roughly speaking). Fast Tracker 2 does not
+exhibit this behaviour. This has been fixed.
+
+The GCC makefiles used -mpentium, which is deprecated in gcc 3.x. This was
+generating warnings, and has now been fixed.
+
+In XM files, the length of a sample is stored in bytes. DUMB was assuming
+that the length of a 16-bit sample would be even. I had two XM files where
+this was not the case, and DUMB was unable to load them. This has been fixed.
+
+In order to accommodate the extra part of the version number,
+DUMB_REVISION_VERSION has been added. DUMB_VERSION has also been added in
+order to facilitate checking if the version of DUMB installed is sufficient.
+See dumb.txt for details.
+
+As a last-minute fix, the XM "Break to row" effect is now loaded properly. It
+was necessary to convert from binary-coded decimal to hexadecimal (those who
+have experience with Fast Tracker 2 will know what I mean). In short, this
+means the effect will now work properly when breaking to row 10 or greater.
+
+DUMB v0.8 had faulty release date constants; DUMB_MONTH and DUMB_DAY were
+swapped! for this reason, DUMB_DATE should not be compared against any date
+in 2002. This note has been added to dumb.txt and also to dumb.h.
+
+Please scroll to the end and read the release notes for the first version,
+DUMB v0.7. Most of them apply equally to this release. However, the
+non-portable code was rewritten for DUMB v0.8, so that point does not apply.
+The point about length not being calculated also applies to XM files.
+
+Enjoy :)
+
+
+****************************************
+*** DUMB v0.8, released 14 June 2002 ***
+****************************************
+
+Welcome to the second release of DUMB!
+
+In addition to these notes, please read below the release notes for the
+previous version, DUMB v0.7. Most of them apply equally to this release.
+However, the non-portable code has been rewritten; DUMB should now port to
+big-endian platforms.
+
+The main improvement in this release of DUMB is the support for XM files.
+Enormous thanks go to Julien Cugniere for working on this while I had to
+revise for my exams!
+
+There was a mistake in the makefiles in the last release. The debugging
+Allegro interface library was mistakenly named libaldmbd.a instead of
+libaldmd.a, meaning you had to compile with -laldmbd, contrary to what the
+docs said. Apologies to everyone who lost sleep trying to work out what was
+wrong! The reason for using libaldmd.a is to maintain compatibility with
+plain DOS, where filenames are limited to eight characters (plus a three-
+letter extension). The makefiles have now been changed to match the
+information in the docs, so you may have to alter your project files
+accordingly.
+
+The example programs were faulty, and crashed on Windows if they were unable
+to load the file. It was also difficult to work out how to exit them (you had
+to click the taskbar button that didn't have a window, then press a key).
+They have been improved in both these respects.
+
+I have now added a docs/faq.txt file (Frequently Asked Questions), which is
+based on problems and misconceptions people have had with the first release.
+Please refer to it before contacting me with problems.
+
+Thanks to networm for touching up the Unix makefile and writing the
+instructions on using it.
+
+Incidentally, today (Friday 14 June) is the Robinson College May Ball at
+Cambridge Uni. God knows why it's called a May Ball if it's in June. I'm not
+going myself (72 GBP, and I'd have to wear a suit, ugh), but with all the
+noise outside I shall enjoy pumping up the speakers tonight!
+
+
+****************************************
+*** DUMB v0.7, released 2 March 2002 ***
+****************************************
+
+This is the first release of DUMB, and parts of the library are not
+crystallised. Don't let this put you off! Provided you don't try to use any
+features that aren't documented in docs/dumb.txt, the library should be rock
+solid and you should be able to upgrade more or less without problems.
+
+Here are some notes on this release:
+
+- There is some non-portable code in this release of DUMB. It is likely that
+  the library will fail to load IT files with compressed samples on
+  big-endian machines such as the Apple Macintosh.
+
+- If your program ever aborts with exit code 37 while loading an IT file,
+  PLEASE LET ME KNOW! The IT file in question has a stereo compressed sample
+  in it, and the format is unspecified for this case (Impulse Tracker itself
+  doesn't use stereo samples at all). I will need the IT file in question,
+  and any information you can give me about how the IT file was created (e.g.
+  what program). (If you don't get to see an exit code, let me know anyway.)
+
+- If your program ever outputs a line resembling "Inst 01 Env: 0,64 8,32
+  15,48" to stderr while loading an IT file, PLEASE LET ME KNOW! You have an
+  old IT file (saved by an Impulse Tracker version older than 2.00), and
+  support for such files is untested.
+
+- The length of IT and S3M files is not currently calculated. It is just set
+  to ten minutes.

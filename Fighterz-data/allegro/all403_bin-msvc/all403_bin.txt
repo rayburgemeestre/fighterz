@@ -1,0 +1,42 @@
+     ______   ___    ___
+    /\  _  \ /\_ \  /\_ \
+    \ \ \L\ \\//\ \ \//\ \      __     __   _ __   ___ 
+     \ \  __ \ \ \ \  \ \ \   /'__`\ /'_ `\/\`'__\/ __`\
+      \ \ \/\ \ \_\ \_ \_\ \_/\  __//\ \L\ \ \ \//\ \L\ \
+       \ \_\ \_\/\____\/\____\ \____\ \____ \ \_\\ \____/
+	\/_/\/_/\/____/\/____/\/____/\/___L\ \/_/ \/___/
+				       /\____/
+				       \_/__/
+
+
+		 Windows binary distribution.
+
+
+
+This package contains precompiled copies of the Windows DLL files for the 
+Allegro library, to save you having to compile it yourself. This is not a 
+complete distribution of Allegro, as it does not contain any of the 
+documentation, example programs, headers, etc. You need to download the full 
+source version, and then just unzip this package over the top of it.
+
+To install, run the batch file msvcmake.bat, either from a command prompt or 
+by double-clicking on it from the Windows explorer. This will hopefully be 
+able to autodetect all the details of where to find your compiler, and will 
+automatically compile the various support programs that come with Allegro.
+
+At the end of the install process you will be asked whether to copy libs and 
+headers into your compiler directories, and whether to install the DLL files 
+into the Windows system directory. You should normally say yes here, but if 
+you prefer, you can leave these files in the Allegro directory, and then 
+specify the paths to them later on, when you come to compile your own 
+programs using Allegro.
+
+There are three versions of the DLL included in this zip:
+
+   alleg40.dll is the normal optimised version
+   alld40.dll is the debugging build, and should be used during development
+   allp40.dll is a profiling build, for collecting performance info
+
+For more general information about using Allegro, see the readme.txt and 
+docs/build/msvc.txt files from the source distribution.
+
