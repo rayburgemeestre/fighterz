@@ -213,7 +213,7 @@ void send_newbullet(struct data *client, struct data *except,
 {
 char *p = packet;
 unsigned short len = 0;
-	verbose("SMSG_NEWBULLET <args>");
+	verbose("SMSG_NEWBULLET <args> [bullet-id:%u]", id);
 	put_u16(SMSG_NEWBULLET, &p, &len);
 	put_u32(id, &p, &len);
 	put_u32(ownerid, &p, &len);

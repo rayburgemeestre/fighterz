@@ -160,7 +160,7 @@ int movebullet(struct data *ptr, unsigned long t2)
 				current->x = pos_x;
 				current->y = pos_y;
 				//current->x2 = current->x * (1.0 + ZOOM);
-				//current->x2 = current->x * (1.0 + ZOOM); /* asdfasdfasdfasdf*/
+				//current->x2 = current->x * (1.0 + ZOOM);
 				setsec(current); /* recent */
 
 				/* did the bullet fly out the field? */

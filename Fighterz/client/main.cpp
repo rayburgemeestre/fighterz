@@ -4,6 +4,14 @@
 *								Started: 07.08.02
 ****************************************************/
 
+/*
+
+	The reason why this is all in .cpp extensions is because 
+	I needed some C++ code, so i couldn't stick to .c
+
+*/
+
+
 #include "common.h"
 
 /********************************************

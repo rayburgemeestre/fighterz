@@ -243,7 +243,7 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			if (!get_dbl(&deg, &dta, &len))
 				goto fatal;
 			verbose("SMSG_TURN");
-			m_turn(id, x, y, deg, turn);
+			m_turn(id, x, y, turn, deg);
 			return;
 		}
 		case SMSG_INVINCIBLE:
@@ -323,7 +323,24 @@ void dopacket(int xtype, unsigned short len, char *dta)
 		}
 		case SMSG_NEWBULLET:
 		{
+			unsigned int id, ownerid;
+			double x, y, deg;
 			verbose("SMSG_NEWBULLET");
+
+			if (!get_u32(&id, &dta, &len))
+				goto fatal;
+			if (!get_u32(&ownerid, &dta, &len))
+				goto fatal;
+			if (!get_dbl(&x, &dta, &len))
+				goto fatal;
+			if (!get_dbl(&y, &dta, &len))
+				goto fatal;
+			if (!get_dbl(&deg, &dta, &len))
+				goto fatal;
+			verbose("GOT OWNER ID: %ud", ownerid);
+			verbose("GOT OWNER ID: %ud", ownerid);
+			verbose("GOT OWNER ID: %ud", ownerid);
+			m_newbullet(id, ownerid, x, y, deg);
 			return;
 		}
 		case SMSG_NICK:
@@ -536,6 +553,18 @@ return;
 	delay(2);
 }
 
+void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, double deg)
+{
+	// *the entire `unsigned int id` var isn't used
+	
+	//verbose("New bullet id: [!], ownerid: %d, x: %2.2f, y: %2.2f, deg: %2.2f\n",
+	//	ownerid, x, y, deg);
+
+	add_bullet( getplayer_byid(ownerid), (int)x, (int)y, (double)deg, ourtime);
+
+	return;
+}
+
 void m_spawn(unsigned int oid)
 {
 	verbose("spawned with id: %d", oid);
@@ -574,6 +603,7 @@ void m_turn(unsigned int id, double x, double y, signed char turn, double deg)
 LINK current;
 unsigned int clag;
 	current = getplayer_byid(id);
+	verbose("Got player id: %d, got deg: %2.2f", current->id, current->deg);
 	if (!current)
 		return;
 

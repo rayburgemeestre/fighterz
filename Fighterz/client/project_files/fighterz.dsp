@@ -144,10 +144,6 @@ SOURCE=..\global.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\icon.rc
-# End Source File
-# Begin Source File
-
 SOURCE=..\main.cpp
 # End Source File
 # Begin Source File
@@ -164,7 +160,7 @@ SOURCE=..\parse.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\common\proto.cpp
+SOURCE=..\..\common\proto.c
 # End Source File
 # Begin Source File
 
@@ -200,10 +196,6 @@ SOURCE=..\..\common\proto.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\resource.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\struct.h
 # End Source File
 # Begin Source File
@@ -218,6 +210,10 @@ SOURCE=..\variables.h
 # Begin Group "Resource Files"
 
 # PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# Begin Source File
+
+SOURCE=.\icon.rc
+# End Source File
 # Begin Source File
 
 SOURCE=.\main.ico

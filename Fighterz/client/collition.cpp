@@ -14,7 +14,7 @@ void collidecheck()
 		{
 			/* collide check for bullets ;) */
 			/* TODO: */
-			// asdfasdfasdfasdf collidecheck2b(current);
+			// collidecheck2b(current);
 		} else {
 			collidecheck2(current->id, 0);
 		}
@@ -455,7 +455,7 @@ int collidecheck2b(struct data *ptr)
 			
 
 
-				/* asdfasdfasdf  */
+				/* */
 				//del_bullet(current2);
 				//retval = 1;
 			} else {
@@ -501,7 +501,7 @@ int bs_collidecheck(struct data *ptr)
 					{
 						// addtext("del bullet at addr: %d", tmp);
 						explosion(tmp->x, tmp->y, 30, 30, makecol(255, 255, 255));
-
+						verbose("ID %u was hit by bullet owned by ID: %u", tmp2->id, tmp->owner);
 						del_bullet(tmp);
 						
 						retval = 1;

@@ -76,6 +76,7 @@ extern void m_ping(unsigned int servertime);
 extern void m_lag(double diff);
 extern void m_nickreply(unsigned char acceptance, char *msg);
 extern void m_spawnready();
+extern void m_newbullet(unsigned int id, unsigned int ownerid, double x, double y, double deg);
 extern void m_spawn(unsigned int oid);
 extern void m_newuser(int id, double x, double y, double deg,
 					  signed char accel, unsigned int alive, signed short frags,

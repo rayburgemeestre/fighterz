@@ -117,7 +117,7 @@ typedef uint32_t in_addr_t;
 #define READY_INT	-97
 
 #define IsRegistered(obj)	(obj->enabled >= STATE_LAG)
-#define IsDead(obj)			(obj->enabled <= STATE_DEAD)
+#define IsDead(obj)			(obj->bullet != 1 && obj->enabled <= STATE_DEAD)
 
 #define SetDeadSend(obj)	do { obj->enabled = STATE_DEADSEND; } while(0);
 #define SetDead(obj)		do { obj->enabled = STATE_DEAD; } while(0);
