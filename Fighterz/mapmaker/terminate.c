@@ -2,6 +2,6 @@
 
 void terminate()
 {
-    // Exit program.
     allegro_exit();
+    exit(-1);
 }

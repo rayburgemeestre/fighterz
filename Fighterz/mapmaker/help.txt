@@ -1,0 +1,15 @@
+Keyboard Controls:
+-------------------
+
+[SHIFT] + Arrow keys: Move the map
+
+Mouse Controls:
+-------------------
+
+Left mouse click: Will add the block selected in the "Add blocks" radio button group beneath the mouse pointer.
+Right mouse click: Will delete the block beneath the mouse pointer.
+
+-------------------
+The text in the right/bottom of the screen shows the mouse its coordinates in block size.
+
+To change the mapsize change the x_width & y_width values in the "Map specification" Section and press the "Ok" button beneath it.
