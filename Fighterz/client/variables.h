@@ -117,3 +117,6 @@ extern int terminate_request;
 extern char large_text_msg[64];
 extern unsigned long large_text_time;
 extern unsigned int large_text_display_time;
+
+extern struct bg_imgs bg_imgs_data[32];
+extern int bg_imgs_data_index;

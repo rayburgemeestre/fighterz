@@ -195,6 +195,60 @@ void dopacket(int xtype, unsigned short len, char *dta)
 			m_nickreply(acceptance, str);
 			return;
 		}
+		case SMSG_CLEARFIELD:
+		{
+			m_clearfield();
+			return;
+		}
+		case SMSG_FIELDLINE:
+		{
+		unsigned int index;
+		char fieldline[512];
+
+			if (!get_u32(&index, &dta, &len))
+				goto fatal;
+			if (!get_str(fieldline, &dta, &len, sizeof(fieldline)))
+				goto fatal;
+
+			m_fieldline(index, fieldline);
+			return;
+		}
+		case SMSG_BLOCKINFO:
+		{
+		int w, h, size;
+
+			if (!get_s32(&w, &dta, &len))
+				goto fatal;
+			if (!get_s32(&h, &dta, &len))
+				goto fatal;
+			if (!get_s32(&size, &dta, &len))
+				goto fatal;
+
+			m_blockinfo(w, h, size);
+			return;
+		}
+		case SMSG_BACKGROUND:
+		{
+		int df_id, pos_x, pos_y;
+		char datfile[128];
+		
+			if (!get_s32(&df_id, &dta, &len))
+				goto fatal;
+			if (!get_s32(&pos_x, &dta, &len))
+				goto fatal;
+			if (!get_s32(&pos_y, &dta, &len))
+				goto fatal;
+			if (!get_str(datfile, &dta, &len, sizeof(datfile)))
+				goto fatal;
+
+			m_background(df_id, pos_x, pos_y, datfile);
+			return;
+		}
+		case SMSG_FIELDEND:
+		{
+			m_fieldend();
+			return;
+		}
 		default:
 			break;
 	}
@@ -563,11 +617,101 @@ void m_lag(double diff)
 	lag[i] = diff;
 }
 
+void m_clearfield()
+{
+	verbose("clearfield::::::::");
+	bg_imgs_data_index = 0;
+}
+
 void m_nickreply(unsigned char acceptance, char *msg)
 {
 	verbose("SMSG_NICKREPLY: %d %s", (int)acceptance, msg);
 }
 
+void m_blockinfo(int w, int h, int size)
+{
+	Y_BLOCKS = h;
+	X_BLOCKS = w;
+	BLOCKSIZE = size; // 20 anyways *sigh*
+
+//
+	BLOCKSIZE_2 = BLOCKSIZE;
+
+	field_width_2 = X_BLOCKS * BLOCKSIZE;
+	field_height_2 = Y_BLOCKS * BLOCKSIZE;
+	field_width = field_width_2;
+	field_height = field_height_2;
+
+//
+	if (field_width > field_height)
+		RADAR_SCALE = field_width / RADAR_SIZE;
+	else
+		RADAR_SCALE = field_height / RADAR_SIZE;
+
+	RADAR_W = field_width / RADAR_SCALE;
+	RADAR_W += (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2);
+	RADAR_W = (RADAR_W <= 0 ? 1 : RADAR_W);
+	RADAR_H = field_height / RADAR_SCALE;
+	RADAR_H = (RADAR_H <= 0 ? 1 : RADAR_H);
+
+
+	CONSOLE_H = (MAX_C_LINES * 10);
+	CONSOLE_W = MAP_W;
+	CONSOLE_X = LEFT;
+	CONSOLE_Y = TOP + MAP_H + CSCREEN_H + 10; 
+		
+	CONSOLE = create_sub_bitmap(tmpscreen, CONSOLE_X, CONSOLE_Y, CONSOLE_W, CONSOLE_H);
+
+	clear_to_color(CONSOLE, 0);
+	
+	CSCREEN_X = LEFT;
+	CSCREEN_Y = TOP;
+
+	FIELD_X = LEFT;
+	FIELD_Y = CSCREEN_Y + CSCREEN_H + 5;
+	
+	RADAR_X = LEFT + (MAP_W - RADAR_W);
+	RADAR_Y = FIELD_Y + (MAP_H - RADAR_H);
+
+	RADAR = create_sub_bitmap(tmpscreen, RADAR_X, RADAR_Y, RADAR_W, RADAR_H);
+	clear_to_color(RADAR, 0);
+
+//
+	destroy_bitmap(fieldbuff);
+	shipbuff = create_bitmap(field_width + 1, field_height + 1);
+
+	destroy_bitmap(talkbuff);
+	talkbuff = create_sub_bitmap(tmpscreen, CSCREEN_X, CSCREEN_Y, MAP_W, CSCREEN_H);
+	destroy_bitmap(ulistbuff);
+	ulistbuff = create_sub_bitmap(tmpscreen, LEFT_2, TOP, 150, (MAP_H + 5 + CSCREEN_H));
+//
+
+	printff_direct("  Vertical blockcount: %d", Y_BLOCKS);
+	printff_direct("  Horizontal blockcount: %d", X_BLOCKS);
+	printff_direct("  Blocksize in pixels: %d", BLOCKSIZE);
+}
+void m_fieldline(unsigned int index, char *fieldline)
+{
+	verbose("map: %s", fieldline);
+	strcpy(field[index], fieldline);
+}
+
+void m_background(int df_id, int pos_x, int pos_y, char *datfile)
+{
+	bg_imgs_data[bg_imgs_data_index].df_id = df_id;
+	bg_imgs_data[bg_imgs_data_index].pos_x = pos_x;
+	bg_imgs_data[bg_imgs_data_index].pos_y = pos_y;
+	if (strlen(datfile) > 128)
+		datfile[127] = '\0';
+
+	strcpy(bg_imgs_data[bg_imgs_data_index].datfile, datfile);
+
+	bg_imgs_data_index++;
+}
+void m_fieldend()
+{
+	drawmap();
+}
 void m_kick( unsigned int id, char *reason )
 {
 	LINK node = getplayer_byid( id );

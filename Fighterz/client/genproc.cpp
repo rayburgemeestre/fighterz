@@ -27,8 +27,7 @@ void init()
 	init_screen();	
 	center_window();
 
-	datafile = (char *)malloc((512+strlen("fighterz.dat")) * sizeof(char));
-	strcpy(datafile, "fighterz.dat");
+	datafile = strdup(BASE_DATAFILE);
 	dataf = load_datafile(datafile);
 	//dataf = load_datafile("#");
 
@@ -85,17 +84,16 @@ void start()
 	//destroy_bitmap(tmpscreen);
 	//tmpscreen = create_bitmap(SCREEN_X, SCREEN_Y);
 	
-
-
 	time_proc();
 	
 	printff_direct("Loading map: %s", map2);
 
-	strncpy(map2, "maps\\lvl1.txt", 64);
+	strncpy(map2, "maps\\lvl-x.txt", 64);
 	map2[63] = '\0';
 
 	/* Read map from file and set some important variables */
-	loadmap();
+	// loadmap();
+	BLOCKSIZE = 20; // @!
 
 	/* 
 		printff_direct("Building map in buffer");
@@ -107,17 +105,11 @@ void start()
 	LEFT_2 = (SCREEN_X - 150) - LEFT;
 	/*					^ lists width */
 	
-	BLOCKSIZE_2 = BLOCKSIZE;	
 	SPEED_2 = SPEED;
 	B_SPEED_2 = B_SPEED;
 	
-	field_width_2 = X_BLOCKS * BLOCKSIZE;
-	field_height_2 = Y_BLOCKS * BLOCKSIZE;
-	field_width = field_width_2;
-	field_height = field_height_2;
+// snipped: asdfasdfasdf
 
-	printff_direct("field_width: %d", field_width);
-	printff_direct("field_height: %d", field_height);
 	showscr = 0;
 	
 	msg[0] = '\0';
@@ -128,38 +120,6 @@ void start()
 		printff_direct("ha");
 		terminate();
 	}*/
-
-
-	if (field_width > field_height)
-		RADAR_SCALE = field_width / RADAR_SIZE;
-	else
-		RADAR_SCALE = field_height / RADAR_SIZE;
-
-	RADAR_W = field_width / RADAR_SCALE;
-	RADAR_W += (INDICATOR_WIDTH * 2) + (INDICATOR_DISTANCE_BETWEEN * 2);
-	RADAR_H = field_height / RADAR_SCALE;
-
-
-	CONSOLE_H = (MAX_C_LINES * 10);
-	CONSOLE_W = MAP_W;
-	CONSOLE_X = LEFT;
-	CONSOLE_Y = TOP + MAP_H + CSCREEN_H + 10; 
-		
-	CONSOLE = create_sub_bitmap(tmpscreen, CONSOLE_X, CONSOLE_Y, CONSOLE_W, CONSOLE_H);
-
-	clear_to_color(CONSOLE, 0);
-	
-	CSCREEN_X = LEFT;
-	CSCREEN_Y = TOP;
-
-	FIELD_X = LEFT;
-	FIELD_Y = CSCREEN_Y + CSCREEN_H + 5;
-	
-	RADAR_X = LEFT + (MAP_W - RADAR_W);
-	RADAR_Y = FIELD_Y + (MAP_H - RADAR_H);
-
-	RADAR = create_sub_bitmap(tmpscreen, RADAR_X, RADAR_Y, RADAR_W, RADAR_H);
-	clear_to_color(RADAR, 0);
 
 	printff_direct("Initializing linked list for users");
 
@@ -176,21 +136,12 @@ void start()
 	printff_direct("Preparing lag array");
 	for (i=0; i<5; i++)
 		lag[i] = 0.0;
-
-	printff_direct("Field height:%lu width:%lu", field_height, field_height);
 	
 	printff_direct("Connecting socket to %s:%d", taddr, tport);
 	connect_socket();
 
 /* tests */
 	guessed_power = MAX_HITS;
-	destroy_bitmap(fieldbuff);
-	shipbuff = create_bitmap(field_width + 1, field_height + 1);
-
-	destroy_bitmap(talkbuff);
-	talkbuff = create_sub_bitmap(tmpscreen, CSCREEN_X, CSCREEN_Y, MAP_W, CSCREEN_H);
-	destroy_bitmap(ulistbuff);
-	ulistbuff = create_sub_bitmap(tmpscreen, LEFT_2, TOP, 150, (MAP_H + 5 + CSCREEN_H));
 
 }
 

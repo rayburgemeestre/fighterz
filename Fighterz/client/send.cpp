@@ -32,7 +32,7 @@ void send_version()
 {
 	char *p = packet;
 	unsigned short len = 0;
-	verbose("CMSG_VERSION: %d", CLIENT_VERSION);
+	// verbose("CMSG_VERSION: %d", CLIENT_VERSION);
 
 	put_u16(CMSG_VERSION, &p, &len);
 	put_u32(CLIENT_VERSION, &p, &len);

@@ -158,6 +158,8 @@ int tport; /**< Will contain the port of the server we will connect to */
 int grid; /**< true means a grid will be drawn on the field */
 int direction_is_up; /**< indicates whether we are moving upwards or not */
 struct option_ option[3]; /**< Will contain menu items in option menu */
+struct bg_imgs bg_imgs_data[32];
+int bg_imgs_data_index;
 
 char *buffer;
 int inlen; /**< input buffer length */

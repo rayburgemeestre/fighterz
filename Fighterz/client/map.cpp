@@ -63,9 +63,43 @@ void loadmap() {
 		}
 		Y_BLOCKS = x_count;
 	}
-	printff_direct("  Vertical blockcount: %d", Y_BLOCKS);
-	printff_direct("  Horizontal blockcount: %d", X_BLOCKS);
-	printff_direct("  Blocksize in pixels: %d", BLOCKSIZE);
+	printff_direct("  Blockcount Y: %d X: %d Size: %d", Y_BLOCKS, X_BLOCKS, BLOCKSIZE);
+}
+
+
+// tmp here
+
+void plot_datimg(struct bg_imgs bg)
+{
+char df_path[512];
+DATAFILE *df;
+
+	sprintf(df_path, "system\\%s", bg.datfile);
+
+	if (!(df = load_datafile(df_path)))
+	{
+		printff_direct("Could not specified datafile (%s) its images will not be displayed", df_path);
+	} else {
+	int index = 0, i = 0;
+	DATAFILE *ptr = df;
+
+		printff_direct("Loaded datafile....%s", df_path);
+
+		while (ptr->type != DAT_END)
+		{
+			if (ptr->type == DAT_BITMAP)
+			{
+				if (bg.df_id == index)
+				{
+					// plot it
+					draw_sprite(fieldbuff, (BITMAP *)df[index].dat, bg.pos_x, bg.pos_y);
+				}
+				index++;
+			}
+			ptr++;
+			i++;
+		}
+	}	
 }
 
 /* procedure to draw map on screen */
@@ -77,7 +111,8 @@ void drawmap() {
 	int blauw = makecol(0,128,255);
 	int grijs = makecol(128,128,128);
 
-	destroy_bitmap(fieldbuff);
+	// if (fieldbuff != NULL) 
+	// 	destroy_bitmap(fieldbuff); <-- todo check if (bitmap) dan destroy.. lakjdsf
 	fieldbuff = create_bitmap(field_width_2 + 1, field_height_2 + 1);
 	//fieldbuff = create_sub_bitmap(tmpscreen, FIELD_X, FIELD_Y, MAP_W, MAP_H);
 	clear_to_color(fieldbuff, 0);
@@ -115,7 +150,37 @@ void drawmap() {
 			}
 		}
 	}
+
+
 	{
+	int i;
+
+		for (i=0; i < 32; i++)
+		{
+			if (strlen(bg_imgs_data[i].datfile) > 0)
+			{
+				plot_datimg(bg_imgs_data[i]);
+			}
+		}		
+	}
+	    /* int df_id, pos_x, pos_y;
+    char buf[512], datafile[512], *fptr;
+
+    char *s;
+    char b[256];
+
+        sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, &datafile);
+        sprintf(buf, "system\\%s", datafile);
+        s = buf;
+        fix_filename_path(b, s, sizeof(b));
+        // strcpy(s, b);
+        // char *fix_filename_path(char *dest, const char *path, int size);
+        // alert(buf, "", "", "Ok", NULL, 0, 0);
+        init_datafile(0, buf);
+        draw_sprite(scrn_field, (BITMAP *)df[df_id].dat, pos_x, pos_y);
+		*/
+
+	if (0) {
 		/* random stuff */
 		unsigned long rw, rh;
 		int i;

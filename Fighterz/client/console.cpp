@@ -77,8 +77,6 @@ void large_text(char *pattern, ...)
 {
 	char buf[512];
 	int total = 0;
-	int bytesleft;
-	int n;
 
 	va_list ap;
 	va_start (ap, pattern);

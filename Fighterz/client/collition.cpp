@@ -269,7 +269,7 @@ int collidecheck2b(struct data *ptr)
 
 				static FILE *fd;
 				if (!fd)
-					fd = fopen("WTF.txt", "w");
+					fd = fopen("collition.txt", "w");
 
 				sprintf(tmp, "%d %d COLLITION AT DEG: %f X: %f Y: %f", 
 					current2->move, ourtime, current2->deg, current2->x, current2->y);

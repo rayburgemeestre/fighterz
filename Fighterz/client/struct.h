@@ -103,3 +103,12 @@ struct option_
 	unsigned long time; /**< Used to constrain time to the highlight effect */
 	char str[100]; /**< The caption of the item */
 };
+
+
+struct bg_imgs {
+	// df_id, pos_x, pos_y, datafile
+	int df_id;
+	int pos_x;
+	int pos_y;
+	char datfile[128];
+};

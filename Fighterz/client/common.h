@@ -15,6 +15,7 @@
 #define SERVER_VERSION 0x000001			/**< Current server version (sent on connect) */
 #define MIN_CLIENT_VERSION 0x00000000	/**< Min. client version required (older=kick) */
 #define CLIENT_VERSION 0x00000001
+#define BASE_DATAFILE "system\\base.dat"
 
 #define T_PLAYER			0
 #define T_BOT				1
