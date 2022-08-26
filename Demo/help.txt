@@ -1,0 +1,22 @@
+#NOTE# [save] doesn't work, only [save as] works.
+
+#MAPMAKER CONTROLS#
+
+[shift] + Arrow keys = move across the map
+
+[left mouse]         = adds blocks or images at the mouse 
+                       location according to the selected 
+                       radio button in the "Add blocks" radio 
+                       group.
+
+[right mouse]        = Deletes only blocks at the mouse
+                       pointers location, (deleting bg-images
+                       has to go via the menu on your right).
+
+[F12]                = Exit.
+
+#INFO#
+
+The text in the right/bottom of the screen shows the mouse its coordinates in block size.
+
+To change the mapsize change the x_width & y_width values in the "Map specification" Section and press the "Ok" button.
