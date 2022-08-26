@@ -1,0 +1,38 @@
+***************************************************************************
+
+      _______  __         __     __      T A C H Y O N
+     |    ___||__|.-----.|  |--.|  |_ .-----..----..-----.
+     |    ___||  ||  _  ||     ||   _||  -__||   _||-- __|
+     |___|    |__||___  ||__|__||____||_____||__|  |_____|
+                  |_____|
+
+
+
+********************
+* INSTALLATION (temporary)
+***************************************************************************
+
+if you want to install the fighterz protocol
+( fighterz://www.fighterz.net:8099/ ) do the following:
+
+first decide where you would like to put fighterz.bat. I will choose C:\.
+so open fighterz.bat and look for the following two lines:
+
+	C:
+	cd C:\Fighterz\
+
+If you chose D:\games\Fighterz\ or whatever this should become:
+
+	D:
+	cd D:\games\Fighterz\
+
+Now, open fighterz.reg and search for the following lines:
+
+	[HKEY_CLASSES_ROOT\fighterz\Shell\open\command]
+	@="C:\\fighterz.bat %1"
+
+You should change the C:\\fighterz.bat to where yours is located.. and
+remember to use two backslashes instead of one..
+
+then run fighterz.reg and fighterz://host:port/ should work :)
+
