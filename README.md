@@ -1,5 +1,16 @@
 <img src="https://github.com/rayburgemeestre/fighterz/blob/master/www.fighterz.net/images/logo_5.gif">
 
+In game screenshot:
+
+<img src="https://github.com/rayburgemeestre/fighterz/blob/master/www.fighterz.net/screenshots/fghz5jun2005.jpg">
+
+Map maker screenshot:
+
+<img src="https://github.com/rayburgemeestre/fighterz/blob/master/www.fighterz.net/screenshots/mapmaker4_02032004.gif">
+
+Original README.txt contents:
+
+
     ***************************************************************************
 
           _______  __         __     __      T A C H Y O N
