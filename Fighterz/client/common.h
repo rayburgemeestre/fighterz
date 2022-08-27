@@ -21,8 +21,8 @@
 #define SERVER_VERSION 0x000001			/**< Current server version (sent on connect) */
 #define MIN_CLIENT_VERSION 0x00000000	/**< Min. client version required (older=kick) */
 #define CLIENT_VERSION 0x00000001
-#define BASE_DATAFILE "system\\base.dat"
-#define BASE_SOUND_DATAFILE "system\\base_snd.dat"
+#define BASE_DATAFILE "system/base.dat"
+#define BASE_SOUND_DATAFILE "system/base_snd.dat"
 
 //move_ships
 #define TURN_SPEED  10 // was: 18
@@ -49,14 +49,16 @@
 #include <allegro.h>
 #include "alfont/alfont.h"
 #include <math.h>
+#ifdef _WIN32
 #include <winalleg.h>
 #include <winsock.h>
+#endif
 /* Time */
 #include <time.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
 
-#include <fcntl.h> 
+#include <fcntl.h>
 
 #include "data.h"
 #include "sound.h"
@@ -66,9 +68,11 @@
 #include "../common/sys.h"
 #include "struct.h"
 #include "variables.h"
-/* needed for current working directory: 
+/* needed for current working directory:
    #include <direct.h> */
 
 // not using: #include <aldumb.h> // for XM etc
+
+#include <stdbool.h>
 
 #endif

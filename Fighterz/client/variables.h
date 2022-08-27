@@ -33,8 +33,8 @@ extern int bullet_movespeed_multiplier;
 
 //extern unsigned int CONSOLE_X;
 //extern unsigned int CONSOLE_Y;
-//extern unsigned int CONSOLE_W; 
-//extern unsigned int CONSOLE_H; 
+//extern unsigned int CONSOLE_W;
+//extern unsigned int CONSOLE_H;
 
 
 
@@ -112,15 +112,15 @@ extern int save_frames_to_bitmap;
 extern int scoreboard_current_y;
 extern int fps, fps_count;
 extern long int fps_oldtime, fps_newtime;
-extern struct timeb t; 
-extern struct timeb started; 
+extern struct timeb t;
+extern struct timeb started;
 extern unsigned long ourtime;
 
 //interface.cpp
 extern BITMAP *tmpscreen;
 extern BITMAP *bmp_mapfield;
 extern BITMAP *bmp_radarfield;
-extern BITMAP *bmp_shipfield;  
+extern BITMAP *bmp_shipfield;
 extern BITMAP *bmp_command;
 extern BITMAP *bmp_console;
 extern BITMAP *bmp_radar;
@@ -172,6 +172,9 @@ extern int options_activeitem;
 extern struct option_ option[3];
 
 //sockets.cpp
+#ifndef _WIN32
+#define SOCKET int
+#endif
 extern SOCKET sock_to_serv;
 extern double lag[5];
 extern char serv_addr[512];

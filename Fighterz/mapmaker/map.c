@@ -124,7 +124,7 @@ int cnt, cnt2;
     char b[256];
 
         sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, &datafile);
-        sprintf(buf, "system\\%s", datafile);
+        sprintf(buf, "system/%s", datafile);
         s = buf;
         fix_filename_path(b, s, sizeof(b));
         // strcpy(s, b);

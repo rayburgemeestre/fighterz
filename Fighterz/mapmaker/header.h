@@ -14,8 +14,8 @@
 #define BOTTOM                               100
 #define BLOCKSIZE                             20
 // #define DATA_FILE                 "fighterz.dat"
-#define DEFAULT_MAP_FILE                "maps\\"
-#define DEFAULT_DATA_FILE "system\\base_gfx.dat"
+#define DEFAULT_MAP_FILE                "maps/"
+#define DEFAULT_DATA_FILE "system/base_gfx.dat"
 #define DLG_MAP_SPECS_OK_BUTTON                6
 #define DLG_MAP_CURIMGS_DEL_BUTTON            19
 #define DLG_NORMAL_WALL_CHECK                  8

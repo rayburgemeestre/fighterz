@@ -36,7 +36,7 @@ void plot_datimg(struct bg_imgs bg)
 char df_path[512];
 DATAFILE *df;
 
-	sprintf(df_path, "system\\%s", bg.datfile);
+	sprintf(df_path, "system/%s", bg.datfile);
 
 	if (!(df = load_datafile(df_path)))
 	{
@@ -100,8 +100,8 @@ void draw_map()
 				if (!mod_grid)
 				{
 					/* temporary stars :) */
-					ret = 1+(int) (15*rand()/(RAND_MAX+1.0));
-					
+					ret = rand()%((15+1)-1) + 1;
+
 					if (ret == 1)
 						draw_sprite(bmp_mapfield, (BITMAP *)dat_base[STARS1].dat, (cnt * blocksize), (cnt2 * blocksize));
 					else if (ret == 2)

@@ -41,13 +41,17 @@ EXPLOSION expl_current = NULL; /**< pointer to the current selected node in the 
 /* ***    ships    *** */
 /* ***             *** */
 
-void draw_ships() 
+static double radius2 = -1;
+void draw_ships()
 {
 int color;
-static double radius = blocksize / 2;
+if (radius2 == -1) {
+    radius2 = blocksize / 2;
+}
+double radius = radius2;
 double ret;
 double pos_x, pos_y; /* ship's x,y */
-double left_wing_deg, right_wing_deg; 
+double left_wing_deg, right_wing_deg;
 double lw_x, lw_y; /* leftwing x,y */
 double rw_x, rw_y; /* rightwing x,y */
 double current_x, current_y; /* x & y to draw on the bmp_shipfield
@@ -72,8 +76,8 @@ double current_x, current_y; /* x & y to draw on the bmp_shipfield
 			{
 				if (!mod_grid)
 				{
-					rotate_sprite(bmp_shipfield, (BITMAP *)dat_base[SHIPS4].dat, 
-						current_x - (blocksize / 2), current_y - (blocksize / 2), 
+					rotate_sprite(bmp_shipfield, (BITMAP *)dat_base[SHIPS4].dat,
+						current_x - (blocksize / 2), current_y - (blocksize / 2),
 						itofix( (int)((current->deg*256)/360)) );
 
 				} else {
@@ -86,10 +90,10 @@ double current_x, current_y; /* x & y to draw on the bmp_shipfield
 				}
 			} else {
 
-				if ((!mod_grid) && (current->shiptype != 6)) 
+				if ((!mod_grid) && (current->shiptype != 6))
 				{                //shiptype 6 = old school ship
 				int shiptype;
-					
+
 					switch (current->shiptype)
 					{
 						case 1: shiptype = SHIPS1; break;
@@ -99,13 +103,13 @@ double current_x, current_y; /* x & y to draw on the bmp_shipfield
 						case 5: shiptype = SHIPS5; break;
 					}
 
-					rotate_sprite(bmp_shipfield, (BITMAP *)dat_base[shiptype].dat, 
-						current_x - (blocksize / 2), current_y - (blocksize / 2), 
+					rotate_sprite(bmp_shipfield, (BITMAP *)dat_base[shiptype].dat,
+						current_x - (blocksize / 2), current_y - (blocksize / 2),
 						itofix( (int)((current->deg*256)/360)) );
 
 					// display our ship in the radar too
 					if (our_node == current)
-						rotate_sprite(bmp_radar, (BITMAP *)dat_base[shiptype].dat, 
+						rotate_sprite(bmp_radar, (BITMAP *)dat_base[shiptype].dat,
 							radar_shiptype_x, radar_shiptype_y, 0 );
 
 				} else {
@@ -170,17 +174,17 @@ double current_x, current_y; /* x & y to draw on the bmp_shipfield
 					line(bmp_shipfield, pos_x, pos_y, rw_x, rw_y, color);
 					line(bmp_shipfield, current_x, current_y, rw_x, rw_y, color);
 				}
-			
+
 			}
-			
+
 			//temporary invincibility shield
             if (current->invincible == 1)
-			    rect(bmp_shipfield, current_x - (blocksize / 2), current_y - (blocksize / 2), 
-			    	current_x + (blocksize / 2), current_y + (blocksize / 2), makecol(255,0,0));				
+			    rect(bmp_shipfield, current_x - (blocksize / 2), current_y - (blocksize / 2),
+			    	current_x + (blocksize / 2), current_y + (blocksize / 2), makecol(255,0,0));
 			//godmode shield (unfair)
             else if (current->invincible == 2)
-			    rect(bmp_shipfield, current_x - (blocksize / 2), current_y - (blocksize / 2), 
-			    	current_x + (blocksize / 2), current_y + (blocksize / 2), makecol(255,128,0));				
+			    rect(bmp_shipfield, current_x - (blocksize / 2), current_y - (blocksize / 2),
+			    	current_x + (blocksize / 2), current_y + (blocksize / 2), makecol(255,128,0));
 
 			// show names underneath the player/bot ships
 			if (show_names == 1)
@@ -189,10 +193,10 @@ double current_x, current_y; /* x & y to draw on the bmp_shipfield
 			char tmpstr[128];
 			int teamcolor = current->team == 1 ? makecol(255, 64, 64) : makecol(0, 186, 255);
 
-			//	sprintf(tmpstr, "%s [%d] [%2.2f] [%d] [%2.2f] [%d]", current->nick, current->velocity, 
+			//	sprintf(tmpstr, "%s [%d] [%2.2f] [%d] [%2.2f] [%d]", current->nick, current->velocity,
 			//				current->speed, current->freeze, current->deg, (int)current->team);
 				sprintf(tmpstr, "%s", current->nick);
-				textprintf_centre(bmp_shipfield, (FONT *)dat_base[NOKIA].dat, current_x, 
+				textprintf_centre(bmp_shipfield, (FONT *)dat_base[NOKIA].dat, current_x,
 					current_y + (blocksize/2) + 3, teamcolor, tmpstr);
 			}
 		}
@@ -208,7 +212,7 @@ void move_ships()
 		{
  			move_ship(current);
 
-			/* something to remove the 'red' glow of 
+			/* something to remove the 'red' glow of
 			   hit ships after 200 ms */
 			if ( (ourtime - current->hit_t) >= 200)
 				current->impact = 0;
@@ -216,12 +220,14 @@ void move_ships()
 	}
 }
 
+static int radius3 = -1;
 void move_ship(struct data *client)
 {
 long int diff = 0, cnt;
 long int times = 0;
 double tmp = 0;
-static int radius = blocksize / 2;;
+if (radius3 == -1) { radius3 = blocksize / 2; }
+int radius = radius3;
 double ret;
 double pos_x, pos_y;
 
@@ -244,19 +250,19 @@ double pos_x, pos_y;
 	for (cnt=0; cnt<times; cnt++)
 	{
 		if (client->velocity == 1) // speed must become maxspeed forwards
-		{ 
+		{
 			if (client->speed < client->max_speed)
 				client->speed += 0.01;
 		}
 		else if (client->velocity == 0.00) // speed must become zero
 		{
-			if (client->speed < -0.001)  
+			if (client->speed < -0.001)
 			{// we don't want -0.00 to valid this statement
 				client->speed += 0.01;
 				if (client->speed == 0.00)
 					client->speed = 0.00;
 			}
-			else if (client->speed > 0.001) // 0.0000 > 0.00 
+			else if (client->speed > 0.001) // 0.0000 > 0.00
 				client->speed -= 0.01;		// (therefore the vague extra 0.001)
 		}
 		else if (client->velocity == -1) // speed must become maxspeed backwards
@@ -334,9 +340,9 @@ double pos_x, pos_y;
 
 		client->x = pos_x;
 		client->y = pos_y;
-		
+
 		/* did the ship fly out the field? */
-		if (client->y < 0) 
+		if (client->y < 0)
 			client->y = field_height - 1;
 		else if (client->y > field_height)
 			client->y = 1;
@@ -345,7 +351,7 @@ double pos_x, pos_y;
 		else if (client->x > field_width)
 			client->x = 1;
 
-		collidecheck2(client->id, 0, 0); 
+		collidecheck2(client->id, 0, 0);
 	}
 	return;
 }
@@ -354,16 +360,16 @@ double pos_x, pos_y;
 /* ***    bullets    *** */
 /* ***               *** */
 
-void draw_bullets() 
+void draw_bullets()
 {
-static int groen = makecol(0, 255, 128);
-static int radius = radius = blocksize / 2;	
+int groen = makecol(0, 255, 128);
+int radius = blocksize / 2;
 
 	for (current=head; current!=NULL; current=current->next)
 	{
 		if (current->bullet == 1)
 		{
-			circlefill(bmp_shipfield , current->x - x_on_map, current->y - y_on_map, 
+			circlefill(bmp_shipfield , current->x - x_on_map, current->y - y_on_map,
 				1, makecol(255, 255, 0));
 		}
 	}
@@ -381,7 +387,7 @@ struct data *add_bullet(struct data *owner, int x, int y, double deg, unsigned l
 	/* insert the created node */
 	new_node->next = head;
 	head           = new_node;
-	
+
 	/* intiate some values */
 	head->owner    = owner;
 	head->bullet   = 1;
@@ -393,7 +399,7 @@ struct data *add_bullet(struct data *owner, int x, int y, double deg, unsigned l
 	head->deg      = deg;
 	head->t        = time;
 	head->turn_t   = time;
-	head->vel_time = 0;	
+	head->vel_time = 0;
 	head->impact   = 0;
 
 	return head;
@@ -438,7 +444,7 @@ void del_bullet(struct data *ptr)
 
 void move_bullets()
 {
-PLAYER previous = head;
+// PLAYER previous = head;
 
 	for (current=head; current; current=current->next)
 	{
@@ -455,13 +461,15 @@ PLAYER previous = head;
 	}
 }
 
+static int radius = -1;
 int move_bullet(struct data *bullet, unsigned long t2)
 {
 long int diff = 0, cnt;
 long int times = 0;
 double tmp = 0;
-static int radius = blocksize / 2;
-double direction; 
+if (radius == -1) radius = blocksize / 2;
+
+double direction;
 double ret;
 double pos_x, pos_y;
 
@@ -491,7 +499,7 @@ double pos_x, pos_y;
 	ret = (PI / 180) * (bullet->deg - 90);
 
 	for (cnt=0; cnt<times; cnt++)
-	{	
+	{
 		// if collidecheck2b sees the bullet collides (with some wall)
 		// it will delete it and return 1
 		if (collidecheck2b(bullet) == 1)
@@ -510,10 +518,10 @@ double pos_x, pos_y;
 		pos_y += bullet->y - (blocksize / 2);
 
 		bullet->x = pos_x;
-		bullet->y = pos_y;		
+		bullet->y = pos_y;
 
 		/* did the bullet fly out the field? */
-		if (bullet->y < 0) 
+		if (bullet->y < 0)
 		{	// *warp*
 			bullet->y = field_height - 1;
 		} else if (bullet->y > field_height) {
@@ -536,7 +544,7 @@ double pos_x, pos_y;
 /* ***    Explosions    *** */
 /* ***                  *** */
 
-void draw_explosions() 
+void draw_explosions()
 {
 int diff, tmp, times, cnt;
 double current_x, current_y;
@@ -544,13 +552,13 @@ EXPLOSION current;
 
 	for (current=expl_head; current; )
 	{
-		// the x,y on the bmp_shipfield (so ship x,y minus the 
+		// the x,y on the bmp_shipfield (so ship x,y minus the
 		// left/top padding of the map)
 		current_x = current->x - x_on_map;
 		current_y = current->y - y_on_map;
 
 		/* Also check here if radius should change */
-		diff = (ourtime - current->t);		
+		diff = (ourtime - current->t);
 		tmp = current->speed;
 		times = 0;
 		while (diff >= tmp)
@@ -583,7 +591,7 @@ struct data2 *add_explosion(double x, double y, int maxrad, int speed, int color
 {
 	/* create first node in linked list */
 	if (!(expl_new = (EXPLOSION)malloc(sizeof(_explosion))))
-	{  
+	{
 		printff_direct("Error allocating memory");
 		exit(-1);
 	}

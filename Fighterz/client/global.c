@@ -18,9 +18,9 @@ unsigned long ourtime; /**< our timer used for all time calculations in millisec
 int bg_music_on = 1;
 int save_frames_to_bitmap = 0;
 
-/* WARNING: vsnprintf() wasn't available 
+/* WARNING: vsnprintf() wasn't available
    char buf[512] could be overflowed */
-void printff_direct(char *pattern, ...) 
+void printff_direct(char *pattern, ...)
 {
 int clr = makecol(0,128,255);
 
@@ -28,7 +28,7 @@ int clr = makecol(0,128,255);
 		return;
 
 	char buf[512];
-	
+
 	va_list ap;
 	va_start (ap, pattern);
 	vsprintf(buf, pattern, ap);
@@ -43,9 +43,9 @@ int clr = makecol(0,128,255);
 		fakeconsole_y = fakeconsole_y + 10;
 	}
 
-	if (fakeconsole_y == 0) { 
+	if (fakeconsole_y == 0) {
 		textprintf(screen, font, 10, 1, clr, buf);
-	} else { 
+	} else {
 		textprintf(screen, font, 10, fakeconsole_y, clr, buf);
 	}
 
@@ -60,14 +60,14 @@ int newturn = 0;
 if (!our_node)
 	return;
 
-	if (our_node->dead == 0 || our_node->invincible == 1) 
+	if (our_node->dead == 0 || our_node->invincible == 1)
 	{
 		// left ctrl or 'z' for fire
-		if ((key[KEY_LCONTROL]||key[KEY_Z]) && our_node->invincible != 1 && 
+		if ((key[KEY_LCONTROL]||key[KEY_Z]) && our_node->invincible != 1 &&
 			our_node->dead != 2)
 		{	/* Requesting fire */
 			if ( (bullet_fire_time == 0) || ((ourtime - bullet_fire_time) >= (unsigned)our_bullet_autofiredelay) )
-			{	
+			{
 				bullet_fire_time = ourtime;
 
 				// SUPER FIRE (5 BULLETS)
@@ -89,35 +89,35 @@ if (!our_node)
 							case 3: deg += TWIST; break;
 							case 4: deg += TWIST*2; break;
 						}
-						
+
 						deg = deg % 360;
 
-						pRet = add_bullet(our_node, our_node->x, our_node->y, deg, ourtime);						
+						pRet = add_bullet(our_node, our_node->x, our_node->y, deg, ourtime);
 						send_newbullet(pRet->x, pRet->y, pRet->deg);
 					}
 					bullet_fire_time = ourtime;
-					
+
 					our_bullet_count += 5;
-					
+
 					play_sample((SAMPLE *)dat_sound[SHOOT].dat, 50, 128, 1000, 0);
 				}
 				// NORMAL FIRE
 				else if (key[KEY_LCONTROL] && (our_bullet_count < our_bullet_max))
-				{	
+				{
 					struct data* pRet;
 					/* add */
 					our_bullet_autofiredelay = 150;
 
 						// play_sample((SAMPLE *)dat_base[FATALITY].dat, 255, 128, 1000, 0);
 
-	
+
 					pRet = add_bullet(our_node, our_node->x, our_node->y, our_node->deg, ourtime);
 					bullet_fire_time = ourtime;
 					our_bullet_count++;
 					send_newbullet(pRet->x, pRet->y, pRet->deg);
 					play_sample((SAMPLE *)dat_sound[SHOOT].dat, 50, 128, 1000, 0);
 				}
-			} 
+			}
 		} else {
 			// UNCOMMENT THE FOLLOWING IF our_bullet_autofiredelay SHOULD BE RESET ON
 			// FIRE KEY RELEASE::::::::::::::
@@ -128,7 +128,7 @@ if (!our_node)
 
 
 		/***** TURN (left/right) HANDLING HERE ****/
-		
+
 		if (key[KEY_RIGHT])
 		{
 			/*  spin right */
@@ -154,21 +154,21 @@ if (!our_node)
 		}
 		// EONewcode
 
-		if (key[KEY_UP] || key[KEY_DOWN]) 
+		if (key[KEY_UP] || key[KEY_DOWN])
 		{
 			if (key[KEY_UP])
 			{
 				int oldvel;
 				int ret = 0;
-				
+
 				our_direction = 1;
 
 				oldvel = our_node->velocity;
 
 				ret = collidecheck2(our_node->id, 1, 0);
 
-				if (ret != 1 || DONT_LOSE_VELOCITY_AT_COLLISION) 
-				{ 
+				if (ret != 1 || DONT_LOSE_VELOCITY_AT_COLLISION)
+				{
 					/* this wouldn't cause a collition*/
 					if (our_node->velocity == -1) our_node->velocity = 0;
 					else if (our_node->velocity == 0) our_node->velocity = 1;
@@ -194,7 +194,7 @@ if (!our_node)
 				ret = collidecheck2(our_node->id, 1, 0);
 
 				if (ret != 1 || DONT_LOSE_VELOCITY_AT_COLLISION)
-				{ 
+				{
 					if (our_node->velocity == 1) our_node->velocity = 0;
 					else if (our_node->velocity == 0) our_node->velocity = -1;
 
@@ -215,7 +215,7 @@ if (!our_node)
 				send_accel(3);
 			}
 		}
-	}	
+	}
 
 	if (talk_mode == 1 ||  talk_mode == 2)
 	{
@@ -254,7 +254,7 @@ if (!our_node)
 		char k, k2;
 
 		ret = readkey();
-		
+
 		k = (ret >> 8);
 		k2 = (ret & 0xff);
 
@@ -280,7 +280,7 @@ if (!our_node)
 				msg[strlen(msg) + 1] = '\0';
 				msg[strlen(msg)] = k2;
 			}
-		} 
+		}
 		else if (talk_mode == 2)
 		{
 			if (k == KEY_BACKSPACE)
@@ -306,7 +306,7 @@ if (!our_node)
 				msg[strlen(msg) + 1] = '\0';
 				msg[strlen(msg)] = k2;
 			}
-		} 
+		}
 		else {
 			if ( k == KEY_1 ) { our_node->shiptype = 1; send_newship(); }
 			if ( k == KEY_2 ) { our_node->shiptype = 2; send_newship(); }
@@ -318,7 +318,7 @@ if (!our_node)
 			if ( k == KEY_P )
 			{
 			char nam[80]; sprintf(nam, "screen%lu.pcx", ourtime);
-			PALETTE pal;			
+			PALETTE pal;
 				get_pallete(pal);
 				save_bitmap(nam, tmpscreen, pal);
 			}
@@ -354,6 +354,7 @@ if (!our_node)
 			{
 				bg_music_on = 1;
 				stop_midi();
+				play_rand_bg_music();
 			}
 			if ( k == KEY_F9 )
 			{
@@ -455,7 +456,7 @@ if (!our_node)
 
 				set_color_depth(16);
 				//set_display_switch_mode(SWITCH_BACKGROUND);
-				init_screen();	
+				init_screen();
 			}
 			if ( k == KEY_G )
 			{
@@ -463,17 +464,17 @@ if (!our_node)
 					mod_grid = 0;
 				else
 					mod_grid = 1;
-				
+
 				draw_map();
 			}
 		}
 	}
 }
 
-void verbose(char *pattern, ...) 
+void verbose(char *pattern, ...)
 {
 	char buf[512];
-	
+
 	va_list ap;
 	va_start (ap, pattern);
 	vsprintf(buf, pattern, ap);
@@ -489,7 +490,7 @@ void verbose(char *pattern, ...)
 
 /* Prints userlist */
 int scoreboard_current_y; /* scoreboard current y-position on which the next nickname should be printed */
-void printulist() 
+void printulist()
 {
 	if (show_scoreboard != 1)
 		return;
@@ -507,7 +508,7 @@ void printulist()
 		if (current->bullet != 1)
 			printul(current);
 	}
-	
+
 	scoreboard_current_y += 10; //10px between the teams
 
 	//red
@@ -522,35 +523,35 @@ void printulist()
 }
 
 /* Used in printulist(); */
-void printul(struct data *node) 
+void printul(struct data *node)
 {
 char buf[128];
 int color;
-	
-	if (strlen(node->nick) > 10) 
+
+	if (strlen(node->nick) > 10)
 		node->nick[10] = '\0'; /* frag >10 */
 
 	if (node->team == 2)
-	{	
+	{
 		if (node->invincible == 2) color = makecol(0, 135, 185); // invincible
-		else if (node->invincible == 1) color = makecol(0, 156, 241); // respawned 
+		else if (node->invincible == 1) color = makecol(0, 156, 241); // respawned
 		else if (node->dead == 1) color = makecol(144, 144, 144); // dead
 		else if (node->dead == 3) color = makecol(0, 49, 67); // spectate
 		else color = makecol(0, 186, 255); // normal (alive)
 	} else {
 		if (node->invincible == 2) color = makecol(255, 122, 119); // invincible
-		else if (node->invincible == 1) color = makecol(255, 65, 60); // respawned 
+		else if (node->invincible == 1) color = makecol(255, 65, 60); // respawned
 		else if (node->dead == 1) color = makecol(144, 144, 144); // dead
 		else if (node->dead == 3) color = makecol(183, 0, 0); // spectate
 		else color = makecol(255, 64, 64); // normal (alive)
 	}
-	
+
 	sprintf(buf, "%d", node->kills);
 
-	if (scoreboard_current_y == 0) { 
+	if (scoreboard_current_y == 0) {
 		alfont_textout_aa_ex(bmp_scoreboard, lcdfont, node->nick, scoreboard_padding_left, 1, color, -1);
 		alfont_textout_right_aa_ex(bmp_scoreboard, lcdfont, buf, scoreboard_w - scoreboard_padding_right, 1, color, -1);
-	} else { 
+	} else {
 		alfont_textout_aa_ex(bmp_scoreboard, lcdfont, node->nick, scoreboard_padding_left, scoreboard_current_y, color, -1);
 		alfont_textout_right_aa_ex(bmp_scoreboard, lcdfont, buf, scoreboard_w - scoreboard_padding_right, scoreboard_current_y, color, -1);
 	}
@@ -573,18 +574,20 @@ void terminate()
 	alfont_destroy_font(tccmfont);
 	alfont_exit();
 	allegro_exit();
+#ifdef _WIN32
 	WSACleanup();
-	exit(-1); 
+#endif
+	exit(-1);
 }
 
 /* delay proc */
 void delay(int secs) {
 	long int oldtime, newtime;
-	
+
 	oldtime = newtime = time(NULL);
-	
+
 	while ( (newtime - oldtime) != secs ) {
-		newtime = time(NULL);	
+		newtime = time(NULL);
 	}
 }
 
@@ -595,7 +598,7 @@ void fps_proc()
 
 	// Change fps var..?
 	if (fps_oldtime!= fps_newtime) {
-		fps_oldtime = fps_newtime; 
+		fps_oldtime = fps_newtime;
 		fps = fps_count; /* set fps */
 		fps_count = 0; /* reset fps counter */
 	}
@@ -604,7 +607,7 @@ void fps_proc()
 }
 
 /* time_proc */
-void time_proc() 
+void time_proc()
 {
 	//char buf[128];
 
@@ -616,10 +619,12 @@ void time_proc()
 	//textprintf(tmpscreen, font, LEFT + 10, (SCREEN_Y - 10), 15, buf);
 }
 
+static unsigned long dtime = 0;
+
 void debug()
 {
 #if DEBUG == 1
-	static unsigned long dtime = ourtime;
+    if (dtime == 0) dtime = ourtime;
 	// dtime = ourtime;
 
 	if ((ourtime - dtime) > 5000) /* ~5 secs delay */
@@ -635,23 +640,23 @@ void debug()
 		fputs("\n",debugfile);
 		dtime = ourtime;
 	}
-#endif 
+#endif
 }
 void draw_fps()
 {
 char buf[512];
 
-	if (show_fps == 1) 
+	if (show_fps == 1)
 	{
-/*		textprintf(tmpscreen, font, 2, 2, makecol(255,255,255), 
-			"FPS: %d LAG: %2.2f VEL: %d SPD: %.2f FRE:%d POW:%d SOCK:%d map-w:%d h:%d             ", 
-			fps, current_lag(), our_node->velocity, our_node->speed, 
+/*		textprintf(tmpscreen, font, 2, 2, makecol(255,255,255),
+			"FPS: %d LAG: %2.2f VEL: %d SPD: %.2f FRE:%d POW:%d SOCK:%d map-w:%d h:%d             ",
+			fps, current_lag(), our_node->velocity, our_node->speed,
 			our_node->freeze, our_node->power, sock_to_serv,
 				field_width, field_height
 		);
 */
-// 		textprintf(tmpscreen, (FONT *)dat_base[NOKIA].dat, 2, 2, makecol(128, 128, 128), 
-//			"FPS: %d LAG: %2.2f MIDItrack:%d   ", 
+// 		textprintf(tmpscreen, (FONT *)dat_base[NOKIA].dat, 2, 2, makecol(128, 128, 128),
+//			"FPS: %d LAG: %2.2f MIDItrack:%d   ",
 //			fps, current_lag(), midi_track
 //		);
 
@@ -674,7 +679,7 @@ void show_graphics()
 	large_text_draw();
 
 	// show_mouse(tmpscreen);
-	poll_mouse();	
+	poll_mouse();
 
 	//acquire_screen();
 	blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
@@ -682,7 +687,7 @@ void show_graphics()
 	{
 	char nam[80]; sprintf(nam, "D:\\fighterz\\%lu.pcx", ourtime);
 	PALETTE pal;
-	
+
 		get_pallete(pal);
 		save_bitmap(nam, tmpscreen, pal);
 	}
@@ -691,7 +696,7 @@ void show_graphics()
 	if (high_gfx == 1)
 	{
 		// rest(8);
-		vsync(); /* wait for vertical retrace (can reduce flickering) 
+		vsync(); /* wait for vertical retrace (can reduce flickering)
 					though a few fps slower :( */
 	}
 	/* poll_keyboard(); *//* This shouldn't be necessary in Windows. */

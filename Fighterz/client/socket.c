@@ -58,6 +58,7 @@ int inlen;			 /**< input buffer length */
 		return -1; \
 	} while (0)
 
+#ifdef _WIN32
 int socket_connect()
 {
 WORD version = MAKEWORD(1,1);
@@ -169,6 +170,130 @@ unsigned long one = 1;
 		return;
 	}
 }
+#else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
+int socket_connect()
+{
+	int nRet;
+	const int just_say_no = 1;
+
+	//Initialize
+
+	//Store information about the server
+	struct addrinfo hints, *res;
+	memset(&hints, 0, sizeof hints);
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+
+	// TODO: check return
+	const *serv_port_str = "8099"; // temp hack to see if stuff works
+	getaddrinfo(serv_addr, serv_port_str, &hints, &res);
+
+//	if (lpHostEntry == NULL)
+//		RETURN_ERROR("Error at gethostbyname()");
+
+
+	//Create the socket
+	sock_to_serv = socket(AF_INET,		/* Go over TCP/IP	*/
+						  SOCK_STREAM,	/* Socket type		*/
+						  IPPROTO_TCP); /* Protocol			*/
+
+						  // TODO: check socke
+	if (sock_to_serv == -1)
+		RETURN_ERROR("Error at socket()");
+
+
+	//Use SOCKADDR_IN to fill in address information
+//	SOCKADDR_IN saServer;
+//	saServer.sin_family = AF_INET;
+//	saServer.sin_addr = *((LPIN_ADDR)*lpHostEntry->h_addr_list);
+//	// ^ Address of the server being inserted into the address field
+//	saServer.sin_port = htons(8099);
+
+// TODO: TCP_NODELAY set doesn't work?
+//	if (setsockopt(sock_to_serv, IPPROTO_TCP, NULL, (char*)&just_say_no,
+//				   sizeof just_say_no) == -1)
+//	{
+//		printff_direct("setsockopt");
+//		terminate();
+//	}
+
+	nRet = connect(sock_to_serv, res->ai_addr, res->ai_addrlen);
+
+	if (nRet == -1)
+		RETURN_ERROR("Error at connect()");
+
+	//Connected!
+	printff_direct("Socket succesfully connected..");
+	printff_direct("");
+
+	//make socket non-blocking
+	//--
+	unsigned long one = 1;
+	int pRet = 0;
+	fcntl(sock_to_serv, F_SETFL, O_NONBLOCK);
+
+	//--
+
+	return 0;
+}
+
+void socket_read()
+{
+	char buf[8192], tmpbuf[4096], *p = buf;
+	int r, len;
+	unsigned short plen;
+	unsigned long one = 1;
+
+	// ioctlsocket(sock_to_serv, FIONREAD, &one);
+
+	if (one > 0)
+	{
+		r = recv(sock_to_serv, tmpbuf, sizeof(tmpbuf),	0);
+
+		if (r == -1) {
+			return;//
+//			int e = errno;
+//
+//			die("Error on recv()");
+		}
+
+		memcpy(buf, buffer, inlen);
+		memcpy(buf + inlen, tmpbuf, r);
+		len = r + inlen;
+
+		memcpy(buf, buffer, inlen);
+		memcpy(buf + inlen, tmpbuf, r);
+		len = r + inlen;
+
+		while(len > 0)
+		{
+			char *p2 = p;
+			unsigned short xlen = (unsigned short)len;
+			unsigned short xtype;
+
+			if (!get_u16(&plen, &p2, &xlen))
+				break; /* Insufficient data (short header) */
+			if (xlen < plen)
+				break; /* Insufficient data (short type/data) */
+			if (!get_u16(&xtype, &p2, &xlen))
+				break; /* Impossible */
+
+			dopacket(xtype, plen-2, p2);
+
+			p += (2 + plen);
+			len -= (2 + plen);
+		}
+		inlen = len;
+		if (len > 0)
+			memcpy(buffer, p, len);
+		return;
+	}
+}
+#endif
 
 void dopacket(int xtype, unsigned short len, char *dta)
 {
@@ -823,7 +948,7 @@ PLAYER node = getplayer_byid(id);
 void m_spawn(unsigned int id, double x, double y, double deg, signed char accel, 
 	unsigned int alive, short frags, signed char turn, unsigned char type, double speed)
 {
-node = getplayer_byid( id );
+PLAYER node = getplayer_byid( id );
 	//	addtext("************************************");
 	//	addtext("spwn: id: %u, x: %2.2f, y: %2.2f", id, x, y);
 	//	addtext("spwn: deg: %2.2f, accel: %d, alive: %u", deg, accel, alive);

@@ -7,7 +7,7 @@
 
 #include "common.h"
 
-const int INFINITY = 16384;
+const int __INFINITY__ = 16384;
 
 typedef struct pq_elist
 {
@@ -34,7 +34,7 @@ int pqueue_peekmin(PQUEUE * pq, int * row, int * col);
 int pqueue_popmin(PQUEUE * pq, int * row, int * col);
 PQUEUE * pqueue_new(void);
 
-struct timeb t_x; 
+struct timeb t_x;
 struct timeb started_x;
 
 static int use_heuristic = 1;		/* don't use a heuristic */
@@ -48,7 +48,7 @@ char line[1001], * line_ptr;
 
 	cols_read = 0;
 
-	for (row = 0; row < (Y_BLOCKS * 2); row++) 
+	for (row = 0; row < (Y_BLOCKS * 2); row++)
 	{
 		strcpy(line, map2[i++]);
 
@@ -56,24 +56,24 @@ char line[1001], * line_ptr;
 			if (isdigit(*line_ptr))
 				map[row][col] = *line_ptr - '0';
 			else
-				map[row][col] = INFINITY;
-		
+				map[row][col] = __INFINITY__;
+
 		if (col > cols_read)
 			cols_read = col - 1;
 
-		for (; col < Y_BLOCKS; col++) 
-			map[row][col] = INFINITY;
+		for (; col < Y_BLOCKS; col++)
+			map[row][col] = __INFINITY__;
 	}
 	rows_read = row;
 
 	for ( ; row < (Y_BLOCKS * 2); row++)
 		for (col = 0; col < (X_BLOCKS * 2); col++)
-			map[row][col] = INFINITY;
-	
+			map[row][col] = __INFINITY__;
+
 	for (row = 0; row < (Y_BLOCKS * 2); row++)
-		for (col = 0; col < (X_BLOCKS * 2); col++) 
+		for (col = 0; col < (X_BLOCKS * 2); col++)
 		{
-			dist[row][col] = INFINITY;
+			dist[row][col] = __INFINITY__;
 			parent[row][col][0] = -1;
 			parent[row][col][1] = -1;
 		}
@@ -87,13 +87,13 @@ int map_draw_path(void)
 int row, col;
 int wt = 0;
 
-    for (row = 0; row < rows_read; row++) 
+    for (row = 0; row < rows_read; row++)
  		for (col = 0; col < cols_read; col++)
- 			if (parent[row][col][0] >= 0 && parent[row][col][1] >= 0) 
+ 			if (parent[row][col][0] >= 0 && parent[row][col][1] >= 0)
  				wt += map[row][col];
 
 	map_draw_path2();
-	
+
 	return wt; // weight of path
 }
 
@@ -119,13 +119,13 @@ double x1, x2, y1, y2;
 	// etcfprintf(fp, "old_r = current_r = startr (%);", );fflush(stdout);
 	fprintf(fp, "LOG: old_r = current_r = startr (%d)\n", startr); fflush(fp);
 	fprintf(fp, "LOG: old_c = current_c = startc (%d)\n", startc); fflush(fp);
-	
+
 	tcoord_x = startc * BLOCKSIZE + (BLOCKSIZE / 2);
 	tcoord_y = startr * BLOCKSIZE + (BLOCKSIZE / 2);
 
 	fprintf(fp, "LOG: tcoord_x = startc in pixels == %d\n", tcoord_x); fflush(fp);
 	fprintf(fp, "LOG: tcoord_y = startr in pixels == %d\n", tcoord_y); fflush(fp);
-	
+
 	ptr->bot_x = (double)((startc * BLOCKSIZE) + (BLOCKSIZE / 2));
 	ptr->bot_y = (double)((startr * BLOCKSIZE) + (BLOCKSIZE / 2));
 
@@ -204,8 +204,8 @@ while (y2 > field_height) y2 -= field_height;
 		}
 #endif
 		if (ret == 1)
-		{	
-			static int old_x, 
+		{
+			static int old_x,
 				       old_y;
 
 			/* not a valid target  */
@@ -230,7 +230,7 @@ while (y2 > field_height) y2 -= field_height;
 					x -= field_width;
 				while (y > field_height)
 					y -= field_height;
-				
+
 				circlefill(fieldbuff, (int)x, (int)y, 5, makecol(255,0,0));
 				line(fieldbuff, old_x, old_y, (int)x, (int)y, makecol(255,0,0));
 
@@ -240,7 +240,7 @@ while (y2 > field_height) y2 -= field_height;
 			}
 #endif
 		}
-		else 
+		else
 		{
 			fprintf(fp, "LOG: tcoord_x = current_c in pixels == %d\n", tcoord_x); fflush(fp);
 			fprintf(fp, "LOG: tcoord_y = current_r in pixels == %d\n", tcoord_y); fflush(fp);
@@ -278,7 +278,7 @@ while (y2 > field_height) y2 -= field_height;
 	ptr->path[element++][1]   = (double)(current_r * BLOCKSIZE + (BLOCKSIZE / 2));
 
 	ptr->path[PATH_MAX_-1][0] = (double)element;
-addtext("done"); 
+addtext("done");
 	return;
 }
 
@@ -298,16 +298,16 @@ void map_draw_path2(void)
 				;
 			else if (endr == row && endc == col)
 				;
-			else if (parent[row][col][0] >= 0 && parent[row][col][1] >= 0) 
+			else if (parent[row][col][0] >= 0 && parent[row][col][1] >= 0)
 				wt += map[row][col];
-//			else if (map[row][col] < INFINITY)
+//			else if (map[row][col] < __INFINITY__)
 //				;
 //			else
 //				;
 		}
     }
 }
-		
+
 
 #define drow(row,i) (row+delta[i][0])
 #define dcol(col,i) (col+delta[i][1])
@@ -318,9 +318,9 @@ void map_draw_path2(void)
  * zijn _NIET_ geinitaliseerd -- Syzop:
  */
 
-int delta[8][2] = { 
-					{ -1, 0 }, 
-					{ 0, 1 }, 
+int delta[8][2] = {
+					{ -1, 0 },
+					{ 0, 1 },
 					{ 1, 0 },
 					{ 0, -1 }
 				  }; /* was: int delta[8][2] = { -1, 0, 0, 1, 1, 0, 0, -1 }; */
@@ -373,7 +373,7 @@ void build_path(void)
 			/* STOP HERE */
 			break;
 		}
-		
+
 		/* FOREACH square adjacent to (row,col), call it drow(row,i), dcol(col,i) */
 		for (i = 0; i < 8; i++)
 		{
@@ -423,7 +423,7 @@ void limit_path(void)
 			parent[row][col][0] = -1;
     return;
 }
-    
+
 void findpath(struct data *ptr, double x, double y)
 {
 int i, use, tmp;
@@ -447,7 +447,7 @@ int rn; /* random number */
 
 				build_path();
 				limit_path();
-				
+
 				flagpos.length1 = map_draw_path();
 
 				break;
@@ -496,20 +496,20 @@ int rn; /* random number */
 				exit(-1);
 				break;
 		}
-		/* We must loop 4 times, to calculate 4 paths! 
+		/* We must loop 4 times, to calculate 4 paths!
 		   TODO: we must not do this in case there are no warps..
 		   Because then there is only one valid path!
 		   This boolean expression must be calculated @ loadmap(); */
 		flagpos.current++;
 	}
 
-	
+
 	srand(time(NULL));
 	// rn = 1+(int) (10.0*rand()/(RAND_MAX+1.0)); /* Random number between 1 and 10 */
 	rn = -1;
 	if (rn == 1) /* 1/10th chance to choose a route at random  */
 	{
-		
+
 		use = 1+(int) (4.0*rand()/(RAND_MAX+1.0));
 
 	} else {
@@ -546,7 +546,7 @@ int rn; /* random number */
 			endc   = (int)x / BLOCKSIZE;
 
 			build_path();
-			limit_path();			
+			limit_path();
 			map_create_path(ptr);
 			break;
 		case 2:
@@ -630,7 +630,7 @@ int pqueue_insert(PQUEUE * pq, int row, int col, int wt)
 	ELIST * e;
 	PLIST * p, * pp;
 
-    if (pq == NULL) return(-1); 
+    if (pq == NULL) return(-1);
 
     if ((e = (ELIST *) my_malloc(sizeof(ELIST))) == NULL) return(-1);
     e->row = row;
@@ -638,7 +638,7 @@ int pqueue_insert(PQUEUE * pq, int row, int col, int wt)
     e->next = NULL;
 
     /* Test empty queue or before the first element of the queue */
-    if (pq->priorities == NULL || pq->priorities->wt > wt) 
+    if (pq->priorities == NULL || pq->priorities->wt > wt)
 	{
 		if ((p = (PLIST *) my_malloc(sizeof(PLIST))) == NULL) return(-1);
 			p->wt = wt;
@@ -694,6 +694,6 @@ int pqueue_popmin(PQUEUE * pq, int * row, int * col)
 		pq->priorities = pq->priorities->next;
 		my_free(tmpp, sizeof(PLIST));
     }
-	
+
     return (0);
 }

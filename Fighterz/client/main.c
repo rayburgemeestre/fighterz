@@ -39,8 +39,8 @@ int our_bullet_count; /**< number of bullets currently exist in the field */
 int our_bullet_max; /**< maximum number of bullets we can have in the field */
 int our_bullet_ttl; /**< our bullet's time-to-live in milliseconds*/
 int our_bullet_autofiredelay; /**< millisecs delay between bullets in autofire */
-int talk_mode; /**< boolean: 0=not in talk mode,1=keystrokes are typed into the 
-							 message/command console */ 
+int talk_mode; /**< boolean: 0=not in talk mode,1=keystrokes are typed into the
+							 message/command console */
 char msg[MSG_LINE_LENGTH]; /**< when talking characters are stored in this array */
 //Large text large_text(), large_text_draw();
 char large_text_msg[64];
@@ -51,9 +51,12 @@ unsigned int large_text_display_time = 5; // secs
 FILE *debugfile; /**< debug file descriptor: used for logging some data */
 #endif
 
-// int main(char *argv[], int argc)
+#ifdef _WIN32
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument,
 				   int nFunsterStil)
+#else
+int main(char *argv[], int argc)
+#endif
 {
 	// char apppath[_MAX_PATH]; /* _MAX_PATH defined in windows.h */
 	char *ptr, *ip, *port;
@@ -72,6 +75,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
 		init(); /* initialize stuff */
 
+#ifdef _WIN32
 		config( (strlen(lpszArgument) == 0 ? 0 : 1 ) );
 		/* TEMPORARY: */
 		//fullscreen = 0;
@@ -110,6 +114,9 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 			}
 		}
 		//skip_options = 1;
+#else
+        config(0);
+#endif
 
 		if (skip_options != 1)
 		{
@@ -117,16 +124,21 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 			play_midi(intro_music, TRUE);
 
 			clear_to_color(screen, makecol(0,0,0));
-			textprintf_centre(screen, (FONT *)dat_base[ARCADE].dat, screensize_x / 2, 
+			textprintf_centre(screen, (FONT *)dat_base[ARCADE].dat, screensize_x / 2,
 				screensize_y / 2, makecol(192, 192, 192), "Tachyon Fighterz");
-			
-			if (fullscreen == 1)
+
+			if (fullscreen == 1) {
+#ifdef _WIN32
 				Sleep(2000); // extra delay for switching resolution..
+#else
+				sleep(2);
+#endif
+			}
 
 			//Sleep(1000);
 
 			clear_to_color(screen, makecol(0,0,0));
-			textprintf_centre(screen, (FONT *)dat_base[ARCADE].dat, screensize_x / 2, 
+			textprintf_centre(screen, (FONT *)dat_base[ARCADE].dat, screensize_x / 2,
 				screensize_y / 2, makecol(192, 192, 192), "www.fighterz.net");
 			//Sleep(1000);
 
@@ -145,14 +157,17 @@ while (!key[KEY_ESC])
 		switch (ret)
 		{
 			case 1:
-				alert("Singleplayer does not yet exist", 
-					  "you are now being redirect to multiplayer", "", 
+				alert("Singleplayer does not yet exist",
+					  "you are now being redirect to multiplayer", "",
 					  "Thanks for the info", NULL, KEY_ENTER, 0);
 			case 0:
 				if (-1 == start() ||
 					-1 == mainloop())
 				{
+#ifdef _WIN32
 					WSACleanup();
+#endif
+
 #if DEBUG == 1
 					fclose(debugfile);
 #endif DEBUG
@@ -184,9 +199,9 @@ while (!key[KEY_ESC])
 
 	/* exit program */
 	alfont_destroy_font(lcdfont);
-	alfont_destroy_font(tccmfont);	
+	alfont_destroy_font(tccmfont);
 	alfont_exit();
-	allegro_exit(); 	
-	return 0; 
-}	 
+	allegro_exit();
+	return 0;
+}
 // END_OF_MAIN();

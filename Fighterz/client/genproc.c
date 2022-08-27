@@ -60,7 +60,7 @@ void init()
 	}
 	/* try to load the font given by the parameter*/
 	printff_direct("   - lcdn.ttf");
-	lcdfont = alfont_load_font("system\\lcdn.ttf");
+	lcdfont = alfont_load_font("system/lcdn.ttf");
 	if (lcdfont == NULL) 
 	{
 		set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
@@ -73,7 +73,7 @@ void init()
 	
 	/* try to load the font given by the parameter*/
 	printff_direct("   - tccm.ttf");
-	tccmfont = alfont_load_font("system\\tccm.ttf");
+	tccmfont = alfont_load_font("system/tccm.ttf");
 	if (tccmfont == NULL) 
 	{
 		set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
@@ -96,7 +96,10 @@ void init()
 
 	printff_direct("Loading Sound");
 
-	if (install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL) < 0)
+	load_midi_patches();
+
+	int a = install_sound(DIGI_AUTODETECT, MIDI_AUTODETECT, NULL);
+	if (a < 0)
 	{
 		printff_direct("ERROR initializing sound!");
 		terminate();
@@ -175,7 +178,7 @@ void init_screen()
 
 	if (fullscreen == 1)
 	{
-		set_gfx_mode(GFX_SAFE, screensize_x, screensize_y, 0, 0);
+		set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, screensize_x, screensize_y, 0, 0);
 	} else {
 		set_gfx_mode(GFX_AUTODETECT_WINDOWED, screensize_x, screensize_y, 0, 0);
 	}

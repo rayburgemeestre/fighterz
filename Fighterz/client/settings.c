@@ -2,12 +2,9 @@
 //refactored 12 dec 2004
 
 //Include AGUP External C header files
-extern "C" 
-{
-		#include "agup/agup.h"
-		#include "agup/aphoton.h"
-		//#include "agup/ans.h"
-}
+#include "agup/agup.h"
+#include "agup/aphoton.h"
+//#include "agup/ans.h"
 
 //functions
 //--
@@ -16,7 +13,7 @@ extern "C"
 //variables
 //--
 //Dialog
-int bg_color = 0xFFFFFF; /* dialog background colour */
+#define  bg_color 0xFFFFFF /* dialog background colour */
 DIALOG settings[] =
 {
    /* (proc)                 (x)  (y)  (w)  (h)  (fg) (bg)                    (key) (flags) (d1) (d2) (dp)                                 (dp2) (dp3) */
@@ -67,7 +64,7 @@ void get_settings()
 //cube:
 //--
 int last_retrace_count;
-bg_color = makecol(216, 216, 216);
+#define bg_color makecol(216, 216, 216)
 //dialog:
 DIALOG_PLAYER *ds;
 
