@@ -1,8 +1,13 @@
 <img src="https://github.com/rayburgemeestre/fighterz/blob/master/www.fighterz.net/images/logo_5.gif">
 
+See for the original import the tag <a href="https://github.com/rayburgemeestre/fighterz/tree/original_import">`original_import`</a>.
+
 In game screenshot:
 
 <img src="https://github.com/rayburgemeestre/fighterz/blob/master/www.fighterz.net/screenshots/fghz5jun2005.jpg">
+
+That screenshot is from 2005, running at 60 FPS, on my Linux laptop the game runs over 1000 FPS.
+
 
 Map maker screenshot:
 

@@ -55,7 +55,7 @@ FILE *debugfile; /**< debug file descriptor: used for logging some data */
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument,
 				   int nFunsterStil)
 #else
-int main(char *argv[], int argc)
+int main(int argc, char *argv[])
 #endif
 {
 	// char apppath[_MAX_PATH]; /* _MAX_PATH defined in windows.h */
