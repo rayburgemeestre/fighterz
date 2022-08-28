@@ -44,9 +44,9 @@ int clr = makecol(0,128,255);
 	}
 
 	if (fakeconsole_y == 0) {
-		textprintf(screen, font, 10, 1, clr, buf);
+		textprintf(screen, font, 10, 1, clr, "%s", buf);
 	} else {
-		textprintf(screen, font, 10, fakeconsole_y, clr, buf);
+		textprintf(screen, font, 10, fakeconsole_y, clr, "%s", buf);
 	}
 
 	release_screen();
@@ -546,7 +546,7 @@ int color;
 		else color = makecol(255, 64, 64); // normal (alive)
 	}
 
-	sprintf(buf, "%d", node->kills);
+	sprintf(buf, "%ld", node->kills);
 
 	if (scoreboard_current_y == 0) {
 		alfont_textout_aa_ex(bmp_scoreboard, lcdfont, node->nick, scoreboard_padding_left, 1, color, -1);
@@ -634,7 +634,7 @@ void debug()
 		for (current=head; current; current=current->next)
 			if (current->bullet != 1)
 			{
-				fprintf(debugfile, "%-15lu | %-15d | %-3u | %-12s %s\n", ourtime, current, current->id, current->nick, (our_id == current->id?"<-- our id":""));
+				fprintf(debugfile, "%-15lu | %-15p | %-3u | %-12s %s\n", ourtime, current, current->id, current->nick, (our_id == current->id?"<-- our id":""));
 				fflush(debugfile);
 			}
 		fputs("\n",debugfile);

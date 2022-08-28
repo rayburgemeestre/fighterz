@@ -471,7 +471,7 @@ int old_px, old_py;
 
 			if (!fd) fd = fopen("collition.txt", "w");
 
-			sprintf(tmp, "%d %d COLLITION AT DEG: %f X: %f Y: %f", 
+			sprintf(tmp, "%d %lu COLLITION AT DEG: %f X: %f Y: %f",
 				ptr->move, ourtime, ptr->deg, ptr->x, ptr->y);
 
 

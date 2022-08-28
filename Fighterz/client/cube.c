@@ -26,7 +26,7 @@ typedef struct SHAPE             /* store position of a shape */
 } SHAPE;
 
 
-#define TEST 32
+#define TEST 32u
 VTX points[] =                   /* a cube, centered on the origin */
 {
    /* vertices of the cube, of type fixed */
@@ -69,7 +69,7 @@ void init_shape()
     shape.ry = 0;
     shape.rz = 0;
 
-	srand(NULL);
+	srand((unsigned int)0);
     shape.drx = (rand() & 0x1FFFF) - 0x10000;
     shape.dry = (rand() & 0x1FFFF) - 0x10000;
     shape.drz = (rand() & 0x1FFFF) - 0x10000;

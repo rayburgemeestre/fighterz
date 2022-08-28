@@ -141,40 +141,41 @@ unsigned long flicker_time;
 				times += 1;
 			}
 
-			if (options_activeitem == i)
-			{
+			if (options_activeitem == i) {
 
-				for (cnt=0; cnt<times; cnt++)
+				for (cnt = 0; cnt < times; cnt++)
 					if (option[i].r > 0)
 						option[i].r--;
-					else
-						if (option[i].g > 128)
-							option[i].g--;
-			
-				// Flickering: hide text
-				if ((option[i].flicker == 0) && (option[i].r == 0 && option[i].g == 128))
-					textprintf(tmpscreen, (FONT *)dat_base[ARCADE].dat, option[i].x, option[i].y, 
-					makecol(0, 0, 0), option[i].str); 
-				// Flickering: show text
-				else
-					textprintf(tmpscreen, (FONT *)dat_base[ARCADE].dat, option[i].x, option[i].y, 
-					makecol(option[i].r,option[i].g,option[i].b), option[i].str);
+					else if (option[i].g > 128)
+						option[i].g--;
+
+				if ((option[i].flicker == 0) && (option[i].r == 0 && option[i].g == 128)) {
+					// Flickering: hide text
+					textprintf(tmpscreen, (FONT *) dat_base[ARCADE].dat, option[i].x, option[i].y,
+							   makecol(0, 0, 0), "%s", option[i].str);
+				} else {
+					// Flickering: show text
+					textprintf(tmpscreen, (FONT *) dat_base[ARCADE].dat, option[i].x, option[i].y,
+							   makecol(option[i].r, option[i].g, option[i].b), "%s", option[i].str);
+				}
 
 			} else {
 
-				if (option[i].r < 255)
-					for (cnt=0; cnt<times; cnt++)
-						if (option[i].g < 255)
+				if (option[i].r < 255) {
+					for (cnt = 0; cnt < times; cnt++)
+						if (option[i].g < 255) {
 							option[i].g++;
-						else 
+						} else {
 							if (option[i].r < 255)
 								option[i].r++;
-				else
+						}
+				} else {
 					option[i].time = ourtime;
+				}
 
 				//show text
 				textprintf(tmpscreen, (FONT *)dat_base[ARCADE].dat, option[i].x, option[i].y, 
-					makecol(option[i].r,option[i].g,option[i].b), option[i].str);
+					makecol(option[i].r,option[i].g,option[i].b), "%s", option[i].str);
 			}
 		}
 		

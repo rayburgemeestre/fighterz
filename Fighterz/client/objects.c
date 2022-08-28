@@ -197,7 +197,7 @@ double current_x, current_y; /* x & y to draw on the bmp_shipfield
 			//				current->speed, current->freeze, current->deg, (int)current->team);
 				sprintf(tmpstr, "%s", current->nick);
 				textprintf_centre(bmp_shipfield, (FONT *)dat_base[NOKIA].dat, current_x,
-					current_y + (blocksize/2) + 3, teamcolor, tmpstr);
+					current_y + (blocksize/2) + 3, teamcolor, "%s", tmpstr);
 			}
 		}
 	}

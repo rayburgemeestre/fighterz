@@ -41,6 +41,7 @@ void draw_console()
 					makecol(192, 192, 192)
 				)
 			),
+			"%s",
 			console[i]
 		);
 

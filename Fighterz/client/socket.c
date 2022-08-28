@@ -189,7 +189,7 @@ int socket_connect()
 	hints.ai_socktype = SOCK_STREAM;
 
 	// TODO: check return
-	const *serv_port_str = "8099"; // temp hack to see if stuff works
+	const char *serv_port_str = "8099"; // temp hack to see if stuff works
 	getaddrinfo(serv_addr, serv_port_str, &hints, &res);
 
 //	if (lpHostEntry == NULL)
@@ -595,8 +595,11 @@ void m_ping(unsigned int servertime)
 void m_lag(double diff)
 {
 int i = 0;
-	while (i < 4)
-		lag[i] = lag[(i++)+1];
+	while (i < 4) {
+		lag[i] = lag[i + 1];
+		i++;
+	}
+
 	lag[i] = diff;
 	printff_direct("smsg_lag diff=%f avg_lag=%2.2f OK", 
 		diff, current_lag());

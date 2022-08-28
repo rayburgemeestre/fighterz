@@ -9,35 +9,28 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(tachyon-fighterz VERSION 0.1 LANGUAGES C)
 
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    set(DEBUG on)  # this is the define that we set for debug
-endif()
-
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=gold")
+    add_link_options(-fuse-ld=gold)
+    add_compile_options(-stdlib=libstdc++)
 else()
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,notext -Wno-unknown-pragmas")
+    add_link_options(-Wl,-z,notext)
 endif()
+
+add_compile_options(-fno-omit-frame-pointer -mssse3)
+
+# allegro4 has a bunch of deprecated stuff that we don't care about
+add_compile_options(-Wno-deprecated-declarations)
 
 if (SANITIZER)
-    add_definitions("-fsanitize=address")
+    add_compile_options(-fsanitize=address)
 endif()
 
-if (DEBUG)
-    message("This is a DEBUG build.")
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        add_definitions("-O0 -g -stdlib=libstdc++ -fno-omit-frame-pointer -Wall -mssse3")
-    else()
-        add_definitions("-O0 -g -fno-omit-frame-pointer -Wall -mssse3 -Wno-unknown-pragmas")
-    endif()
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    add_compile_options(-O0 -g)
 else()
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        add_definitions("-O2 -funsigned-char -stdlib=libstdc++ -Wall -fno-omit-frame-pointer -pedantic -pthread -mssse3 -Wno-reserved-user-defined-literal")
-    else()
-        add_definitions("-O2 -funsigned-char -Wall -fno-omit-frame-pointer -pedantic -pthread -mssse3 -Wno-reserved-user-defined-literal -Wno-unknown-pragmas")
-    endif()
+    add_compile_options(-O2)
 endif()
 
 include_directories(

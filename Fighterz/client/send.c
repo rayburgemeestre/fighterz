@@ -1,6 +1,9 @@
 #include "common.h"
 //refactored 12 dec 2004
 
+#include <sys/types.h>
+#include <sys/socket.h>
+
 //functions:
 //--
 // void send_packet(char *pktin, unsigned short len);

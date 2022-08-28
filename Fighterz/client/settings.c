@@ -13,7 +13,8 @@
 //variables
 //--
 //Dialog
-#define  bg_color 0xFFFFFF /* dialog background colour */
+#undef bg_color
+#define bg_color 0xFFFFFF /* dialog background colour */
 DIALOG settings[] =
 {
    /* (proc)                 (x)  (y)  (w)  (h)  (fg) (bg)                    (key) (flags) (d1) (d2) (dp)                                 (dp2) (dp3) */
@@ -64,6 +65,7 @@ void get_settings()
 //cube:
 //--
 int last_retrace_count;
+#undef bg_color
 #define bg_color makecol(216, 216, 216)
 //dialog:
 DIALOG_PLAYER *ds;

@@ -361,7 +361,7 @@ void draw_talk_box()
 {
 	clear_to_color(bmp_command, makecol(0, 0, 0));
 	textprintf(bmp_command, (FONT *)dat_base[NOKIA].dat, 
-		5, 5, makecol(255, 255, 255), msg);
+		5, 5, makecol(255, 255, 255), "%s", msg);
 }
 
 void read_config()

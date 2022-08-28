@@ -170,7 +170,7 @@ while (!key[KEY_ESC])
 
 #if DEBUG == 1
 					fclose(debugfile);
-#endif DEBUG
+#endif
 					initialize_vars();
 					play_midi(intro_music, TRUE);
 				}
