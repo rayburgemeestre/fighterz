@@ -13,14 +13,10 @@ char buffer[512] = "";
 
     strcpy(buffer, DEFAULT_MAP_FILE);
 
+	ret = file_select_ex("Select map file", buffer, "txt;TXT;", sizeof(buffer), 0, 0);
+
 // Temporary disabled:
-    if (ret = file_select_ex(
-        "Select map file",
-        buffer,
-        "txt;TXT;",
-        sizeof(buffer),
-        0, 0
-    ) == 0 && cont == 1 && ! key[KEY_F12])
+    if (ret == 0 && cont == 1 && ! key[KEY_F12])
     {
         if (allow_cancel == 1)
             return -1;
@@ -63,7 +59,7 @@ char buffer[512] = "";
             char buf[512];
             char datafile[128];
 
-				sscanf(line, "3 %d %d %d %s\n", &df_id, &pos_x, &pos_y, &datafile);
+				sscanf(line, "3 %d %d %d %s\n", &df_id, &pos_x, &pos_y, datafile);
 				sprintf(buf, "%d (%d,%d) %s", df_id, pos_x, pos_y, datafile);
 				strcpy(current_bmp_df[current_bmp_df_index++], buf);
 			}
@@ -123,7 +119,7 @@ int cnt, cnt2;
     char *s;
     char b[256];
 
-        sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, &datafile);
+        sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, datafile);
         sprintf(buf, "system/%s", datafile);
         s = buf;
         fix_filename_path(b, s, sizeof(b));

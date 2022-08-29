@@ -187,7 +187,7 @@ while (x2 > field_width)  x2 -= field_width;
 while (y2 > field_height) y2 -= field_height;
 		ret = valid_target( x1, y1, x2, y2, (double)(BLOCKSIZE/2) );
 
-		fprintf(fp, "element %d is %sa valid target (%d,%d)-(%d,%d) field= %d-%d\n", element, (ret == 1 ? "NOT " : ""),
+		fprintf(fp, "element %d is %sa valid target (%d,%d)-(%d,%d) field= %ldu-%ldu\n", element, (ret == 1 ? "NOT " : ""),
 			(int)x1, (int)y1, (int)x2, (int)y2,
 			field_width,
 			field_height

@@ -48,19 +48,19 @@ void loadmap() {
 			cnt++;
 			
 		}
-		if ( (buff[0] == '2') ) {
+		if ( buff[0] == '2' ) {
 			strcpy(buff, strtok(buff, "\n"));
 			ptr = &buff[2];
 			BLOCKSIZE = atoi((const char *) ptr);
 		}
-		if ( (buff[0] == '3') ) 
+		if ( buff[0] == '3' )
 		{
 		int df_id, pos_x, pos_y;
 		char datafile[128];
 			strcpy(buff, strtok(buff, "\n"));
 			// ptr = &buff[2];
 			// Fuck it i totally trust our little mapfile :)
-			sscanf(buff, "3 %d %d %d %s", &df_id, &pos_x, &pos_y, &datafile);
+			sscanf(buff, "3 %d %d %d %s", &df_id, &pos_x, &pos_y, datafile);
 			printf("df_id: %d pos_x: %d pos_y: %d df: %s\n", 
 				df_id, pos_x, pos_y, datafile);
 			// BLOCKSIZE = atoi((const char *) ptr);

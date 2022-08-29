@@ -51,13 +51,8 @@ int ret;
 
 if (allow_cancel != 0)
 {
-    if (ret = file_select_ex(
-        "Select datafile (*.dat)",
-        df_path,
-        "dat;DAT;",
-        sizeof(df_path),
-        0, 0
-    ) == 0 && ! key[KEY_F12])
+	ret = file_select_ex("Select datafile (*.dat)", df_path, "dat;DAT;", sizeof(df_path), 0, 0);
+    if (ret == 0 && ! key[KEY_F12])
     {
         return -1;
     }
@@ -71,7 +66,8 @@ if (allow_cancel != 0)
 		/* try in c:\fighterz... */
 		sprintf(buf, "c:\\fighterz\\%s", df_path);
 		strcpy(df_path, buf);
-		if (df = load_datafile(df_path)) {
+		df = load_datafile(df_path);
+		if (df) {
 			char mbuf2[512];
 			sprintf(mbuf2, "using %s instead.", df_path);
 			alert("Warning:", mbuf, mbuf2, "OK", NULL, 0, 0);

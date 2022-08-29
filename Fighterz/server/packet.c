@@ -166,7 +166,7 @@ unsigned int clag;
 static void m_turn(struct data *client, double x, double y, signed char turn, double deg)
 {
 unsigned int clag;
-printf("x: %d, y: %d, deg: %2.2f\n", x, y, deg);
+printf("x: %lf, y: %lf, deg: %2.2f\n", x, y, deg);
 
 #if IGNORE_LAG != 1
 	clag = (unsigned int)current_lag(client->id);

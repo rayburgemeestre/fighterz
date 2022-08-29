@@ -307,7 +307,7 @@ void initialize_vars()
 
 	/* map */
 	strncpy(map3, "maps/lvl-syz.txt", 64);
-	map3[64] = '\0';
+	map3[63] = '\0';
 	return;
 }
 

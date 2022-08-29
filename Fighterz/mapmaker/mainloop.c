@@ -340,14 +340,9 @@ int bmp_df_h, bmp_df_w;
             else if ( !ret && player->obj == DLG_CURRENT_MAP_SAVE_AS)
             {
             char buffer[512] = "maps\\lvl-new.txt";
-                if (ret = file_select_ex(
-                    "Save file as",
-                    buffer,
-                    "txt;TXT",
-                    sizeof(buffer),
-                    0, 0
-                ) != 0 )
-                {
+				ret = file_select_ex("Save file as", buffer, "txt;TXT", sizeof(buffer), 0, 0);
+				if (ret != 0)
+				{
                 FILE *fp;
                 int cnt;
 
@@ -377,7 +372,7 @@ int bmp_df_h, bmp_df_w;
                         char buf[512];
                         char datafile[128];
 
-                            sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, &datafile);
+                            sscanf(current_bmp_df[cnt], "%d (%d,%d) %s", &df_id, &pos_x, &pos_y, datafile);
                             sprintf(buf, "3 %d %d %d %s\n", df_id, pos_x, pos_y, datafile);
                             fputs(buf, fp);
                         }
