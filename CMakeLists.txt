@@ -27,11 +27,11 @@ if (SANITIZER)
     add_compile_options(-fsanitize=address)
 endif()
 
-if(CMAKE_BUILD_TYPE MATCHES Debug)
+#if(CMAKE_BUILD_TYPE MATCHES Debug)
     add_compile_options(-O0 -g)
-else()
-    add_compile_options(-O2)
-endif()
+#else()
+#    add_compile_options(-O2)
+#endif()
 
 include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/client"
@@ -39,6 +39,8 @@ include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/server"
     "${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/common"
 )
+
+link_directories("/usr/lib/llvm-12/lib/clang/12.0.0/lib/linux/")
 
 # client
 
@@ -61,6 +63,13 @@ target_link_libraries(mapmaker PRIVATE -lalleg)
 file(GLOB_RECURSE server_SOURCES "Fighterz/server/**.h" "Fighterz/server/**.c" "Fighterz/common/**.h" "Fighterz/common/**.c")
 add_executable(server ${server_SOURCES})
 target_link_libraries(server PRIVATE -lm)
+target_link_libraries(server PRIVATE -lalleg) # depends on DEBUG2
+
+if (SANITIZER)
+    target_link_libraries(client PRIVATE -lclang_rt.asan-x86_64)
+    target_link_libraries(mapmaker PRIVATE -lclang_rt.asan-x86_64)
+    target_link_libraries(server PRIVATE -lclang_rt.asan-x86_64)
+endif()
 
 install (TARGETS client DESTINATION bin)
 install (TARGETS mapmaker DESTINATION bin)
