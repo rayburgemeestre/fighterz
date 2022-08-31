@@ -394,7 +394,7 @@ if (!our_node)
 			{
 				char *t1 = "F1 = this help                ";
 				char *t2 = "F2 = show/hide player list    ";
-				char *t3 = "F3 = smooth graphics on/off   ";
+				char *t3 = "F3 = vsync on/off             ";
 				char *t4 = "F4 = fullscreen on/off        ";
 				char *t5 = "F5 = player names on/off      ";
 				char *t6 = "F6 = fps on/off               ";
@@ -432,15 +432,15 @@ if (!our_node)
 			}
 			if ( k == KEY_F3 )
 			{
-				if (high_gfx == 1)
+				if (enable_vsync == 1)
 				{
-					addtext("*** SMOOTH GFX: OFF");
-					high_gfx = 0;
+					addtext("*** VSYNC: OFF");
+					enable_vsync = 0;
 				}
 				else
 				{
-					addtext("*** SMOOTH GFX: ON");
-					high_gfx = 1;
+					addtext("*** VSYNC: ON");
+					enable_vsync = 1;
 				}
 			}
 			if ( k == KEY_F4 )
@@ -682,7 +682,13 @@ void show_graphics()
 	poll_mouse();
 
 	//acquire_screen();
-	blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
+	if (enable_stretch == 0 || (screensize_y == desktop_y && screensize_x == desktop_x)) {
+		blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
+	} else {
+		blit(tmpscreen, tmpscreen2, 0, 0, 0, 0, screensize_x, screensize_y);
+		stretch_blit(tmpscreen2, screen, 0, 0, screensize_x, screensize_y, 0, 0, desktop_x, desktop_y);
+	}
+
 	if (save_frames_to_bitmap == 1)
 	{
 	char nam[80]; sprintf(nam, "D:\\fighterz\\%lu.pcx", ourtime);
@@ -693,7 +699,7 @@ void show_graphics()
 	}
 	//release_screen();
 
-	if (high_gfx == 1)
+	if (enable_vsync == 1)
 	{
 		// rest(8);
 		vsync(); /* wait for vertical retrace (can reduce flickering)

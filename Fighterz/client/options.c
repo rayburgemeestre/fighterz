@@ -68,7 +68,7 @@ unsigned long flicker_time;
 
     //Cube initialization
 	// set up the viewport for the perspective projection
-    set_projection_viewport(0, 0, SCREEN_W, SCREEN_H); 
+    set_projection_viewport(0, 0, screensize_x, screensize_y);
     // initialise the bouncing shapes
     init_shape();
     last_retrace_count = retrace_count;
@@ -183,7 +183,12 @@ unsigned long flicker_time;
 		//Draw Double buffer to screen
 
 		// acquire_screen();
-		blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
+		if (enable_stretch == 0 || (screensize_y == desktop_y && screensize_x == desktop_x)) {
+			blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
+		} else {
+			blit(tmpscreen, tmpscreen2, 0, 0, 0, 0, screensize_x, screensize_y);
+			stretch_blit(tmpscreen2, screen, 0, 0, screensize_x, screensize_y, 0, 0, desktop_x, desktop_y);
+		}
 		// release_screen();
 		// rest(10);
 		vsync();

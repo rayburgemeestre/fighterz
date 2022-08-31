@@ -316,14 +316,23 @@ void map_draw_path2(void)
 
 /* TODO: Hier zit iets fout, 8x2=16 dingen, en er staan hier 8, dus de andere 8
  * zijn _NIET_ geinitaliseerd -- Syzop:
+ * Nice find :) -- trigen
  */
 
 int delta[8][2] = {
-					{ -1, 0 },
-					{ 0, 1 },
-					{ 1, 0 },
-					{ 0, -1 }
-				  }; /* was: int delta[8][2] = { -1, 0, 0, 1, 1, 0, 0, -1 }; */
+	// deltas should be:
+	// 1 2 3
+	// 4   5
+	// 6 7 8
+	{ -1, 1 }, // 1
+	{ 0, 1 }, // 2
+	{ 1, 1 }, // 3
+	{ -1, 0 }, // 4
+	{ 1, 0 }, // 5
+	{ -1, -1 }, // 6
+	{ 0, -1 }, // 7
+	{ 1, 1 }, // 8
+};
 
 #ifdef max
 #undef max

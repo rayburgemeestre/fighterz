@@ -2,6 +2,7 @@
 
 //graphics
 BITMAP *tmpscreen; /**< bitmap used for double buffering (primary bitmap) */
+BITMAP *tmpscreen2; /**< bitmap used to write to first, before stretching to real screen  */
 BITMAP *bmp_mapfield; /**< bitmap that contains the rendered map as rcvd from serv */
 BITMAP *bmp_radarfield; /**< bitmap that contains the rendered radar as rcvd from serv */
 BITMAP *bmp_shipfield; /**< subbitmap on tmpscreen for ships & bullets */

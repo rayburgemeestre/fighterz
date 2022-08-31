@@ -9,8 +9,11 @@
 //general
 int screensize_y = 600; /**< screen height size in pixels */
 int screensize_x = 800; /**< screen width size in pixels */
+int desktop_y = 600;
+int desktop_x = 800;
 int fullscreen = 0; /**< boolean: 0=windowed, 1=fullscreen */
-int high_gfx = 0; /**< boolean: 1=rest()+vsync(),0=not */
+int enable_vsync = 0; /**< boolean: 1=rest()+vsync(),0=not */
+int enable_stretch = 0; /**< boolean: 1=yes,0=no */
 int game_started; /**< boolean: 0=no,1=yes */
 //settings
 unsigned int ship_maxpower; /**< bullets count after which a ship dies */
@@ -117,6 +120,11 @@ int main(int argc, char *argv[])
 #else
         config(0);
 #endif
+
+		if (enable_stretch == 0) {
+			desktop_x = screensize_x;
+			desktop_y = screensize_y;
+		}
 
 		if (skip_options != 1)
 		{

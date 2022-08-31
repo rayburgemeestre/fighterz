@@ -22,6 +22,10 @@ void init()
 
 	allegro_init();
 
+	if (get_desktop_resolution(&desktop_x, &desktop_y) == 0) {
+		/* Got the resolution correctly */
+	}
+
 	set_color_depth(16);
 
 	set_display_switch_mode(SWITCH_BACKGROUND);
@@ -44,8 +48,10 @@ void init()
 	//dataf = load_datafile("#");
 
 	destroy_bitmap(tmpscreen);
+	destroy_bitmap(tmpscreen2);
 	tmpscreen = create_bitmap(screensize_x, screensize_y);
-	
+	tmpscreen2 = create_bitmap(screensize_x, screensize_y);
+
 	/* Initialize Allegro. */
 	printff_direct("Initialized allegro");
 
@@ -178,9 +184,9 @@ void init_screen()
 
 	if (fullscreen == 1)
 	{
-		set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, screensize_x, screensize_y, 0, 0);
+		set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, desktop_x, desktop_y, screensize_x, screensize_y);
 	} else {
-		set_gfx_mode(GFX_AUTODETECT_WINDOWED, screensize_x, screensize_y, 0, 0);
+		set_gfx_mode(GFX_AUTODETECT_WINDOWED, desktop_x, desktop_y, screensize_x, screensize_y);
 	}
 }
 
@@ -384,7 +390,7 @@ void initialize_vars()
 	/* Will eventually become dynamic etc :) */
 	our_spawnstatus = 0;
 	fullscreen = 0;
-	high_gfx = 1;
+	enable_vsync = 1;
 	mod_bounce = 0;
 	ship_movespeed_multiplier = 1; 
 	bullet_movespeed_multiplier = 1;

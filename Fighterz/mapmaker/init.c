@@ -10,7 +10,7 @@ void init()
     // Initialize Allegro.
     allegro_init();
 
-    set_color_depth(16);
+	set_color_depth(16);
 
     // Set the resolution to 640 by 480 with SAFE autodetection.
     // set_gfx_mode(GFX_SAFE, SCREEN_X, SCREEN_Y, 0, 0);

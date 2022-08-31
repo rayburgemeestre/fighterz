@@ -139,7 +139,7 @@ void config(int ignore) /* ignore @ 1 = don't use host/port in config */
 				mod_grid = (i == 1?1:0);
 				printff_direct("  mod_grid:%s", (mod_grid == 1?"on":"off"));
 			}
-			if (!strcmp(buff, "high_graphics"))
+			if (!strcmp(buff, "vsync"))
 			{
 				int i;
 
@@ -154,8 +154,26 @@ void config(int ignore) /* ignore @ 1 = don't use host/port in config */
 					*(p + 1) = '\0';
 				
 				i = atoi(p);
-				high_gfx = i;
-				printff_direct("  high graphics:%s", (mod_grid == 1?"yes":"no"));
+				enable_vsync = i;
+				printff_direct("  vsync	:%s", (enable_vsync == 1?"yes":"no"));
+			}
+			if (!strcmp(buff, "stretch"))
+			{
+				int i;
+
+				p++;
+				if (!p)
+				{
+					printff_direct("Illegal data in config file");
+					terminate();
+				}
+
+				if (strlen(p) > 1)
+					*(p + 1) = '\0';
+
+				i = atoi(p);
+				enable_stretch = i;
+				printff_direct("stretch	:%s", (enable_stretch == 1?"yes":"no"));
 			}
 		}
 	}

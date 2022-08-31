@@ -494,11 +494,9 @@ int old_px, old_py;
 	}
 
 	/* Correct degrees if needed */
-	if (ptr->deg < 0)
+	while (ptr->deg < 0)
 	{
-		sprintf(tmp, "wtf: %2.2f", ptr->deg);
-		alert(tmp, "", "", "", "", 1, 1);
-		ptr->deg += 90;
+		ptr->deg += 360;
 	}
 
 	/* Lets bounce this bullet~~ */

@@ -8,8 +8,11 @@ extern MIDI *intro_music;
 
 extern int screensize_y;
 extern int screensize_x;
+extern int desktop_y;
+extern int desktop_x;
 extern int fullscreen;
-extern int high_gfx;
+extern int enable_vsync;
+extern int enable_stretch;
 extern int mod_bounce;
 extern int ship_movespeed_multiplier;
 
@@ -118,6 +121,7 @@ extern unsigned long ourtime;
 
 //interface.cpp
 extern BITMAP *tmpscreen;
+extern BITMAP *tmpscreen2;
 extern BITMAP *bmp_mapfield;
 extern BITMAP *bmp_radarfield;
 extern BITMAP *bmp_shipfield;

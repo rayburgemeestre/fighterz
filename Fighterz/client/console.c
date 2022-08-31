@@ -123,6 +123,6 @@ int i;
 		i++;
 	}
 
-	alfont_textout_centre_aa_ex(tmpscreen, tccmfont, large_text_msg, SCREEN_W / 2, SCREEN_H / 2 - 28, makecol(85, 239, 111), -1);
+	alfont_textout_centre_aa_ex(tmpscreen, tccmfont, large_text_msg, screensize_x / 2, screensize_y / 2 - 28, makecol(85, 239, 111), -1);
 
 }

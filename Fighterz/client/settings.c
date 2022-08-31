@@ -75,7 +75,7 @@ DIALOG_PLAYER *ds;
 	clear_to_color(tmpscreen, makecol(0,0,0));
 
 	//Cube Initialization
-    set_projection_viewport(0, 0, SCREEN_W, SCREEN_H);
+    set_projection_viewport(0, 0, screensize_x, screensize_y);
     init_shape();
     last_retrace_count = retrace_count;
 	//--
@@ -98,12 +98,12 @@ DIALOG_PLAYER *ds;
 
 	//Draw Options Text
 	textprintf_centre(tmpscreen, (FONT *)dat_base[ARCADE].dat, 
-		SCREEN_W / 2, 100, 
+		screensize_x / 2, 100,
 		makecol(255, 255, 255), 
 		"OPTIONS [Currently doesn't work]");
 	
 	//--
-	blit(tmpscreen, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H); 
+	blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
 	do_dialog(settings, -1);
 
 	//while (key[KEY_ESC]);
