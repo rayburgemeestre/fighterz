@@ -254,6 +254,10 @@ LINK redflagcarrier, blueflagcarrier;
 
 int main(void)
 {
+	if (access("resources", F_OK) == 0) {
+		chdir("resources");
+	}
+
 	/* ******************** */
 	/* *** UNIX SOCKETS *** */
 	/* ******************** */

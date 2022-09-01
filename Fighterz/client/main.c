@@ -61,6 +61,10 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 int main(int argc, char *argv[])
 #endif
 {
+	if (access("resources", F_OK) == 0) {
+		chdir("resources");
+	}
+
 	// char apppath[_MAX_PATH]; /* _MAX_PATH defined in windows.h */
 	char *ptr, *ip, *port;
 	int ret, skip_options = 0;

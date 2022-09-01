@@ -19,6 +19,10 @@ void die(char *diemsg)
 
 int main()
 {
+	if (access("resources", F_OK) == 0) {
+		chdir("resources");
+	}
+
     init();
     // init_map(0);
     init_datafile(0, DEFAULT_DATA_FILE);
