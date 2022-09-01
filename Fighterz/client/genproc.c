@@ -22,10 +22,6 @@ void init()
 
 	allegro_init();
 
-	if (get_desktop_resolution(&desktop_x, &desktop_y) == 0) {
-		/* Got the resolution correctly */
-	}
-
 	set_color_depth(16);
 
 	set_display_switch_mode(SWITCH_BACKGROUND);

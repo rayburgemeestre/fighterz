@@ -126,8 +126,13 @@ int main(int argc, char *argv[])
 #endif
 
 		if (enable_stretch == 0) {
+			printf("enabling stretch was disabled, so resetting\n");
 			desktop_x = screensize_x;
 			desktop_y = screensize_y;
+		} else {
+			if (get_desktop_resolution(&desktop_x, &desktop_y) == 0) {
+				printf("Read desktop resolution!\n");
+			}
 		}
 
 		if (skip_options != 1)

@@ -76,6 +76,7 @@ void moveship(unsigned int id2, TIME t2)
 	{
 		if (current->bullet != 1)
 		{
+			printf("current ship: %d, %f, %f, paths: %f, %f\n", current->id, current->x, current->y, head->path[PATH_MAX_-1][0], head->path[PATH_MAX_-1][1]);
 			if ((unsigned)current->id == id2)
 			{
 
@@ -299,17 +300,27 @@ for (cnt=0; cnt<times; cnt++)
 							diffx2 = dabs(fx - tx);
 							diffy1 = dabs(current->bot_y - ty);
 							diffy2 = dabs(fy - ty);
-							
+
+							double distance_now = sqrt((current->bot_x - tx) * (current->bot_x - tx)+
+													   (current->bot_y - ty) * (current->bot_y - ty));
+							double distance_next = sqrt((fx - tx) * (fx - tx)+
+												 	    (fy - ty) * (fy - ty));
+
 							//fprintf(juub, "x1;%.2f x2;%.2f y1;%.2f y2;%.2f  x: %.2f %.2f\n", diffx1, diffx2, diffy1, diffy2, current->bot_x, fx);
 
 							/* If coordinates between ship and the target (tx/ty) will
 							increase with the next step .. :) */
-							if ((diffx2 >= diffx1 &&
-								diffy2 >= diffy1) && current->speed != 0.0)
+							//if ((diffx2 >= diffx1 &&
+							//	 diffy2 >= diffy1) && current->speed != 0.0)
+							if (distance_next > distance_now && current->speed != 0.0)
 							{
-								
+								printf("RBU | difference next: %f and now: %f\n", distance_next, distance_now);
+								printf("RBU | because of: %f,%f  ?  %f, %f\n", current->bot_x, current->bot_y, fx, fy);
+
 								ox = current->path[(int)(current->path[PATH_MAX_-1][1])][0];
 								oy = current->path[(int)(current->path[PATH_MAX_-1][1])][1];
+
+								printf("RBU | got ox, oy: %f,%f\n", ox, oy);
 
 								current->path[PATH_MAX_-1][1] = current->path[PATH_MAX_-1][1] + 1.0;
 
@@ -342,7 +353,7 @@ for (cnt=0; cnt<times; cnt++)
 
 										/* Acceleration update */
 										send_accel(EVERYONE, NULL, current->id, current->x, current->y, (signed char)current->velocity, current->speed);
-#ifndef NOT_DEFINED
+//#ifndef NOT_DEFINED
 										// flyto random place
 										{
 											int rand_x, rand_y, tx, ty;
@@ -354,11 +365,14 @@ for (cnt=0; cnt<times; cnt++)
 
 												tx = (int) ((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
 												ty = (int) ((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
-											} while (field[ty][tx] == '1');
+											} while (field[ty][tx] == '1' || (fabs(rand_x - current->x) < 20 && fabs(rand_y - current->y) < 20));
 
-//SKIP IT:									flyto(current->id, rand_x, rand_y);
+											printf("going to fly from: %f, %f -> %d, %d\n", current->x, current->y, rand_x, rand_y);
+											head->path[PATH_MAX_-1][0] = 0;
+											head->path[PATH_MAX_-1][1] = 0;
+											flyto(current->id, rand_x, rand_y);
 										}
-#endif
+//#endif
 										/* XXXXXXZ */
 										//circlefill(fieldbuff, current->target_x, current->target_y, 20, makecol(255,255,255));
 										//circlefill(fieldbuff, current->target_x - field_width, current->target_y - field_height, 20, makecol(255,255,255));
@@ -576,6 +590,7 @@ void drawships()
 
 void flyto(int id, double x, double y)
 {
+	drawmap(); // hack
 	LINK tmp;
 	double tx, ty;
 

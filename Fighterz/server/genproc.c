@@ -13,6 +13,10 @@ void settime()
 #else
 	ftime(& t);
 	servertime = (TIME)( (t.time - started.time) * 1000) + ( (t.millitm - started.millitm) / 1);
+	// workaround
+	if (map_scroll - servertime > 10000) {
+		map_scroll = servertime;
+	}
 	/* initiate some values */
 	t2.tv_usec = 5000;
 	//t2.tv_sec = 100;
@@ -170,7 +174,8 @@ int i;
 			// findpath(head);
 			bot = add_bot();
 			notify_of_newuser(EVERYONE, NULL, bot);
-			flyto(bot->id, REDFLAG.x, REDFLAG.y);
+			//flyto(bot->id, REDFLAG.x, REDFLAG.y);
+			flyto(bot->id, bot->x, bot->y + 10);
 			// addtext("2: %d", head->bot);
 			//}
 /*
@@ -306,8 +311,9 @@ void initialize_vars()
 	
 
 	/* map */
-	strncpy(map3, "maps/lvl-syz.txt", 64);
-	// strncpy(map3, "maps/lvl-x2.txt", 64);
+	// strncpy(map3, "maps/lvl-syz.txt", 64);
+	//strncpy(map3, "maps/lvl-x2.txt", 64);
+	strncpy(map3, "maps/minilvl-x.txt", 64);
 	map3[63] = '\0';
 	return;
 }
@@ -427,7 +433,7 @@ double deg, ret;
 		rw_y = sin(ret);
 		rw_y = rw_y * (radius / 2);
 		rw_y = rw_y + radius;
-		rw_y = rw_y + tmp_y - (BLOCKSIZE / 2);		
+		rw_y = rw_y + tmp_y - (BLOCKSIZE / 2);
 
 		/* Check if tmp_x/tmp_y collide with something :) */
 		
@@ -441,19 +447,19 @@ double deg, ret;
 			collided = 1;
 
 		/* temp added */
-		if (map[(int)((tmp_y - (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x - (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
+		if (map[(int)((tmp_y - (BLOCKSIZE / 3)) / BLOCKSIZE)][(int)((tmp_x - (BLOCKSIZE / 3)) / BLOCKSIZE)] == 16384)
 		{
 			collided = 1;
 		}
-		if (map[(int)((tmp_y - (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
+		if (map[(int)((tmp_y - (BLOCKSIZE / 3)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 3)) / BLOCKSIZE)] == 16384)
 		{
 			collided = 1;
 		}
-		if (map[(int)((tmp_y + (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
+		if (map[(int)((tmp_y + (BLOCKSIZE / 3)) / BLOCKSIZE)][(int)((tmp_x + (BLOCKSIZE / 3)) / BLOCKSIZE)] == 16384)
 		{
 			collided = 1;
 		}
-		if (map[(int)((tmp_y + (BLOCKSIZE / 4)) / BLOCKSIZE)][(int)((tmp_x - (BLOCKSIZE / 4)) / BLOCKSIZE)] == 16384)
+		if (map[(int)((tmp_y + (BLOCKSIZE / 3)) / BLOCKSIZE)][(int)((tmp_x - (BLOCKSIZE / 3)) / BLOCKSIZE)] == 16384)
 		{
 			collided = 1;
 		}
