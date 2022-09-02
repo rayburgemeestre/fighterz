@@ -11,6 +11,10 @@ project(tachyon-fighterz VERSION 0.1 LANGUAGES C)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
+set(CLANGFORMAT_EXECUTABLE clang-format-12)
+
+include(ClangFormat)
+
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_link_options(-fuse-ld=gold)
     add_compile_options(-stdlib=libstdc++)
@@ -74,3 +78,9 @@ endif()
 install (TARGETS client DESTINATION bin)
 install (TARGETS mapmaker DESTINATION bin)
 install (TARGETS server DESTINATION bin)
+
+set(all_sources ${client_SOURCES})
+list(APPEND all_sources ${mapmaker_SOURCES})
+list(APPEND all_sources ${server_SOURCES})
+list(REMOVE_DUPLICATES all_sources)
+clangformat_setup(${all_sources})
