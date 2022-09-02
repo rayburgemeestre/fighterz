@@ -76,12 +76,12 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
 
   while (current != NULL) {
     if (current->bullet != 1) {
-//      printf("current ship: %d, %f, %f, paths: %f, %f\n",
-//             current->id,
-//             current->x,
-//             current->y,
-//             head->path[PATH_MAX_ - 1][0],
-//             head->path[PATH_MAX_ - 1][1]);
+      //      printf("current ship: %d, %f, %f, paths: %f, %f\n",
+      //             current->id,
+      //             current->x,
+      //             current->y,
+      //             head->path[PATH_MAX_ - 1][0],
+      //             head->path[PATH_MAX_ - 1][1]);
       if ((unsigned)current->id == id2) {
         /* NEW */
         diff = (servertime - current->turn_t);
@@ -318,7 +318,7 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
                   //); Hmmm
                   current->velocity = 0;
                   current->speed = 0.0;
-				  printf("Bot %d has reached its destination\n", current->id);
+                  printf("Bot %d has reached its destination\n", current->id);
 
                   /* Acceleration update */
                   send_accel(EVERYONE,
@@ -344,22 +344,23 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
                       EVERYONE, NULL, current->id, current->x, current->y, (signed char)current->turn, current->deg);
                 }
 
-//                // flyto random place
-//                {
-//                  int rand_x, rand_y, tx, ty;
-//                  int continue_loop = 0;
-//                  do {
-//                    rand_x = 1 + (int)(field_width * rand() / (RAND_MAX + 1.0));
-//                    rand_y = 1 + (int)(field_height * rand() / (RAND_MAX + 1.0));
-//
-//                    tx = (int)((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
-//                    ty = (int)((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
-//                  } while (field[ty][tx] == '1' || (fabs(rand_x - current->x) < 20 && fabs(rand_y - current->y) < 20));
-//
-//                  head->path[PATH_MAX_ - 1][0] = 0;
-//                  head->path[PATH_MAX_ - 1][1] = 0;
-//                  flyto(current->id, rand_x, rand_y);
-//                }
+                //                // flyto random place
+                //                {
+                //                  int rand_x, rand_y, tx, ty;
+                //                  int continue_loop = 0;
+                //                  do {
+                //                    rand_x = 1 + (int)(field_width * rand() / (RAND_MAX + 1.0));
+                //                    rand_y = 1 + (int)(field_height * rand() / (RAND_MAX + 1.0));
+                //
+                //                    tx = (int)((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
+                //                    ty = (int)((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+                //                  } while (field[ty][tx] == '1' || (fabs(rand_x - current->x) < 20 && fabs(rand_y -
+                //                  current->y) < 20));
+                //
+                //                  head->path[PATH_MAX_ - 1][0] = 0;
+                //                  head->path[PATH_MAX_ - 1][1] = 0;
+                //                  flyto(current->id, rand_x, rand_y);
+                //                }
 
                 //}
               }
@@ -572,30 +573,8 @@ void flyto(int id, double x, double y) {
 
   if (tmp == NULL) exit(-2);
 
-  if ((tmp->x <= (double)(field_width / 2)) && (tmp->y <= (double)(field_height / 2))) {
-    // addtext("We are 1");
-    extra_x = (int)field_width;
-    extra_y = (int)field_height;
-  } else if ((tmp->x > (double)(field_width / 2)) && (tmp->y <= (double)(field_height / 2))) {
-    // addtext("We are 2");
-    extra_x = 0;
-    extra_y = (int)field_height;
-  } else if ((tmp->x <= (double)(field_width / 2)) && (tmp->y > (double)(field_height / 2))) {
-    // addtext("We are 3");
-    extra_x = (int)field_width;
-    extra_y = (int)field_height;
-  } else if ((tmp->x > (double)(field_width / 2)) && (tmp->y > (double)(field_height / 2))) {
-    // addtext("We are 4");
-    extra_x = 0;
-    extra_y = 0;
-  }
-
   findpath(tmp, x, y);
 
-  // return;
-  // he no fly!
-
-  /* bot shall fly :) */
   tmp->path[PATH_MAX_ - 1][1] = 0;
 
   tx = tmp->path[(int)(tmp->path[PATH_MAX_ - 1][1])][0];

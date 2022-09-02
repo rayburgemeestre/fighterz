@@ -17,8 +17,6 @@ unsigned int blue_team_score = 0;
 
 /***************** VARS ****************/
 
-struct flagpositions flagpos; /**< flagpos will be used to store
-                                 path calculation results (length of all 4 directions) */
 // DEPRECATED double SPEED; /**< pixels to move every step :)
 // should be in sync with clients, example: 0.20 (pixels) */
 struct timeb t;       /**< used to calculate our time in millisecs (our_time) */
@@ -123,8 +121,6 @@ struct location BLUEFLAG;           /**< struct which will contain the position 
                                          on the map (not in x/y coordinates, but in blocks)*/
 struct location red_flag_default;   /**< red flag default location */
 struct location blue_flag_default;  /**< blue flag default location */
-int extra_x;                        /**< Used within the path calculations (x-offset) */
-int extra_y;                        /**< Used within the path calculations (x-offset) */
 ID bot_id;                          /**< Used to give bots id's like 1000, 1001, 1002 etc */
 int path_calc_dbg_on;               /**< Indicates whether a debug file should be written about
                                          how the path was calculated */

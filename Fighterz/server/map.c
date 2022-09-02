@@ -210,7 +210,7 @@ void fillmap() {
   int cnt, cnt2;
 
   for (cnt = 0; cnt < Y_BLOCKS; cnt++) {
-    for (cnt2 = 0; cnt2 < (X_BLOCKS); cnt2++) {
+    for (cnt2 = 0; cnt2 < X_BLOCKS; cnt2++) {
       if (field[cnt][cnt2] == '1')
         map2[cnt][cnt2] = '#';
       else
@@ -222,13 +222,6 @@ void fillmap() {
       else
         map2[cnt][cnt2 + X_BLOCKS] = '1';
     }
-    // fprintf(kuub, "%s\n", map2[cnt]);
-  }
-  cnt2 = cnt;  // - 1; this was a mistake ;)
-  for (cnt = 0; cnt < Y_BLOCKS; cnt++) {
-    // fprintf(kuub, "%s\n", map2[cnt]);
-    strcpy(map2[cnt2], map2[cnt]);
-    cnt2++;
   }
 }
 

@@ -43,32 +43,36 @@ void map_read() {
 
   cols_read = 0;
 
-  for (row = 0; row < (Y_BLOCKS * 2); row++) {
+  for (row = 0; row < Y_BLOCKS; row++) {
     strcpy(line, map2[i++]);
 
-    for (col = 0, line_ptr = line; col < (X_BLOCKS * 2) && *line_ptr; col++, line_ptr++)
+    for (col = 0, line_ptr = line; col < X_BLOCKS && *line_ptr; col++, line_ptr++)
       if (isdigit(*line_ptr))
         map[row][col] = *line_ptr - '0';
       else
         map[row][col] = __INFINITY__;
-
-    if (col > cols_read) cols_read = col - 1;
-
-    for (; col < Y_BLOCKS; col++) map[row][col] = __INFINITY__;
   }
-  rows_read = row;
 
-  for (; row < (Y_BLOCKS * 2); row++)
-    for (col = 0; col < (X_BLOCKS * 2); col++) map[row][col] = __INFINITY__;
+  cols_read = X_BLOCKS;
+  rows_read = Y_BLOCKS;
 
-  for (row = 0; row < (Y_BLOCKS * 2); row++)
-    for (col = 0; col < (X_BLOCKS * 2); col++) {
+  for (row = 0; row < Y_BLOCKS; row++)
+    for (col = 0; col < X_BLOCKS; col++) {
       dist[row][col] = __INFINITY__;
       parent[row][col][0] = -1;
       parent[row][col][1] = -1;
     }
 
   startr = startc = endr = endc = -1;
+
+  printf("debug 2:\n");
+  for (row = 0; row < Y_BLOCKS; row++) {
+    for (col = 0; col < X_BLOCKS; col++) {
+      printf("%c", map[row][col] == __INFINITY__ ? '#' : (char)map[row][col] + '0');
+    }
+    printf("\n");
+  }
+
   return;
 }
 
@@ -419,162 +423,19 @@ void limit_path(void) {
 }
 
 void findpath(struct data *ptr, double x, double y) {
-  int i, use, tmp;
-  int rn; /* random number */
-
   fillmap();
 
-  flagpos.current = 1;
+  map_read();
 
-  for (i = 0; i < 4; i++) {
-    switch (flagpos.current) {
-      case 1:
-        map_read();
+  startr = (int)((ptr->y) / BLOCKSIZE);
+  startc = (int)((ptr->x) / BLOCKSIZE);
+  endr = (int)y / BLOCKSIZE;
+  endc = (int)x / BLOCKSIZE;
 
-        startr = (int)((ptr->y + extra_y) / BLOCKSIZE);
-        startc = (int)((ptr->x + extra_x) / BLOCKSIZE);
-        endr = (int)y / BLOCKSIZE;
-        endc = (int)x / BLOCKSIZE;
+  build_path();
+  limit_path();
 
-        build_path();
-        limit_path();
-
-        flagpos.length1 = map_draw_path();
-
-        break;
-      case 2:
-        map_read();
-
-        startr = (int)((ptr->y + extra_y) / BLOCKSIZE);
-        startc = (int)((ptr->x + extra_x) / BLOCKSIZE);
-        endr = (int)y / BLOCKSIZE;
-        endc = (int)(x + (int)field_width) / BLOCKSIZE;
-
-        build_path();
-        limit_path();
-
-        flagpos.length2 = map_draw_path();
-
-        break;
-      case 3:
-        map_read();
-
-        startr = (int)((ptr->y + extra_y) / BLOCKSIZE);
-        startc = (int)((ptr->x + extra_x) / BLOCKSIZE);
-        endr = (int)(y + (int)field_height) / BLOCKSIZE;
-        endc = (int)x / BLOCKSIZE;
-
-        build_path();
-        limit_path();
-
-        flagpos.length3 = map_draw_path();
-        break;
-      case 4:
-        map_read();
-
-        startr = (int)((ptr->y + extra_y) / BLOCKSIZE);
-        startc = (int)((ptr->x + extra_x) / BLOCKSIZE);
-        endr = (int)(y + (int)field_height) / BLOCKSIZE;
-        endc = (int)(x + (int)field_width) / BLOCKSIZE;
-
-        build_path();
-        limit_path();
-
-        flagpos.length4 = map_draw_path();
-        break;
-      default:
-        printf_("Failure\n");
-        exit(-1);
-        break;
-    }
-    /* We must loop 4 times, to calculate 4 paths!
-       TODO: we must not do this in case there are no warps..
-       Because then there is only one valid path!
-       This boolean expression must be calculated @ loadmap(); */
-    flagpos.current++;
-  }
-
-  srand(time(NULL));
-  // rn = 1+(int) (10.0*rand()/(RAND_MAX+1.0)); /* Random number between 1 and 10 */
-  rn = -1;
-  if (rn == 1) /* 1/10th chance to choose a route at random  */
-  {
-    use = 1 + (int)(4.0 * rand() / (RAND_MAX + 1.0));
-
-  } else {
-    use = 1;
-    tmp = flagpos.length1;
-    if ((tmp == 0 && flagpos.length2 > 0) || (flagpos.length2 < tmp && flagpos.length2 > 0)) {
-      use = 2;
-      tmp = flagpos.length2;
-    }
-    if ((tmp == 0 && flagpos.length3 > 0) || (flagpos.length3 < tmp && flagpos.length3 > 0)) {
-      use = 3;
-      tmp = flagpos.length3;
-    }
-    if ((tmp == 0 && flagpos.length4 > 0) || (flagpos.length4 < tmp && flagpos.length4 > 0)) {
-      use = 4;
-      tmp = flagpos.length4;
-    }
-  }
-  addtext("path %d was the shortest with %d", use, tmp);
-
-  flagpos.current = use;
-  switch (flagpos.current) {
-    case 1:
-      map_read();
-      startr = (int)((ptr->y + extra_y) / BLOCKSIZE);
-      startc = (int)((ptr->x + extra_x) / BLOCKSIZE);
-      endr = (int)y / BLOCKSIZE;
-      endc = (int)x / BLOCKSIZE;
-
-      build_path();
-      limit_path();
-      map_create_path(ptr);
-      break;
-    case 2:
-      map_read();
-      startr = (int)((ptr->y + extra_y) / BLOCKSIZE);
-      startc = (int)((ptr->x + extra_x) / BLOCKSIZE);
-      endr = (int)y / BLOCKSIZE;
-      endc = (int)(x + (int)field_width) / BLOCKSIZE;
-
-      build_path();
-      limit_path();
-      map_create_path(ptr);
-      break;
-    case 3:
-      map_read();
-      startr = (int)((ptr->y + extra_y) / BLOCKSIZE);
-      startc = (int)((ptr->x + extra_x) / BLOCKSIZE);
-      endr = (int)(y + (int)field_height) / BLOCKSIZE;
-      endc = (int)x / BLOCKSIZE;
-
-      build_path();
-      limit_path();
-      map_create_path(ptr);
-      break;
-    case 4:
-      map_read();
-      startr = (int)((ptr->y + extra_y) / BLOCKSIZE);
-      startc = (int)((ptr->x + extra_x) / BLOCKSIZE);
-      endr = (int)(y + (int)field_height) / BLOCKSIZE;
-      endc = (int)(x + (int)field_width) / BLOCKSIZE;
-
-      build_path();
-      limit_path();
-      map_create_path(ptr);
-      break;
-    default:
-      exit(-1);
-      break;
-  }
-
-  addtext("We required 2x %d/%d (pushes/pops) queue operations\n", pushes, pops);
-  addtext("N = rows x cols = %d x %d = %d\n", rows_read, cols_read, rows_read * cols_read);
-  //    addtext("Maximum memory consummed in the priority queue = %d\n", max_memory);
-
-  return;
+  map_create_path(ptr);
 }
 
 /* Priority queue stuff */

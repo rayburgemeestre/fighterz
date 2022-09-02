@@ -427,8 +427,8 @@ int bs_collidecheck(struct data *ptr) {
           /* Compare coordinates with this ship */
           if ((dabs(tmp2->x - (tmp->x)) <= (double)(BLOCKSIZE / 4)) &&
               (dabs(tmp2->y - (tmp->y)) <= (double)(BLOCKSIZE / 4))) {
-            //						addtext("del bullet at addr: %d P:%s hit P:%s", tmp, tmp->owner->nick,
-            //tmp2->nick); sock__NOTUSED__write(tmp2->id, "H\n");
+            //						addtext("del bullet at addr: %d P:%s hit P:%s", tmp,
+            // tmp->owner->nick, tmp2->nick); sock__NOTUSED__write(tmp2->id, "H\n");
             send_hit(EVERYONE, NULL, tmp2->id, tmp->id, (unsigned char)tmp2->power);
             /* Ajust scores */
             tmp2->power--;

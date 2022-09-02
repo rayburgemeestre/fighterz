@@ -34,7 +34,7 @@ void addtext(char *pattern, ...) {
   }
 
   strcpy(console[i], buf);
-//  printf("add_text: %s\n", buf);
+  //  printf("add_text: %s\n", buf);
 }
 #else
 

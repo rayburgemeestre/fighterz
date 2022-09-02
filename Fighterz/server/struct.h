@@ -126,18 +126,6 @@ struct data {
 typedef struct data user; /**< typedef for the structure data */
 typedef user *LINK;       /**< pointer to { typedef for the struct data } */
 
-/** flag positions */
-struct flagpositions {
-  int current; /**< Current path we're calculating, because there are
-                    always 4 directions there should be calculated (example:
-                                    because flying an entire different direction might be faster..
-                    if there is an opening you can warp..) */
-  int length1; /**< will contain the length of path calculation 1 */
-  int length2; /**< will contain the length of path calculation 2 */
-  int length3; /**< will contain the length of path calculation 3 */
-  int length4; /**< will contain the length of path calculation 4 */
-};
-
 /**
  *	Struct to store locations (on map not coordinates)
  *  used for flags/spawnlocatioins etc

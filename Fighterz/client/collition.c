@@ -574,8 +574,9 @@ int collidecheck2b(struct data *ptr) {
                                                                               int qx;
                                                                               qx = (int)( ( (x + MARGE ) / blocksize));
                                                                               if (field[py][qx] == '1')
-                                                                              {														// TODO; find
-         out why :) rectfill( bmp_shipfield, (qx * blocksize), (py * blocksize),
+                                                                              {
+         //
+         TODO; find out why :) rectfill( bmp_shipfield, (qx * blocksize), (py * blocksize),
                                                                                               ((qx + 1) * blocksize),
          ((py + 1) * blocksize), makecol(255,0,0)
                                                                                       );
