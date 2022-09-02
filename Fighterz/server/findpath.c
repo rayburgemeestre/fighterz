@@ -39,7 +39,8 @@ static int abort_at_dest = 0; /* don't abort at destination */
 void map_read() {
   int row, col;
   int i = 0;
-  char line[1001], *line_ptr;
+  char line[1001];
+  char *line_ptr;
 
   cols_read = 0;
 
@@ -64,16 +65,6 @@ void map_read() {
     }
 
   startr = startc = endr = endc = -1;
-
-  printf("debug 2:\n");
-  for (row = 0; row < Y_BLOCKS; row++) {
-    for (col = 0; col < X_BLOCKS; col++) {
-      printf("%c", map[row][col] == __INFINITY__ ? '#' : (char)map[row][col] + '0');
-    }
-    printf("\n");
-  }
-
-  return;
 }
 
 int map_draw_path(void) {
@@ -84,7 +75,7 @@ int map_draw_path(void) {
     for (col = 0; col < cols_read; col++)
       if (parent[row][col][0] >= 0 && parent[row][col][1] >= 0) wt += map[row][col];
 
-  map_draw_path2();
+  // map_draw_path2();
 
   return wt;  // weight of path
 }
@@ -95,30 +86,15 @@ void map_create_path(struct data *ptr) {
   int old_r, old_c;
   int ret;
   int tcoord_x, tcoord_y; /* tussen coordinaten, waar die zeg maar maximaal in 1 lijn naartoe kan vliegen */
-  static FILE *fp = NULL;
   double x1, x2, y1, y2;
-
-  if (fp == NULL)
-    if (!(fp = fopen("debug.log", "w"))) die("cannot open debug.log");
 
   element = 0;
 
   old_r = current_r = startr;
   old_c = current_c = startc;
 
-  // etcfprintf(fp, "old_r = current_r = startr (%);", );fflush(stdout);
-  fprintf(fp, "LOG: old_r = current_r = startr (%d)\n", startr);
-  fflush(fp);
-  fprintf(fp, "LOG: old_c = current_c = startc (%d)\n", startc);
-  fflush(fp);
-
   tcoord_x = startc * BLOCKSIZE + (BLOCKSIZE / 2);
   tcoord_y = startr * BLOCKSIZE + (BLOCKSIZE / 2);
-
-  fprintf(fp, "LOG: tcoord_x = startc in pixels == %d\n", tcoord_x);
-  fflush(fp);
-  fprintf(fp, "LOG: tcoord_y = startr in pixels == %d\n", tcoord_y);
-  fflush(fp);
 
   ptr->bot_x = (double)((startc * BLOCKSIZE) + (BLOCKSIZE / 2));
   ptr->bot_y = (double)((startr * BLOCKSIZE) + (BLOCKSIZE / 2));
@@ -127,8 +103,6 @@ void map_create_path(struct data *ptr) {
   while (dir != 0) {
     /* find a walkable spot */
     dir = 0;
-    fprintf(fp, "currently at element: %d\n", element);
-    fflush(fp);
 
     /* left of us */
     if (current_c > 0 && dir == 0)
@@ -146,19 +120,11 @@ void map_create_path(struct data *ptr) {
     if (current_r < rows_read && dir == 0)
       if (parent[current_r + 1][current_c][0] >= 0 && parent[current_r + 1][current_c][1] >= 0) dir = 4;
 
-    fprintf(fp, "currently at dir: %d\n", dir);
-    fflush(fp);
-
     parent[current_r][current_c][0] = -1;
     parent[current_r][current_c][1] = -1;
 
     old_c = current_c;
     old_r = current_r;
-
-    fprintf(fp, "LOG: old_c = current_c (%d)\n", current_c);
-    fflush(fp);
-    fprintf(fp, "LOG: old_r = current_r (%d)\n", current_r);
-    fflush(fp);
 
     if (dir == 1)
       current_c--;
@@ -174,36 +140,23 @@ void map_create_path(struct data *ptr) {
     y1 = (double)(startr * BLOCKSIZE) + (BLOCKSIZE / 2);
     x2 = (double)((current_c)*BLOCKSIZE) + (BLOCKSIZE / 2);
     y2 = (double)((current_r)*BLOCKSIZE) + (BLOCKSIZE / 2);
-    while (x1 > field_width) x1 -= field_width;
-    while (y1 > field_height) y1 -= field_height;
-    while (x2 > field_width) x2 -= field_width;
-    while (y2 > field_height) y2 -= field_height;
+    // while (x1 > field_width) x1 -= field_width;
+    // while (y1 > field_height) y1 -= field_height;
+    // while (x2 > field_width) x2 -= field_width;
+    // while (y2 > field_height) y2 -= field_height;
     ret = valid_target(x1, y1, x2, y2, (double)(BLOCKSIZE / 2));
-
-    // ret = 1;
-
-    fprintf(fp,
-            "element %d is %sa valid target (%d,%d)-(%d,%d) field= %ldu-%ldu\n",
-            element,
-            (ret == 1 ? "NOT " : ""),
-            (int)x1,
-            (int)y1,
-            (int)x2,
-            (int)y2,
-            field_width,
-            field_height);
 
 #if DEBUG2 == 1
     {
       double a, b, c, d;
       a = x1;
-      while (a > field_width) a -= field_width;
+      //      while (a > field_width) a -= field_width;
       b = y1;
-      while (b > field_height) b -= field_height;
+      //      while (b > field_height) b -= field_height;
       c = x2;
-      while (c > field_width) c -= field_width;
+      //      while (c > field_width) c -= field_width;
       d = y2;
-      while (d > field_height) d -= field_height;
+      //      while (d > field_height) d -= field_height;
       line(fieldbuff, (int)a, (int)b, (int)c, (int)d, makecol(255, 0, 0));
     }
 #endif
@@ -224,8 +177,6 @@ void map_create_path(struct data *ptr) {
       //			fprintf(fp, "LOG: current_r = start_r = old_r (%d)\n", old_r);
       old_c = startc = current_c;
       old_r = startr = current_r; /* was: current instead of old */
-      fprintf(fp, "LOG: old_c = startc = current_c (%d)\n", current_c);
-      fprintf(fp, "LOG: old_r = startr = current_r (%d)\n", current_r);
 #if DEBUG2 == 1
       {
         double x = (double)tcoord_x;
@@ -243,11 +194,6 @@ void map_create_path(struct data *ptr) {
       }
 #endif
     } else {
-      fprintf(fp, "LOG: tcoord_x = current_c in pixels == %d\n", tcoord_x);
-      fflush(fp);
-      fprintf(fp, "LOG: tcoord_y = current_r in pixels == %d\n", tcoord_y);
-      fflush(fp);
-
       tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
       tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
 
@@ -292,8 +238,6 @@ void map_draw_path2(void) {
   int wt;
 
   wt = 0;
-  /* Auw, dit is redelijk pijnlijk... de else path's kloppen hier
-   * niet, of iig niet met hoe ze uitgelijnd zijn... -- Syzop */
   for (row = 0; row < rows_read; row++) {
     for (col = 0; col <= cols_read; col++) {
       if (startr == row && startc == col)
@@ -302,10 +246,6 @@ void map_draw_path2(void) {
         ;
       else if (parent[row][col][0] >= 0 && parent[row][col][1] >= 0)
         wt += map[row][col];
-      //			else if (map[row][col] < __INFINITY__)
-      //				;
-      //			else
-      //				;
     }
   }
 }

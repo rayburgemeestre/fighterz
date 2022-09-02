@@ -155,7 +155,6 @@ int start() {
 
 void init_screen() {
   /* Set the resolution with SAFE autodetection. */
-
   if (fullscreen == 1) {
     set_gfx_mode(GFX_AUTODETECT_FULLSCREEN, desktop_x, desktop_y, screensize_x, screensize_y);
   } else {

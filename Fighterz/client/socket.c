@@ -792,7 +792,7 @@ void m_newuser(int id,
   clag = (unsigned long)current_lag();
 
   head->id = id;
-  head->dead = 2;  // spectator
+  head->dead = 0;  // 2 = spectator
   //[TODO] we need one phucing type
   // instead of booleans for each specialization
   head->bot = (type == T_BOT) ? 1 : 0;
@@ -818,6 +818,7 @@ void m_newuser(int id,
   head->hit_t = ourtime;
   head->impact = 0;
   head->shiptype = shiptype;
+  head->alive = alive;
   head->team = team;
 
   strcpy(head->nick, nick);

@@ -151,6 +151,10 @@ struct data *add_bot() {
   head->type = T_BOT;
   head->freeze = 0;
 
+  static int last_ship_type = 0;
+  head->shiptype = last_ship_type++;
+  last_ship_type = last_ship_type % 6;
+
   if (red_team_count < blue_team_count) {
     head->team = 1;
     red_team_count++;

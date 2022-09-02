@@ -146,7 +146,8 @@ void parse_input() {
       // findpath(head);
       bot = add_bot();
       notify_of_newuser(EVERYONE, NULL, bot);
-      flyto(bot->id, REDFLAG.x, REDFLAG.y);
+      // flyto(bot->id, REDFLAG.x, REDFLAG.y);
+      flyto(bot->id, 1, 1);
       // flyto(bot->id, bot->x, bot->y + 10);
       // addtext("2: %d", head->bot);
       //}
@@ -281,9 +282,9 @@ void initialize_vars() {
   ftime(&started);
 
   /* map */
-  // strncpy(map3, "maps/lvl-syz.txt", 64);
+  strncpy(map3, "maps/lvl-syz.txt", 64);
   // strncpy(map3, "maps/lvl-x2.txt", 64);
-  strncpy(map3, "maps/minilvl-x.txt", 64);
+  // strncpy(map3, "maps/minilvl-x.txt", 64);
   map3[63] = '\0';
   return;
 }

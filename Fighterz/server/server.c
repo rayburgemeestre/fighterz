@@ -410,18 +410,17 @@ int main(void) {
 
     /* ***** ai_bots() ****** */
     {
-      LINK humanoid, bot;
+      LINK other, bot;
       for (bot = head; bot; bot = bot->next)
         if (bot->bot == 1 && bot->invincible != 1 && bot->dead == 0)
-          for (humanoid = head; humanoid; humanoid = humanoid->next)
-            if (humanoid->bot == 0 && humanoid->dead == 0 && humanoid->invincible == 0)
-              if (sqrt((bot->x - humanoid->x) * (bot->x - humanoid->x) +
-                       (bot->y - humanoid->y) * (bot->y - humanoid->y)) <= 300) {
+          for (other = head; other; other = other->next)
+            if (other->bullet == 0 && other->team != bot->team && other->dead == 0 && other->invincible == 0)
+              if (sqrt((bot->x - other->x) * (bot->x - other->x) + (bot->y - other->y) * (bot->y - other->y)) <= 300) {
                 if ((bot->bullet_time == 0) || ((servertime - bot->bullet_time) >= (unsigned)BULLET_RE)) {
                   bot->bullet_time = servertime;
                   if (bot->bulletcnt < BULLET_MAX) {
                     LINK b;
-                    double angle = getangle(bot->x, bot->y, humanoid->x, humanoid->y) + 180;
+                    double angle = getangle(bot->x, bot->y, other->x, other->y) + 180;
 
                     // bot->velocity = 0;
                     // bot->speed    = 0.0;

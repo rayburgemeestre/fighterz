@@ -125,6 +125,7 @@ int main(int argc, char *argv[])
     } else {
       if (get_desktop_resolution(&desktop_x, &desktop_y) == 0) {
         printf("Read desktop resolution!\n");
+        init_screen();
       }
     }
 

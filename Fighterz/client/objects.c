@@ -75,16 +75,35 @@ void draw_ships() {
       /* is this ship a bot */
       if (current->bot == 1) {
         if (!mod_grid) {
+          int shiptype = SHIPS4;
+          switch (current->shiptype) {
+            case 1:
+              shiptype = SHIPS1;
+              break;
+            case 2:
+              shiptype = SHIPS2;
+              break;
+            case 3:
+              shiptype = SHIPS3;
+              break;
+            case 4:
+              shiptype = SHIPS4;
+              break;
+            case 5:
+              shiptype = SHIPS5;
+              break;
+          }
+
           rotate_sprite(bmp_shipfield,
-                        (BITMAP *)dat_base[SHIPS4].dat,
+                        (BITMAP *)dat_base[shiptype].dat,
                         current_x - (blocksize / 2),
                         current_y - (blocksize / 2),
                         itofix((int)((current->deg * 256) / 360)));
 
         } else {
           ret = (PI / 180) * (current->deg - 90);
-          pos_x = futureX(current, current->deg, radius);
-          pos_y = futureY(current, current->deg, radius);
+          pos_x = futureX(current, current->deg, radius) - x_on_map;
+          pos_y = futureY(current, current->deg, radius) - y_on_map;
 
           circle(bmp_shipfield, current_x, current_y, blocksize / 4, color);
           line(bmp_shipfield, current_x, current_y, pos_x, pos_y, color);

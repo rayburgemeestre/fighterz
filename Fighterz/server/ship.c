@@ -29,11 +29,35 @@ void moveships() {
               current->invincible = 1;
               current->invincibility_t = 5000;
               current->invincibility_t2 = servertime;
-              current->x = (double)(BLUE.x + (BLOCKSIZE / 2));
-              current->y = (double)(BLUE.y + (BLOCKSIZE / 2));
+              if (current->team == 1) {
+                current->x = (double)(RED.x + (BLOCKSIZE / 2));
+                current->y = (double)(RED.y + (BLOCKSIZE / 2));
+              } else {
+                current->x = (double)(BLUE.x + (BLOCKSIZE / 2));
+                current->y = (double)(BLUE.y + (BLOCKSIZE / 2));
+              }
               current->dead = 0;
               notify_of_respawn(EVERYONE, NULL, current);
-              flyto(current->id, REDFLAG.x, REDFLAG.y);
+              // go to other teams flag
+              //	if (current->team == 1) {
+              //		  flyto(current->id, BLUEFLAG.x, BLUEFLAG.y);
+              //	} else {
+              //		  flyto(current->id, REDFLAG.x, REDFLAG.y);
+              //	}
+              // or go somewhere random
+              {
+                int rand_x, rand_y, tx, ty;
+                int continue_loop = 0;
+                do {
+                  rand_x = 1 + (int)(field_width * rand() / (RAND_MAX + 1.0));
+                  rand_y = 1 + (int)(field_height * rand() / (RAND_MAX + 1.0));
+
+                  tx = (int)((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
+                  ty = (int)((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+                } while (field[ty][tx] == '1');
+
+                flyto(current->id, rand_x, rand_y);
+              }
             }
           }
         }
@@ -73,6 +97,7 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
   double ret;
   double pos_x, pos_y;
   LINK current = head;
+  int new_target = 0;
 
   while (current != NULL) {
     if (current->bullet != 1) {
@@ -138,67 +163,16 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
             */
           } else if (current->velocity == -1) {
             if (current->speed > (-1 * current->max_speed)) current->speed -= 0.01;
-          } else
-            ;
-
-          /*
-          ---
-          --- Start: Old
-          ---
-                  //addtext("XXXXXXXXXXXXXXXXXXXXXXX");
-                  if (current->velocity == 1)
-                  {
-                          if (current->speed < SPEED)
-                                  current->speed += 0.01;
-
-                          //addtext("%20lu Speed atm: %.2f", servertime, current->speed);
-                  }
-                  if (current->velocity == -1)
-                  {
-                          if (current->speed > (-1 * SPEED))
-                                  current->speed -= 0.01;
-
-                          //addtext("%20lu Speed atm: %.2f", servertime, current->speed);
-                  }
-          //	else
-          //		; // current->vel_time += diff;
-
-          ---
-          --- End: Old
-          ---
-          */
-          /*
-          if (current->velocity == 0)
-          {
-                  if (current->speed == -0.01)
-                  {
-                          current->speed = 0;
-                  }
-                  else
-                  {
-                          if (current->speed > 0.00)
-                          {
-                                  addtext("%.2f -> 1", current->speed);
-                                  current->speed -= 0.01;
-                          }
-                          else if (current->speed < -0.01)
-                          {
-                                  addtext("%.2f -> 2", current->speed);
-                                  current->speed += 0.01;
-                          }
-                  }
-          } */
+          }
         }
 
         times = 0;
         tmp = 0;
 
-        /* /NEW */
-
         /* move this ship*/
         if (current->t > t2) { /* time is not synched correctly */
           /* todo: call function to sync again*/
-          // addtext("ERROR: Time out of sync for client: %d", current->id);
+          addtext("ERROR: Time out of sync for client: %d", current->id);
           return;
         }
         diff = (servertime - current->t);
@@ -211,26 +185,12 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
           /* we don't move because we THINK (and are probably right)
              that this person has collided with some wall.. */
         }
-        // --
-        // if ( (current->velocity == 1) || (current->velocity == -1) )
-        //{
-        //	//tmp = MOVE_INTERVAL * 2;
-        //	tmp = 2;
-        //} else if ((current->velocity == 2) || (current->velocity == -2))
-        //{
-        //	//tmp = MOVE_INTERVAL;
-        //	tmp = 1;
-        //} else {
-        //	current->t = servertime + diff;
-        //	return;
-        //}
 
         tmp = 1;
 
         while (diff >= tmp) {
           diff -= tmp;
           current->t += tmp;
-          // times += ( MOVE_STEPW * ( BLOCKSIZE / DEF_BLOCKSIZE ) );
           times += MOVE_STEPW;
         }
 
@@ -240,11 +200,9 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
         for (cnt = 0; cnt < times; cnt++) {
           if (current->bot == 1) {
             if (current == NULL) {
-              printf("Hier klopt geen reet van\n");
               return;
             }
 
-            // alert("hihi", "","","","",1,1);
             if (current->path[PATH_MAX_ - 1][1] < current->path[PATH_MAX_ - 1][0]) {
               int a;
               double tx, ty;
@@ -257,36 +215,16 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
               tx = current->path[a][0];
               ty = current->path[a][1];
 
-              // circlefill(fieldbuff, tx, ty, 5, makecol(0,255,0));
-              // circlefill(fieldbuff, tx + field_width, ty + field_height, 5, makecol(0,255,0));
-              // circlefill(fieldbuff, tx - field_width, ty + field_height, 5, makecol(0,255,0));
-              // circlefill(fieldbuff, tx + field_width, ty - field_height, 5, makecol(0,255,0));
-              // circlefill(fieldbuff, tx - field_width, ty - field_height, 5, makecol(0,255,255));
-
-              // addtext("Tx: %.2f Ty: %.2f 1;%.2f 2;%.2f   ? %.2f", head->bot_x, head->bot_y, head->x, head->y,
-              // head->y);
-
               /* We're following a path :) */
 
               fx = futureX(current, current->deg, current->speed);
               fy = futureY(current, current->deg, current->speed);
 
-              //							diffx1 = dabs(current->bot_x - tx);
-              //							diffx2 = dabs(fx - tx);
-              //							diffy1 = dabs(current->bot_y - ty);
-              //							diffy2 = dabs(fy - ty);
-
               double distance_now = get_distance(current->bot_x, current->bot_y, tx, ty);
               double distance_next = get_distance(fx, fy, tx, ty);
 
-              // fprintf(juub, "x1;%.2f x2;%.2f y1;%.2f y2;%.2f  x: %.2f %.2f\n", diffx1, diffx2, diffy1, diffy2,
-              // current->bot_x, fx);
-
               /* If coordinates between ship and the target (tx/ty) will
               increase with the next step .. :) */
-              // if ((diffx2 >= diffx1 &&
-              //	 diffy2 >= diffy1) && current->speed != 0.0)
-              // if (distance_next > distance_now && current->speed != 0.0)
               if (distance_next > distance_now && current->speed != 0.0) {
                 ox = current->path[(int)(current->path[PATH_MAX_ - 1][1])][0];
                 oy = current->path[(int)(current->path[PATH_MAX_ - 1][1])][1];
@@ -294,11 +232,10 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
                 current->path[PATH_MAX_ - 1][1] = current->path[PATH_MAX_ - 1][1] + 1.0;
 
                 addtext("Done path %.2f of %.2f", current->path[PATH_MAX_ - 1][1], current->path[PATH_MAX_ - 1][0]);
-
-                // if (current->path[PATH_MAX-1][1] != current->path[PATH_MAX-1][0])
-                //{
-
-                // current->velocity = 0;
+                //                printf("Bot %d is following path %.2f of %.2f\n",
+                //                       current->id,
+                //                       current->path[PATH_MAX_ - 1][1],
+                //                       current->path[PATH_MAX_ - 1][0]);
 
                 tx = current->path[(int)(current->path[PATH_MAX_ - 1][1])][0];
                 ty = current->path[(int)(current->path[PATH_MAX_ - 1][1])][1];
@@ -310,15 +247,10 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
                 current->bot_y = oy;
 
                 if ((current->path[PATH_MAX_ - 1][0] - current->path[PATH_MAX_ - 1][1]) == 0) {
-                  // current->deg = getangle(
-                  //	endc * BLOCKSIZE + (BLOCKSIZE / 2),
-                  //	endr * BLOCKSIZE + (BLOCKSIZE / 2),
-                  //	current->bot_x,
-                  //	current->bot_y
-                  //); Hmmm
                   current->velocity = 0;
                   current->speed = 0.0;
-                  printf("Bot %d has reached its destination\n", current->id);
+                  //                  printf("Bot %d has reached its destination\n", current->id);
+                  new_target = 1;
 
                   /* Acceleration update */
                   send_accel(EVERYONE,
@@ -328,68 +260,37 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
                              current->y,
                              (signed char)current->velocity,
                              current->speed);
-                  //#ifndef NOT_DEFINED
-                  //#endif
-                  /* XXXXXXZ */
-                  // circlefill(fieldbuff, current->target_x, current->target_y, 20, makecol(255,255,255));
-                  // circlefill(fieldbuff, current->target_x - field_width, current->target_y - field_height, 20,
-                  // makecol(255,255,255));
 
                 } else {
                   current->deg = getangle(tx, ty, current->bot_x, current->bot_y);
 
                   /* Direction update */
-                  /* [TODO: Is this right? turn wasn't sent before ;P] */
                   send_turn(
                       EVERYONE, NULL, current->id, current->x, current->y, (signed char)current->turn, current->deg);
                 }
 
-                //                // flyto random place
-                //                {
-                //                  int rand_x, rand_y, tx, ty;
-                //                  int continue_loop = 0;
-                //                  do {
-                //                    rand_x = 1 + (int)(field_width * rand() / (RAND_MAX + 1.0));
-                //                    rand_y = 1 + (int)(field_height * rand() / (RAND_MAX + 1.0));
-                //
-                //                    tx = (int)((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
-                //                    ty = (int)((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
-                //                  } while (field[ty][tx] == '1' || (fabs(rand_x - current->x) < 20 && fabs(rand_y -
-                //                  current->y) < 20));
-                //
-                //                  head->path[PATH_MAX_ - 1][0] = 0;
-                //                  head->path[PATH_MAX_ - 1][1] = 0;
-                //                  flyto(current->id, rand_x, rand_y);
-                //                }
+                // flyto random place
+                if (new_target) {
+                  int rand_x, rand_y, tx, ty;
+                  int continue_loop = 0;
+                  do {
+                    rand_x = 1 + (int)(field_width * rand() / (RAND_MAX + 1.0));
+                    rand_y = 1 + (int)(field_height * rand() / (RAND_MAX + 1.0));
 
-                //}
+                    tx = (int)((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
+                    ty = (int)((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+                  } while (field[ty][tx] == '1' || (fabs(rand_x - current->x) < 20 && fabs(rand_y - current->y) < 20));
+
+                  current->path[PATH_MAX_ - 1][0] = 0;
+                  current->path[PATH_MAX_ - 1][1] = 0;
+                  flyto(current->id, rand_x, rand_y);
+                }
               }
             }
-            // printf("Checking id: %d (bot: %d)\n", current->id, current->bot);
-            // fflush(stdout);
-            // fflush(stdin);
             collidecheck2(current, 0);
-            // heh foutje @ collidecheck2b(current);
-          }  // if (current->bot == 1)
-          else if (current->bot == 0) {
+          } else if (current->bot == 0) {
             collidecheck2(current, 0);
           }
-
-          //					if (ret == 1)
-          //						break; // don't move, we would collide
-
-          /* collidecheck2(current);
-          do not collide check at the server, stuff could
-          be out of sync, and that would mess up some things */
-
-          // if (current->velocity == 0) break;
-
-          //	if ((current->velocity) < 0)
-          //	{
-          //		direction = SPEED * -1; ** pixzls to move :) **
-          //	} else {
-          //		direction = SPEED;
-          //	}
 
           direction = current->speed;
 
@@ -415,8 +316,6 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
           pos_y = pos_y + radius;
           pos_y = pos_y + current->bot_y - (BLOCKSIZE / 2);
           current->bot_y = pos_y;
-
-          // addtext("set to: y: %.2f", pos_y);
 
           /* did the ship fly out the field? */
           if (current->y < 0) {  // *warp*
