@@ -82,5 +82,11 @@ install (TARGETS server DESTINATION bin)
 set(all_sources ${client_SOURCES})
 list(APPEND all_sources ${mapmaker_SOURCES})
 list(APPEND all_sources ${server_SOURCES})
+
+list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/mapmaker/data.h)
+list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/client/data.h)
+list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/client/sound.h)
+list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/mapmaker/dialog.c)
+
 list(REMOVE_DUPLICATES all_sources)
 clangformat_setup(${all_sources})

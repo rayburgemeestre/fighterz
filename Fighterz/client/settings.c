@@ -15,6 +15,7 @@
 //Dialog
 #undef bg_color
 #define bg_color 0xFFFFFF /* dialog background colour */
+// clang-format off
 DIALOG settings[] =
 {
    /* (proc)                 (x)  (y)  (w)  (h)  (fg) (bg)                    (key) (flags) (d1) (d2) (dp)                                 (dp2) (dp3) */
@@ -44,6 +45,7 @@ DIALOG settings[] =
    { d_text_proc,            264, 156, 144, 12,  0,   bg_color, 0,    0,      0,   0,   "Sound Options",                     NULL, NULL },
    { NULL,                   0,   0,   0,   0,   0,   0,        0,    0,      0,   0,   NULL,                                NULL, NULL }
 };
+// clang-format on
 
 //external
 //--
