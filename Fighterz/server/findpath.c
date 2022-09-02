@@ -187,6 +187,8 @@ while (x2 > field_width)  x2 -= field_width;
 while (y2 > field_height) y2 -= field_height;
 		ret = valid_target( x1, y1, x2, y2, (double)(BLOCKSIZE/2) );
 
+		// ret = 1;
+
 		fprintf(fp, "element %d is %sa valid target (%d,%d)-(%d,%d) field= %ldu-%ldu\n", element, (ret == 1 ? "NOT " : ""),
 			(int)x1, (int)y1, (int)x2, (int)y2,
 			field_width,
@@ -208,6 +210,9 @@ while (y2 > field_height) y2 -= field_height;
 			static int old_x,
 				       old_y;
 
+			// these two lines help if ret = 1
+			// tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
+			// tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
 			/* not a valid target  */
 			//LOG: current++ == 1222
 			ptr->path[element][0]   = (double)tcoord_x;
@@ -290,7 +295,7 @@ void map_draw_path2(void)
     wt = 0;
 	/* Auw, dit is redelijk pijnlijk... de else path's kloppen hier
 	 * niet, of iig niet met hoe ze uitgelijnd zijn... -- Syzop */
-    for (row = 0; row < rows_read; row++)
+	for (row = 0; row < rows_read; row++)
 	{
 		for (col = 0; col <= cols_read; col++)
 		{
@@ -305,7 +310,7 @@ void map_draw_path2(void)
 //			else
 //				;
 		}
-    }
+	}
 }
 
 
@@ -317,21 +322,19 @@ void map_draw_path2(void)
 /* TODO: Hier zit iets fout, 8x2=16 dingen, en er staan hier 8, dus de andere 8
  * zijn _NIET_ geinitaliseerd -- Syzop:
  * Nice find :) -- trigen
+ * EDIT: blijkbaar intentioneel geweest, alleen naar boven/links/rechts/beneden was de bedoeling
+ * zat wel bug in idd
  */
 
-int delta[8][2] = {
+int delta[4][2] = {
 	// deltas should be:
 	// 1 2 3
 	// 4   5
 	// 6 7 8
-	{ -1, 1 }, // 1
-	{ 0, 1 }, // 2
-	{ 1, 1 }, // 3
-	{ -1, 0 }, // 4
-	{ 1, 0 }, // 5
-	{ -1, -1 }, // 6
-	{ 0, -1 }, // 7
-	{ 1, 1 }, // 8
+	{  0,  1 }, // 2
+	{ -1,  0 }, // 4
+	{  1,  0 }, // 5
+	{  0, -1 }, // 7
 };
 
 #ifdef max
@@ -384,7 +387,7 @@ void build_path(void)
 		}
 
 		/* FOREACH square adjacent to (row,col), call it drow(row,i), dcol(col,i) */
-		for (i = 0; i < 8; i++)
+		for (i = 0; i < 4; i++)
 		{
 			/* Check to make sure the square is on the map */
 			if (drow(row,i) < 0 || drow(row,i) >= rows_read ||

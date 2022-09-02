@@ -34,8 +34,13 @@ void loadmap() {
 				exit(-1);
 			}
 
-			strcpy(buff, strtok(ptr, "\n"));
-			
+			const char *src = strtok(ptr, "\n");
+			memmove(
+				buff,
+				src,
+				strlen(src) + 1
+			);
+
 			if ( cnt == 0 ) 
 				X_BLOCKS = (int)strlen(buff);
 			
@@ -49,7 +54,13 @@ void loadmap() {
 			
 		}
 		if ( buff[0] == '2' ) {
-			strcpy(buff, strtok(buff, "\n"));
+			const char *src = strtok(buff, "\n");
+			memmove(
+				buff,
+				src,
+				strlen(src) + 1
+			);
+
 			ptr = &buff[2];
 			BLOCKSIZE = atoi((const char *) ptr);
 		}
@@ -57,7 +68,12 @@ void loadmap() {
 		{
 		int df_id, pos_x, pos_y;
 		char datafile[128];
-			strcpy(buff, strtok(buff, "\n"));
+			const char *src = strtok(buff, "\n");
+			memmove(
+				buff,
+				src,
+				strlen(src) + 1
+			);
 			// ptr = &buff[2];
 			// Fuck it i totally trust our little mapfile :)
 			sscanf(buff, "3 %d %d %d %s", &df_id, &pos_x, &pos_y, datafile);

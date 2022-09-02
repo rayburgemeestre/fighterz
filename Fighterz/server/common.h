@@ -10,7 +10,7 @@
  #define WINDOWS 0
 #endif
 #define DEBUG 0   /*    log ship positions etc to debug.log */
-#define DEBUG2 0  /*    1= SHOW FIELD(console msgs are logged to a file)
+#define DEBUG2 1  /*    1= SHOW FIELD(console msgs are logged to a file)
 					    0= CONSOLE ONLY
 
 						if chosen 1: replace /subsystem:console with 
@@ -23,10 +23,6 @@
       #pragma comment( linker, "/subsystem:\"windows\"" )
   #else
       #pragma comment( linker, "/subsystem:\"console\"" )
-  #endif
-#else
-  #if (DEBUG2 == 1)
-	  #define DEBUG2 0
   #endif
 #endif
 
@@ -68,7 +64,9 @@
 #if DEBUG2 == 1
 /* allegro */
 #include <allegro.h>
+#ifdef _WIN32
 #include <winalleg.h>
+#endif
 #endif
 
 #if WINDOWS == 1 

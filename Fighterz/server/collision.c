@@ -36,7 +36,7 @@ int collidecheck2(struct data *ptr, int nobounce)
 			/* fucking thing still collides? FUCK THAT */ \
 			return collided; \
 		} else { \
-			addtext("collided restoring %2.2f to %2.2f", current->deg, old_deg); \
+			/* addtext("collided restoring %2.2f to %2.2f", current->deg, old_deg); */ \
 			current->deg = old_deg; \
 			/* current->deg = 0;*/ \
 		}

@@ -59,6 +59,23 @@ LINK current = head;
 	}
 }
 
+double get_distance(double x, double y, double x2, double y2) {
+
+	while (x < 0) {
+		x += field_width;
+	}
+	while (x > field_width) {
+		x -= field_width;
+	}
+	while (y < 0) {
+		y += field_height;
+	}
+	while (y > field_height) {
+		y -= field_height;
+	}
+	return sqrt((x - x2) * (x - x2)+ (y - y2) * (y - y2));
+}
+
 #define TURN_SPEED  10// 18
 #define ACCEL_SPEED 30
 void moveship(unsigned int id2, TIME t2)
@@ -295,16 +312,14 @@ for (cnt=0; cnt<times; cnt++)
 							
 							fx = futureX(current, current->deg, current->speed);
 							fy = futureY(current, current->deg, current->speed);
-							
-							diffx1 = dabs(current->bot_x - tx);
-							diffx2 = dabs(fx - tx);
-							diffy1 = dabs(current->bot_y - ty);
-							diffy2 = dabs(fy - ty);
 
-							double distance_now = sqrt((current->bot_x - tx) * (current->bot_x - tx)+
-													   (current->bot_y - ty) * (current->bot_y - ty));
-							double distance_next = sqrt((fx - tx) * (fx - tx)+
-												 	    (fy - ty) * (fy - ty));
+//							diffx1 = dabs(current->bot_x - tx);
+//							diffx2 = dabs(fx - tx);
+//							diffy1 = dabs(current->bot_y - ty);
+//							diffy2 = dabs(fy - ty);
+
+							double distance_now = get_distance(current->bot_x, current->bot_y, tx, ty);
+							double distance_next = get_distance(fx, fy, tx, ty);
 
 							//fprintf(juub, "x1;%.2f x2;%.2f y1;%.2f y2;%.2f  x: %.2f %.2f\n", diffx1, diffx2, diffy1, diffy2, current->bot_x, fx);
 
@@ -312,15 +327,12 @@ for (cnt=0; cnt<times; cnt++)
 							increase with the next step .. :) */
 							//if ((diffx2 >= diffx1 &&
 							//	 diffy2 >= diffy1) && current->speed != 0.0)
+							//if (distance_next > distance_now && current->speed != 0.0)
 							if (distance_next > distance_now && current->speed != 0.0)
 							{
-								printf("RBU | difference next: %f and now: %f\n", distance_next, distance_now);
-								printf("RBU | because of: %f,%f  ?  %f, %f\n", current->bot_x, current->bot_y, fx, fy);
 
 								ox = current->path[(int)(current->path[PATH_MAX_-1][1])][0];
 								oy = current->path[(int)(current->path[PATH_MAX_-1][1])][1];
-
-								printf("RBU | got ox, oy: %f,%f\n", ox, oy);
 
 								current->path[PATH_MAX_-1][1] = current->path[PATH_MAX_-1][1] + 1.0;
 
@@ -354,24 +366,6 @@ for (cnt=0; cnt<times; cnt++)
 										/* Acceleration update */
 										send_accel(EVERYONE, NULL, current->id, current->x, current->y, (signed char)current->velocity, current->speed);
 //#ifndef NOT_DEFINED
-										// flyto random place
-										{
-											int rand_x, rand_y, tx, ty;
-											int continue_loop = 0;
-											do
-											{
-												rand_x = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
-												rand_y = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
-
-												tx = (int) ((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
-												ty = (int) ((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
-											} while (field[ty][tx] == '1' || (fabs(rand_x - current->x) < 20 && fabs(rand_y - current->y) < 20));
-
-											printf("going to fly from: %f, %f -> %d, %d\n", current->x, current->y, rand_x, rand_y);
-											head->path[PATH_MAX_-1][0] = 0;
-											head->path[PATH_MAX_-1][1] = 0;
-											flyto(current->id, rand_x, rand_y);
-										}
 //#endif
 										/* XXXXXXZ */
 										//circlefill(fieldbuff, current->target_x, current->target_y, 20, makecol(255,255,255));
@@ -389,6 +383,24 @@ for (cnt=0; cnt<times; cnt++)
 										/* [TODO: Is this right? turn wasn't sent before ;P] */
 										send_turn(EVERYONE, NULL, current->id, current->x, current->y, (signed char)current->turn, current->deg);
 									}
+
+				// flyto random place
+				{
+					int rand_x, rand_y, tx, ty;
+					int continue_loop = 0;
+					do
+					{
+						rand_x = 1+(int) (field_width*rand()/(RAND_MAX+1.0));
+						rand_y = 1+(int) (field_height*rand()/(RAND_MAX+1.0));
+
+						tx = (int) ((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
+						ty = (int) ((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
+					} while (field[ty][tx] == '1' || (fabs(rand_x - current->x) < 20 && fabs(rand_y - current->y) < 20));
+
+					head->path[PATH_MAX_-1][0] = 0;
+					head->path[PATH_MAX_-1][1] = 0;
+					flyto(current->id, rand_x, rand_y);
+				}
 
 								//}
 							}
@@ -466,7 +478,6 @@ for (cnt=0; cnt<times; cnt++)
 					(unsigned int)current->id, current->x, current->y, current->deg, current->velocity);
 				fflush(outp);
 #endif
-
 				return;
 			}
 		}
