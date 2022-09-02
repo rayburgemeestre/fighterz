@@ -1,18 +1,18 @@
 #include "common.h"
-//refactored 12 dec 2004
+// refactored 12 dec 2004
 
-//Include AGUP External C header files
+// Include AGUP External C header files
 #include "agup/agup.h"
 #include "agup/aphoton.h"
 //#include "agup/ans.h"
 
-//functions
+// functions
 //--
 // void get_settings();
 
-//variables
+// variables
 //--
-//Dialog
+// Dialog
 #undef bg_color
 #define bg_color 0xFFFFFF /* dialog background colour */
 // clang-format off
@@ -47,66 +47,66 @@ DIALOG settings[] =
 };
 // clang-format on
 
-//external
+// external
 //--
-//type definitions:
-typedef struct VTX		 /* vertex data */
+// type definitions:
+typedef struct VTX /* vertex data */
 {
-    fixed x, y, z;
+  fixed x, y, z;
 } VTX;
-//cube functions:
+// cube functions:
 extern void init_shape();
 extern void animate_shape();
 extern void translate_shape();
 extern void quad(BITMAP *b, VTX *v1, VTX *v2, VTX *v3, VTX *v4);
 extern void draw_shape(BITMAP *b);
 
-//get_settings(): [...]
-void get_settings()
-{
-//cube:
-//--
-int last_retrace_count;
+// get_settings(): [...]
+void get_settings() {
+  // cube:
+  //--
+  int last_retrace_count;
 #undef bg_color
 #define bg_color makecol(216, 216, 216)
-//dialog:
-DIALOG_PLAYER *ds;
+  // dialog:
+  DIALOG_PLAYER *ds;
 
-	//Initialization:
-	gui_bg_color = makecol(255,0,0);
-	clear_to_color(tmpscreen, makecol(0,0,0));
+  // Initialization:
+  gui_bg_color = makecol(255, 0, 0);
+  clear_to_color(tmpscreen, makecol(0, 0, 0));
 
-	//Cube Initialization
-    set_projection_viewport(0, 0, screensize_x, screensize_y);
-    init_shape();
-    last_retrace_count = retrace_count;
-	//--
+  // Cube Initialization
+  set_projection_viewport(0, 0, screensize_x, screensize_y);
+  init_shape();
+  last_retrace_count = retrace_count;
+  //--
 
-	//Agup Initialization
-	agup_init(aphoton_theme);
-	ds = init_dialog(settings, -1);
-	//--
+  // Agup Initialization
+  agup_init(aphoton_theme);
+  ds = init_dialog(settings, -1);
+  //--
 
-	//cube [static/non moving background image ;), 
-	//      update_dialog etc didn't seem to work 
-	//      properly in combination with agup]
-	while (last_retrace_count < retrace_count)
-	{
-		animate_shape();
-		last_retrace_count++;
-	}
-	translate_shape(); // 3D -> 2D
-	draw_shape(tmpscreen); //Draw
+  // cube [static/non moving background image ;),
+  //      update_dialog etc didn't seem to work
+  //      properly in combination with agup]
+  while (last_retrace_count < retrace_count) {
+    animate_shape();
+    last_retrace_count++;
+  }
+  translate_shape();      // 3D -> 2D
+  draw_shape(tmpscreen);  // Draw
 
-	//Draw Options Text
-	textprintf_centre(tmpscreen, (FONT *)dat_base[ARCADE].dat, 
-		screensize_x / 2, 100,
-		makecol(255, 255, 255), 
-		"OPTIONS [Currently doesn't work]");
-	
-	//--
-	blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
-	do_dialog(settings, -1);
+  // Draw Options Text
+  textprintf_centre(tmpscreen,
+                    (FONT *)dat_base[ARCADE].dat,
+                    screensize_x / 2,
+                    100,
+                    makecol(255, 255, 255),
+                    "OPTIONS [Currently doesn't work]");
 
-	//while (key[KEY_ESC]);
+  //--
+  blit(tmpscreen, screen, 0, 0, 0, 0, screensize_x, screensize_y);
+  do_dialog(settings, -1);
+
+  // while (key[KEY_ESC]);
 }

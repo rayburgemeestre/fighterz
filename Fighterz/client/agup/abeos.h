@@ -27,6 +27,6 @@ int d_abeos_slider_proc(int, DIALOG *, int);
 int d_abeos_menu_proc(int, DIALOG *, int);
 int d_abeos_window_proc(int, DIALOG *, int);
 
-extern AL_CONST struct agup_theme * abeos_theme;
+extern AL_CONST struct agup_theme *abeos_theme;
 
 #endif

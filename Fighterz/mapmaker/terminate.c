@@ -1,7 +1,6 @@
 #include "header.h"
 
-void terminate()
-{
-    allegro_exit();
-    exit(-1);
+void terminate() {
+  allegro_exit();
+  exit(-1);
 }

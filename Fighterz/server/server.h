@@ -69,9 +69,9 @@ extern void drawbullets();
 
 #if WINDOWS == 1
 /* Fuck it then i'll make it myself ;)  */
-//struct timeval {
-	//long tv_sec;        /* seconds */
-	//long tv_usec;  /* microseconds */
+// struct timeval {
+// long tv_sec;        /* seconds */
+// long tv_usec;  /* microseconds */
 //};
 extern struct timeval timevl;
 #endif
@@ -87,7 +87,7 @@ extern struct timeval timevl;
 
 // typedef int MAP[MAX_R][MAX_C];
 
-//int  map_read(char * fname);
+// int  map_read(char * fname);
 extern void map_read();
 extern int map_draw_path(void);
 extern void map_draw_path2(void);
@@ -119,35 +119,48 @@ extern void send_flagrestorer(ID restorer_id, unsigned int code);
 extern void send_flagcaptured(ID capturer_id, unsigned int code);
 extern void send_clearfield(struct data *client);
 extern void send_fieldline(struct data *client, unsigned int index, char *line);
-extern void send_background(struct data *client, int df_id, 
-	int pos_x, int pos_y, char *datfile);
+extern void send_background(struct data *client, int df_id, int pos_x, int pos_y, char *datfile);
 extern void send_fieldend(struct data *client);
 extern void send_blockinfo(struct data *client, int w, int h, int size);
 extern void send_lag(struct data *client, int diff);
-extern void send_accel(struct data *client, struct data *except,
-    ID id, double x, double y, signed char accel, double speed);
-extern void send_turn(struct data *client, struct data *except,
-    ID id, double x, double y, signed char turn, double deg);
-extern void send_invincible(struct data *client, struct data *except,
-    ID id, unsigned char yesno, unsigned int t);
-extern void send_hit(struct data *client, struct data *except,
-    ID victimid, ID evilid, unsigned char newpower);
-extern void send_newuser(struct data *client, struct data *except,
-    ID id, double x, double y, double deg, signed char accel, 
-	unsigned int alive, signed short frags, signed char team,
-    signed char turn, unsigned char type, double speed, int shiptype,
-    char *nick);
+extern void send_accel(
+    struct data *client, struct data *except, ID id, double x, double y, signed char accel, double speed);
+extern void send_turn(
+    struct data *client, struct data *except, ID id, double x, double y, signed char turn, double deg);
+extern void send_invincible(struct data *client, struct data *except, ID id, unsigned char yesno, unsigned int t);
+extern void send_hit(struct data *client, struct data *except, ID victimid, ID evilid, unsigned char newpower);
+extern void send_newuser(struct data *client,
+                         struct data *except,
+                         ID id,
+                         double x,
+                         double y,
+                         double deg,
+                         signed char accel,
+                         unsigned int alive,
+                         signed short frags,
+                         signed char team,
+                         signed char turn,
+                         unsigned char type,
+                         double speed,
+                         int shiptype,
+                         char *nick);
 extern void send_newship(struct data *client);
 extern void send_delobj(struct data *client, struct data *except, ID id);
-extern void send_kill(struct data *client, struct data *except,
-    ID victimid, ID evilid, char *killstr);
-extern void send_newbullet(struct data *client, struct data *except,
-    ID id, ID ownerid, double x, double y, double deg);
+extern void send_kill(struct data *client, struct data *except, ID victimid, ID evilid, char *killstr);
+extern void send_newbullet(struct data *client, struct data *except, ID id, ID ownerid, double x, double y, double deg);
 extern void send_nick(struct data *client, struct data *except, ID id, char *newnick);
-extern void send_spawn(struct data *client, struct data *except,
-    ID id, double x, double y, double deg,
-    signed char accel, unsigned int alive, signed short frags,
-    signed char turn, unsigned char type, double speed);
+extern void send_spawn(struct data *client,
+                       struct data *except,
+                       ID id,
+                       double x,
+                       double y,
+                       double deg,
+                       signed char accel,
+                       unsigned int alive,
+                       signed short frags,
+                       signed char turn,
+                       unsigned char type,
+                       double speed);
 extern void send_quit(struct data *client, struct data *except, ID id, char *msg);
 extern void send_kick(struct data *client, struct data *except, ID id, char *msg);
 extern void send_nickreply(struct data *client, unsigned char goodorbad, char *txt);

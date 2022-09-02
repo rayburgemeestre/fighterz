@@ -1,14 +1,14 @@
 /********************************************
-*  VARIABLES
-****************************************************/
+ *  VARIABLES
+ ****************************************************/
 
-//DEPRECATED: extern double SPEED;
-extern struct timeb t; 
-extern struct timeb started; 
+// DEPRECATED: extern double SPEED;
+extern struct timeb t;
+extern struct timeb started;
 #if WINDOWS != 1
 extern struct timeval t2;
 #else
-extern struct timeb t2; 
+extern struct timeb t2;
 #endif
 extern TIME servertime;
 extern unsigned long int lps_time;
@@ -50,10 +50,10 @@ extern int LEFT;
 extern int TOP;
 extern int show_fps;
 extern int show_ulist;
-extern int fps; 
+extern int fps;
 extern int fps_count;
 extern long int fps_oldtime, fps_newtime;
-extern BITMAP *fieldbuff; 
+extern BITMAP *fieldbuff;
 extern BITMAP *shipbuff;
 extern int MAP_X;
 extern int MAP_Y;
@@ -65,7 +65,7 @@ extern unsigned int FIELD_X;
 extern unsigned int FIELD_Y;
 extern unsigned int map_scroll;
 #endif
-extern unsigned int MAX_HITS; 
+extern unsigned int MAX_HITS;
 extern unsigned int MAX_CHARS_IN_SENTENCE;
 extern struct flagpositions flagpos;
 extern struct location RED;
@@ -92,12 +92,12 @@ extern int element;
 
 extern struct bg_imgs bg_imgs_data[32];
 
-//server.c
+// server.c
 extern int id_has_redflag;
 extern int id_has_blueflag;
 extern unsigned int red_team_score;
 extern unsigned int blue_team_score;
 
-//player.c
+// player.c
 extern int red_team_count;
 extern int blue_team_count;
