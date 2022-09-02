@@ -10,7 +10,7 @@ void drawconsole() {
   // AL_INLINE(void, rectfill, (BITMAP *bmp, int x1, int y1, int x2, int y2, int color),
   while (i < MAX_C_LINES) {
     putpixel(tmpscreen, 0, cur_pos, 42);
-    textprintf(tmpscreen, font, LEFT, cur_pos, makecol(255, 128, 0), console[i]);
+    textprintf(tmpscreen, font, LEFT, cur_pos, makecol(255, 128, 0), "%s", console[i]);
     cur_pos += 10;
     i++;
   }

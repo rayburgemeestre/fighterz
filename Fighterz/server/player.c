@@ -309,14 +309,14 @@ void printul(char *nick, long int one) {
   char buf[128];
   /* again no snprintf().. arghl*/
   if (strlen(nick) > 30) nick[30] = '\0'; /* frag >30 */
-  sprintf(buf, "%8s %4d", nick, one);
+  sprintf(buf, "%8s %4ld", nick, one);
 
   TXTPTR2 = TXTPTR2 + 10;
 
   if (TXTPTR2 == 0) {
-    textprintf(tmpscreen, font, LEFT_2, 1, 42, buf); /* 42 = makecol(255, 128, 0) (orange) */
+    textprintf(tmpscreen, font, LEFT_2, 1, 42, "%s", buf); /* 42 = makecol(255, 128, 0) (orange) */
   } else {
-    textprintf(tmpscreen, font, LEFT_2, TXTPTR2, 42, buf);
+    textprintf(tmpscreen, font, LEFT_2, TXTPTR2, 42, "%s", buf);
   }
 }
 #endif
