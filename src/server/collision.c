@@ -274,9 +274,9 @@ double _futureX(double x, double angle, double speed) {
   pos_x = (cos(rads) * radius) + x;
 
   if (pos_x < 0)
-    pos_x = field_width - 1;
+    pos_x = 0;
   else if (pos_x > field_width)
-    pos_x = 1;
+    pos_x = field_width;
 
   return pos_x;
 }
@@ -290,9 +290,9 @@ double _futureY(double y, double angle, double speed) {
   pos_y = (sin(rads) * radius) + y;
 
   if (pos_y < 0)
-    pos_y = field_height - 1;
+    pos_y = 0;
   else if (pos_y > field_height)
-    pos_y = 1;
+    pos_y = field_height;
 
   return pos_y;
 }

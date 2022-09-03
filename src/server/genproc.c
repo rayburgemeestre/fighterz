@@ -365,8 +365,6 @@ int valid_target(double x1, double y1, double x2, double y2, double precision) {
   precision += 1; // for rounding errors
 
   while ((dabs(cur_x - x2) > precision || dabs(cur_y - y2) > precision)) {
-    // tmp_x = vtX(cur_x, deg);
-    // tmp_y = vtY(cur_y, deg);
     tmp_x = _futureX(cur_x, deg, B_SPEED);
     tmp_y = _futureY(cur_y, deg, B_SPEED);
 
