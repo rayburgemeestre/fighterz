@@ -140,32 +140,18 @@ void map_create_path(struct data *ptr) {
     y1 = (double)(startr * BLOCKSIZE) + (BLOCKSIZE / 2);
     x2 = (double)((current_c)*BLOCKSIZE) + (BLOCKSIZE / 2);
     y2 = (double)((current_r)*BLOCKSIZE) + (BLOCKSIZE / 2);
-    // while (x1 > field_width) x1 -= field_width;
-    // while (y1 > field_height) y1 -= field_height;
-    // while (x2 > field_width) x2 -= field_width;
-    // while (y2 > field_height) y2 -= field_height;
     ret = valid_target(x1, y1, x2, y2, (double)(BLOCKSIZE / 2));
+	// ret = 1;
 
 #if DEBUG2 == 1
-    {
-      double a, b, c, d;
-      a = x1;
-      //      while (a > field_width) a -= field_width;
-      b = y1;
-      //      while (b > field_height) b -= field_height;
-      c = x2;
-      //      while (c > field_width) c -= field_width;
-      d = y2;
-      //      while (d > field_height) d -= field_height;
-      line(fieldbuff, (int)a, (int)b, (int)c, (int)d, makecol(255, 0, 0));
-    }
+   line(fieldbuff, x1, y1, x2, y2, makecol(255, 0, 0));
 #endif
     if (ret == 1) {
       static int old_x, old_y;
 
       // these two lines help if ret = 1
-      // tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
-      // tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
+	// tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
+	// tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
       /* not a valid target  */
       // LOG: current++ == 1222
       ptr->path[element][0] = (double)tcoord_x;

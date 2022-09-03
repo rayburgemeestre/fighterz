@@ -38,17 +38,17 @@ endif()
 #endif()
 
 include_directories(
-    "${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/client"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/mapmaker"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/server"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/common"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mapmaker"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/common"
 )
 
 link_directories("/usr/lib/llvm-12/lib/clang/12.0.0/lib/linux/")
 
 # client
 
-file(GLOB_RECURSE client_SOURCES "Fighterz/client/**.h" "Fighterz/client/**.c" "Fighterz/common/**.h" "Fighterz/common/**.c")
+file(GLOB_RECURSE client_SOURCES "src/client/**.h" "src/client/**.c" "src/common/**.h" "src/common/**.c")
 
 add_executable(client ${client_SOURCES})
 target_link_libraries(client PRIVATE -lalleg)
@@ -58,13 +58,13 @@ target_link_libraries(client PRIVATE -lm)
 
 # mapmaker
 
-file(GLOB_RECURSE mapmaker_SOURCES "Fighterz/mapmaker/**.h" "Fighterz/mapmaker/**.c" "Fighterz/common/**.h" "Fighterz/common/**.c")
+file(GLOB_RECURSE mapmaker_SOURCES "src/mapmaker/**.h" "src/mapmaker/**.c" "src/common/**.h" "src/common/**.c")
 add_executable(mapmaker ${mapmaker_SOURCES})
 target_link_libraries(mapmaker PRIVATE -lalleg)
 
 # server
 
-file(GLOB_RECURSE server_SOURCES "Fighterz/server/**.h" "Fighterz/server/**.c" "Fighterz/common/**.h" "Fighterz/common/**.c")
+file(GLOB_RECURSE server_SOURCES "src/server/**.h" "src/server/**.c" "src/common/**.h" "src/common/**.c")
 add_executable(server ${server_SOURCES})
 target_link_libraries(server PRIVATE -lm)
 target_link_libraries(server PRIVATE -lalleg) # depends on DEBUG2
@@ -83,10 +83,10 @@ set(all_sources ${client_SOURCES})
 list(APPEND all_sources ${mapmaker_SOURCES})
 list(APPEND all_sources ${server_SOURCES})
 
-list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/mapmaker/data.h)
-list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/client/data.h)
-list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/client/sound.h)
-list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/Fighterz/mapmaker/dialog.c)
+list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/mapmaker/data.h)
+list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/client/data.h)
+list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/client/sound.h)
+list(REMOVE_ITEM all_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/mapmaker/dialog.c)
 
 list(REMOVE_DUPLICATES all_sources)
 clangformat_setup(${all_sources})

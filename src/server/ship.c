@@ -318,15 +318,19 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
           current->bot_y = pos_y;
 
           /* did the ship fly out the field? */
-          if (current->y < 0) {  // *warp*
-            current->y = (double)(field_height - 1);
-          } else if ((unsigned long)current->y > field_height) {
-            current->y = 1.0;
-          } else if (current->x < 0) {
-            current->x = (double)(field_width - 1);
-          } else if ((unsigned long)current->x > field_width) {
-            current->x = 1.0;
-          }
+		  if (current->bot != 1) {
+			  if (current->y < 0) {  // *warp*
+				  current->y = (double) (field_height - 1);
+			  } else if ((unsigned long) current->y > field_height) {
+				  current->y = 1.0;
+			  }
+//			  } else if (current->x < 0) {
+//				  current->x = (double) (field_width - 1);
+//			  } else if ((unsigned long) current->x > field_width) {
+//				  printf("warped x because: %f > %f\n", current->x, (double)field_width);
+//				  current->x = 1.0;
+//			  }
+		  }
         }
 
 #if DEBUG == 1

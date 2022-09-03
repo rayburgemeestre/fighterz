@@ -360,10 +360,10 @@ void move_ship(struct data *client) {
       client->y = field_height - 1;
     else if (client->y > field_height)
       client->y = 1;
-    else if (client->x < 0)
-      client->x = field_width - 1;
-    else if (client->x > field_width)
-      client->x = 1;
+//    else if (client->x < 0)
+//      client->x = field_width - 1;
+//    else if (client->x > field_width)
+//      client->x = 1;
 
     collidecheck2(client->id, 0, 0);
   }
