@@ -146,9 +146,14 @@ void parse_input() {
       // findpath(head);
       bot = add_bot();
       notify_of_newuser(EVERYONE, NULL, bot);
-      // flyto(bot->id, REDFLAG.x, REDFLAG.y);
-//      flyto(bot->id, 10, 30);
-		flyto(bot->id, 29 * 20, 30);
+      if (bot->team == 1) {
+        flyto(bot->id, BLUEFLAG.x, BLUEFLAG.y);
+      } else {
+        flyto(bot->id, REDFLAG.x, REDFLAG.y);
+      }
+      // flyto(bot->id, 10, 30);
+      // flyto(bot->id, 100, 100);
+      // flyto(bot->id, 29 * 20, 30);
       // flyto(bot->id, bot->x, bot->y + 10);
       // addtext("2: %d", head->bot);
       //}
@@ -283,9 +288,10 @@ void initialize_vars() {
   ftime(&started);
 
   /* map */
-  // strncpy(map3, "maps/lvl-syz.txt", 64);
+  strncpy(map3, "maps/lvl-syz.txt", 64);
   // strncpy(map3, "maps/lvl1.txt", 64);
- strncpy(map3, "maps/lvl1b.txt", 64);
+  // strncpy(map3, "maps/lvl1b.txt", 64);
+  // strncpy(map3, "maps/lvldbg.txt", 64);
   // strncpy(map3, "maps/lvl-x2.txt", 64);
   // strncpy(map3, "maps/minilvl-x.txt", 64);
   map3[63] = '\0';
@@ -362,7 +368,7 @@ int valid_target(double x1, double y1, double x2, double y2, double precision) {
   collided = 0;
   i = 0;
 
-  precision += 1; // for rounding errors
+  precision += 1;  // for rounding errors
 
   while ((dabs(cur_x - x2) > precision || dabs(cur_y - y2) > precision)) {
     tmp_x = _futureX(cur_x, deg, B_SPEED);
@@ -419,8 +425,7 @@ int valid_target(double x1, double y1, double x2, double y2, double precision) {
     cur_x = tmp_x;
     cur_y = tmp_y;
 
-    if (collided == 1)
-		return 1;
+    if (collided == 1) return 1;
   }
 
   return 0;

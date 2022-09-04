@@ -141,17 +141,17 @@ void map_create_path(struct data *ptr) {
     x2 = (double)((current_c)*BLOCKSIZE) + (BLOCKSIZE / 2);
     y2 = (double)((current_r)*BLOCKSIZE) + (BLOCKSIZE / 2);
     ret = valid_target(x1, y1, x2, y2, (double)(BLOCKSIZE / 2));
-	// ret = 1;
+    // ret = 1;
 
 #if DEBUG2 == 1
-   line(fieldbuff, x1, y1, x2, y2, makecol(255, 0, 0));
+    line(fieldbuff, x1, y1, x2, y2, makecol(255, 0, 0));
 #endif
     if (ret == 1) {
       static int old_x, old_y;
 
       // these two lines help if ret = 1
-	// tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
-	// tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
+      // tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
+      // tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
       /* not a valid target  */
       // LOG: current++ == 1222
       ptr->path[element][0] = (double)tcoord_x;
@@ -168,12 +168,12 @@ void map_create_path(struct data *ptr) {
         double x = (double)tcoord_x;
         double y = (double)tcoord_y;
 
-        while (x > field_width) x -= field_width;
-        while (y > field_height) y -= field_height;
-
-        circlefill(fieldbuff, (int)x, (int)y, 5, makecol(255, 0, 0));
-        line(fieldbuff, old_x, old_y, (int)x, (int)y, makecol(255, 0, 0));
-
+        if (dir == 0) {
+          circlefill(fieldbuff, (int)x, (int)y, 5, makecol(255, 0, 254));
+        } else {
+          circlefill(fieldbuff, (int)x, (int)y, 5, makecol(255, 0, 0));
+        }
+        if (old_x != 0 && old_y != 0) line(fieldbuff, old_x, old_y, (int)x, (int)y, makecol(255, 0, 0));
         addtext("%.2f, %.2f", x, y);
         old_x = x;
         old_y = y;
@@ -187,24 +187,13 @@ void map_create_path(struct data *ptr) {
       {
         double x = (double)tcoord_x;
         double y = (double)tcoord_y;
-
-        while (x > field_width) x -= field_width;
-        while (y > field_height) y -= field_height;
-        circlefill(fieldbuff, (int)x, (int)y, 5, makecol(0, 0, 255));
-        addtext("%.2f, %.2f", x, y);
-
-        {
-          double a, b, c, d;
-          a = x1;
-          while (a > field_width) a -= field_width;
-          b = y1;
-          while (b > field_height) b -= field_height;
-          c = x2;
-          while (c > field_width) c -= field_width;
-          d = y2;
-          while (d > field_height) d -= field_height;
-          line(fieldbuff, (int)a, (int)b, (int)c, (int)d, makecol(0, 255, 0));
+        if (dir == 0) {
+          circlefill(fieldbuff, (int)x, (int)y, 5, makecol(255, 0, 254));
+        } else {
+          circlefill(fieldbuff, (int)x, (int)y, 5, makecol(0, 0, 255));
         }
+        addtext("%.2f, %.2f", x, y);
+        line(fieldbuff, x1, y1, x2, y2, makecol(0, 255, 0));
       }
 #endif
     }
@@ -304,20 +293,30 @@ void build_path(void) {
 
     /* FOREACH square adjacent to (row,col), call it drow(row,i), dcol(col,i) */
     for (i = 0; i < 4; i++) {
+      int crow = drow(row, i);
+      int ccol = dcol(col, i);
+      //	if (crow == -1)
+      //		crow = rows_read - 1;
+      //	if (ccol == -1)
+      //		ccol = cols_read - 1;
+      //	if (crow == rows_read)
+      //		crow = 0;
+      //	if (ccol == cols_read)
+      //		ccol = 0;
+
       /* Check to make sure the square is on the map */
-      if (drow(row, i) < 0 || drow(row, i) >= rows_read || dcol(col, i) < 0 || dcol(col, i) >= cols_read) continue;
+      if (crow < 0 || crow >= rows_read || ccol < 0 || ccol >= cols_read) {
+        continue;
+      }
 
       /* Check to see if we've found a shorter path */
-      if (dist[row][col] + map[drow(row, i)][dcol(col, i)] < dist[drow(row, i)][dcol(col, i)]) {
+      if (dist[row][col] + map[crow][ccol] < dist[crow][ccol]) {
         /* We have a shorter path, update the information */
-        dist[drow(row, i)][dcol(col, i)] = map[drow(row, i)][dcol(col, i)] + dist[row][col];
-        parent[drow(row, i)][dcol(col, i)][0] = row;
-        parent[drow(row, i)][dcol(col, i)][1] = col;
+        dist[crow][ccol] = map[crow][ccol] + dist[row][col];
+        parent[crow][ccol][0] = row;
+        parent[crow][ccol][1] = col;
         /* Push the modified square onto the priority queue */
-        pqueue_insert(pq,
-                      drow(row, i),
-                      dcol(col, i),
-                      dist[drow(row, i)][dcol(col, i)] + h(drow(row, i), dcol(col, i), endr, endc));
+        pqueue_insert(pq, crow, ccol, dist[crow][ccol] + h(crow, ccol, endr, endc));
         pushes++;
       }
     }
