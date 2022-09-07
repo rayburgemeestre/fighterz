@@ -87,6 +87,7 @@ void map_create_path(struct data *ptr) {
   int ret;
   int tcoord_x, tcoord_y; /* tussen coordinaten, waar die zeg maar maximaal in 1 lijn naartoe kan vliegen */
   double x1, x2, y1, y2;
+  int warping = 0;
 
   element = 0;
 
@@ -135,12 +136,37 @@ void map_create_path(struct data *ptr) {
     else if (dir == 4)
       current_r++;
 
+    // do some wrapping, but we need to do something smart additionally to this
+    if (current_r < 0) current_r = rows_read - 1;
+    if (current_c < 0) current_c = cols_read - 1;
+    if (current_r >= rows_read) current_r = 0;
+    if (current_c >= cols_read) current_c = 0;
+
     // fix coordinates
     x1 = (double)(startc * BLOCKSIZE) + (BLOCKSIZE / 2);
     y1 = (double)(startr * BLOCKSIZE) + (BLOCKSIZE / 2);
     x2 = (double)((current_c)*BLOCKSIZE) + (BLOCKSIZE / 2);
     y2 = (double)((current_r)*BLOCKSIZE) + (BLOCKSIZE / 2);
     ret = valid_target(x1, y1, x2, y2, (double)(BLOCKSIZE / 2));
+
+    // This is too late, but we need to do something similar, whenever we detect we're doing a warp, store the path as
+    // an explicit step, and the next one as well.
+    // if (warping) {
+    //	ret = 1; // the other end of the warp also needs to always be taken
+    //	tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
+    //	tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
+    //	warping = 0;
+    //}
+    // if (abs(old_r - current_r) + abs(old_c - current_c) > 1) {
+    //	ret = 1; // not a valid target, because we've warped around, we need to take the warp
+    //	tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
+    //	tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
+    //	warping = 1;
+    //}
+
+    old_r = current_r;
+    old_c = current_c;
+
     // ret = 1;
 
 #if DEBUG2 == 1
@@ -290,19 +316,17 @@ void build_path(void) {
       /* STOP HERE */
       break;
     }
+    //      	if (ccol == -1)
+    //      		ccol = cols_read - 1;
 
     /* FOREACH square adjacent to (row,col), call it drow(row,i), dcol(col,i) */
     for (i = 0; i < 4; i++) {
       int crow = drow(row, i);
       int ccol = dcol(col, i);
-      //	if (crow == -1)
-      //		crow = rows_read - 1;
-      //	if (ccol == -1)
-      //		ccol = cols_read - 1;
-      //	if (crow == rows_read)
-      //		crow = 0;
-      //	if (ccol == cols_read)
-      //		ccol = 0;
+      if (crow < 0) crow = rows_read - 1;
+      if (ccol < 0) ccol = cols_read - 1;
+      if (crow >= rows_read) crow = 0;
+      if (ccol >= cols_read) ccol = 0;
 
       /* Check to make sure the square is on the map */
       if (crow < 0 || crow >= rows_read || ccol < 0 || ccol >= cols_read) {
@@ -310,13 +334,19 @@ void build_path(void) {
       }
 
       /* Check to see if we've found a shorter path */
-      if (dist[row][col] + map[crow][ccol] < dist[crow][ccol]) {
+      int a = dist[row][col];
+      int b = map[crow][ccol];
+      int c = dist[crow][ccol];
+      // printf("checking %d,%d and c+ %d,%d with a,b,c: %d,%d,%d\n", row, col, crow, ccol, a, b, c);
+      if (a + b < c) {
         /* We have a shorter path, update the information */
         dist[crow][ccol] = map[crow][ccol] + dist[row][col];
         parent[crow][ccol][0] = row;
         parent[crow][ccol][1] = col;
         /* Push the modified square onto the priority queue */
-        pqueue_insert(pq, crow, ccol, dist[crow][ccol] + h(crow, ccol, endr, endc));
+        int a = dist[crow][ccol];
+        int b = h(crow, ccol, endr, endc);
+        pqueue_insert(pq, crow, ccol, a + b);
         pushes++;
       }
     }

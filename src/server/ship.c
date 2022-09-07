@@ -369,13 +369,13 @@ void drawships() {
         pos_x = fbX(current->id);
         pos_y = fbY(current->id);
 
-		if (current->team == 1) {
-			circle(shipbuff, (int) current->x, (int) current->y, BLOCKSIZE / 4, makecol(255, 128, 128));
-			line(shipbuff, (int)current->x, (int)current->y, (int)pos_x, (int)pos_y, makecol(255, 128, 128));
-		} else {
-			circle(shipbuff, (int)current->x, (int)current->y, BLOCKSIZE / 4, makecol(128, 128, 255));
-			line(shipbuff, (int)current->x, (int)current->y, (int)pos_x, (int)pos_y, makecol(128, 128,255));
-		}
+        if (current->team == 1) {
+          circle(shipbuff, (int)current->x, (int)current->y, BLOCKSIZE / 4, makecol(255, 128, 128));
+          line(shipbuff, (int)current->x, (int)current->y, (int)pos_x, (int)pos_y, makecol(255, 128, 128));
+        } else {
+          circle(shipbuff, (int)current->x, (int)current->y, BLOCKSIZE / 4, makecol(128, 128, 255));
+          line(shipbuff, (int)current->x, (int)current->y, (int)pos_x, (int)pos_y, makecol(128, 128, 255));
+        }
 
         if (current->invincible != 0)
           rect(shipbuff,
