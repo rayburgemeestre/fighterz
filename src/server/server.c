@@ -475,8 +475,8 @@ int main(void) {
         int rand_x, rand_y, tx, ty;
         int continue_loop = 0;
         do {
-          rand_x = 1 + (int)(field_width * rand() / (RAND_MAX + 1.0));
-          rand_y = 1 + (int)(field_height * rand() / (RAND_MAX + 1.0));
+          rand_x = 1 + (int)((field_width - 1) * rand() / (RAND_MAX + 1.0));
+          rand_y = 1 + (int)((field_height - 1) * rand() / (RAND_MAX + 1.0));
 
           tx = (int)((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
           ty = (int)((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);

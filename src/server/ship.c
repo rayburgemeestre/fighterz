@@ -49,8 +49,8 @@ void moveships() {
                 int rand_x, rand_y, tx, ty;
                 int continue_loop = 0;
                 do {
-                  rand_x = 1 + (int)(field_width * rand() / (RAND_MAX + 1.0));
-                  rand_y = 1 + (int)(field_height * rand() / (RAND_MAX + 1.0));
+                  rand_x = 1 + (int)((field_width - 1) * rand() / (RAND_MAX + 1.0));
+                  rand_y = 1 + (int)((field_height - 1) * rand() / (RAND_MAX + 1.0));
 
                   tx = (int)((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
                   ty = (int)((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
@@ -157,9 +157,9 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
               current->speed -= 0.01;
             }
             /*
-                    *** De doubles zijn nogal gaar, intern afgerond ofzo?
-                    0.0000 is tegenwoordig al groter dan 0.00 ofzo
-                    dus ehm, vandaar die vage extra 0.001 steeds.....
+                          *** De doubles zijn nogal gaar, intern afgerond ofzo?
+                          0.0000 is tegenwoordig al groter dan 0.00 ofzo
+                          dus ehm, vandaar die vage extra 0.001 steeds.....
             */
           } else if (current->velocity == -1) {
             if (current->speed > (-1 * current->max_speed)) current->speed -= 0.01;
@@ -225,26 +225,26 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
 
               /* If coordinates between ship and the target (tx/ty) will
               increase with the next step .. :) */
-              if (distance_next > distance_now && current->speed != 0.0) {
+              if (distance_now < 5 && current->speed != 0.0) {
                 ox = current->path[(int)(current->path[PATH_MAX_ - 1][1])][0];
                 oy = current->path[(int)(current->path[PATH_MAX_ - 1][1])][1];
 
-                current->path[PATH_MAX_ - 1][1] = current->path[PATH_MAX_ - 1][1] + 1.0;
-
-                addtext("Done path %.2f of %.2f", current->path[PATH_MAX_ - 1][1], current->path[PATH_MAX_ - 1][0]);
-                //                printf("Bot %d is following path %.2f of %.2f\n",
-                //                       current->id,
-                //                       current->path[PATH_MAX_ - 1][1],
-                //                       current->path[PATH_MAX_ - 1][0]);
-
-                tx = current->path[(int)(current->path[PATH_MAX_ - 1][1])][0];
-                ty = current->path[(int)(current->path[PATH_MAX_ - 1][1])][1];
-
-                current->x -= (current->bot_x - ox);
-                current->y -= (current->bot_y - oy);
+                current->x = ox;
+                current->y = oy;
 
                 current->bot_x = ox;
                 current->bot_y = oy;
+
+                current->path[PATH_MAX_ - 1][1]++;
+
+                addtext("Done path %.2f of %.2f", current->path[PATH_MAX_ - 1][1], current->path[PATH_MAX_ - 1][0]);
+                printf("Bot %d is following path %.2f of %.2f\n",
+                       current->id,
+                       current->path[PATH_MAX_ - 1][1],
+                       current->path[PATH_MAX_ - 1][0]);
+
+                tx = current->path[(int)(current->path[PATH_MAX_ - 1][1])][0];
+                ty = current->path[(int)(current->path[PATH_MAX_ - 1][1])][1];
 
                 if ((current->path[PATH_MAX_ - 1][0] - current->path[PATH_MAX_ - 1][1]) == 0) {
                   current->velocity = 0;
@@ -274,8 +274,8 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
                   int rand_x, rand_y, tx, ty;
                   int continue_loop = 0;
                   do {
-                    rand_x = 1 + (int)(field_width * rand() / (RAND_MAX + 1.0));
-                    rand_y = 1 + (int)(field_height * rand() / (RAND_MAX + 1.0));
+                    rand_x = 1 + (int)((field_width - 1) * rand() / (RAND_MAX + 1.0));
+                    rand_y = 1 + (int)((field_height - 1) * rand() / (RAND_MAX + 1.0));
 
                     tx = (int)((rand_x - (BLOCKSIZE / 4)) / BLOCKSIZE);
                     ty = (int)((rand_y - (BLOCKSIZE / 4)) / BLOCKSIZE);
@@ -318,18 +318,25 @@ void moveship(unsigned int id2, TIME t2) { /* t2 wasn't needed :} */
           current->bot_y = pos_y;
 
           /* did the ship fly out the field? */
-          if (current->bot != 1) {
-            if (current->y < 0) {  // *warp*
-              current->y = (double)(field_height - 1);
-            } else if ((unsigned long)current->y > field_height) {
-              current->y = 1.0;
+          int warped = 0;
+          if (current->y < 0) {  // *warp*
+            current->y = (double)(field_height - 1);
+            warped = 1;
+          } else if ((unsigned long)current->y > field_height) {
+            current->y = 1.0;
+            warped = 1;
+          } else if (current->x < 0) {
+            current->x = (double)(field_width - 1);
+            warped = 1;
+          } else if ((unsigned long)current->x > field_width) {
+            current->x = 1.0;
+            warped = 1;
+          }
+          if (warped) {
+            // increment path
+            if (current->path[PATH_MAX_ - 1][1] < current->path[PATH_MAX_ - 1][0]) {
+              current->path[PATH_MAX_ - 1][1]++;
             }
-            // } else if (current->x < 0) {
-            //	  current->x = (double) (field_width - 1);
-            // } else if ((unsigned long) current->x > field_width) {
-            //	  printf("warped x because: %f > %f\n", current->x, (double)field_width);
-            //	  current->x = 1.0;
-            // }
           }
         }
 

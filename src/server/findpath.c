@@ -136,11 +136,45 @@ void map_create_path(struct data *ptr) {
     else if (dir == 4)
       current_r++;
 
+    // we could put this inside the if statements below
+    int pre_warp_current_r = current_r;
+    int pre_warp_current_c = current_c;
+
     // do some wrapping, but we need to do something smart additionally to this
-    if (current_r < 0) current_r = rows_read - 1;
-    if (current_c < 0) current_c = cols_read - 1;
-    if (current_r >= rows_read) current_r = 0;
-    if (current_c >= cols_read) current_c = 0;
+    if (current_r < 0) {
+      current_r = rows_read - 1;
+      warping = 1;
+    }
+    if (current_c < 0) {
+      current_c = cols_read - 1;
+      warping = 1;
+    }
+    if (current_r >= rows_read) {
+      current_r = 0;
+      warping = 1;
+    }
+    if (current_c >= cols_read) {
+      current_c = 0;
+      warping = 1;
+    }
+
+    if (warping) {
+      // insert both sides of the wormhole
+      // this location will make the bot do the warp, when it does, we simply advance the path once more.
+      ptr->path[element][0] = (double)(pre_warp_current_c * BLOCKSIZE + (BLOCKSIZE / 2));
+      ptr->path[element][1] = (double)(pre_warp_current_r * BLOCKSIZE + (BLOCKSIZE / 2));
+      element++;
+
+      ptr->path[element][0] = (double)(current_c * BLOCKSIZE + (BLOCKSIZE / 2));
+      ptr->path[element][1] = (double)(current_r * BLOCKSIZE + (BLOCKSIZE / 2));
+      element++;
+
+      // needed?
+      tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
+      tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
+
+      warping = 0;
+    }
 
     // fix coordinates
     x1 = (double)(startc * BLOCKSIZE) + (BLOCKSIZE / 2);
@@ -149,25 +183,10 @@ void map_create_path(struct data *ptr) {
     y2 = (double)((current_r)*BLOCKSIZE) + (BLOCKSIZE / 2);
     ret = valid_target(x1, y1, x2, y2, (double)(BLOCKSIZE / 2));
 
-    // This is too late, but we need to do something similar, whenever we detect we're doing a warp, store the path as
-    // an explicit step, and the next one as well.
-    // if (warping) {
-    //	ret = 1; // the other end of the warp also needs to always be taken
-    //	tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
-    //	tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
-    //	warping = 0;
-    //}
-    // if (abs(old_r - current_r) + abs(old_c - current_c) > 1) {
-    //	ret = 1; // not a valid target, because we've warped around, we need to take the warp
-    //	tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
-    //	tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
-    //	warping = 1;
-    //}
-
     old_r = current_r;
     old_c = current_c;
 
-    // ret = 1;
+    // ret = 0;
 
 #if DEBUG2 == 1
     line(fieldbuff, x1, y1, x2, y2, makecol(255, 0, 0));
@@ -175,18 +194,11 @@ void map_create_path(struct data *ptr) {
     if (ret == 1) {
       static int old_x, old_y;
 
-      // these two lines help if ret = 1
-      // tcoord_x = current_c * BLOCKSIZE + (BLOCKSIZE / 2);
-      // tcoord_y = current_r * BLOCKSIZE + (BLOCKSIZE / 2);
       /* not a valid target  */
-      // LOG: current++ == 1222
       ptr->path[element][0] = (double)tcoord_x;
-      ptr->path[element++][1] = (double)tcoord_y;
+      ptr->path[element][1] = (double)tcoord_y;
+      element++;
 
-      //			current_c = startc = old_c;
-      //			current_r = startr = old_r; /* was: current instead of old */
-      //			fprintf(fp, "LOG: current_c = start_c = old_c (%d)\n", old_c);
-      //			fprintf(fp, "LOG: current_r = start_r = old_r (%d)\n", old_r);
       old_c = startc = current_c;
       old_r = startr = current_r; /* was: current instead of old */
 #if DEBUG2 == 1
@@ -316,8 +328,6 @@ void build_path(void) {
       /* STOP HERE */
       break;
     }
-    //      	if (ccol == -1)
-    //      		ccol = cols_read - 1;
 
     /* FOREACH square adjacent to (row,col), call it drow(row,i), dcol(col,i) */
     for (i = 0; i < 4; i++) {
@@ -340,7 +350,7 @@ void build_path(void) {
       // printf("checking %d,%d and c+ %d,%d with a,b,c: %d,%d,%d\n", row, col, crow, ccol, a, b, c);
       if (a + b < c) {
         /* We have a shorter path, update the information */
-        dist[crow][ccol] = map[crow][ccol] + dist[row][col];
+        dist[crow][ccol] = a + b;
         parent[crow][ccol][0] = row;
         parent[crow][ccol][1] = col;
         /* Push the modified square onto the priority queue */

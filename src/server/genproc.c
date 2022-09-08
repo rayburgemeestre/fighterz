@@ -146,12 +146,23 @@ void parse_input() {
       // findpath(head);
       bot = add_bot();
       notify_of_newuser(EVERYONE, NULL, bot);
-      //      if (bot->team == 1) {
-      //        flyto(bot->id, BLUEFLAG.x, BLUEFLAG.y);
-      //      } else {
-      //        flyto(bot->id, REDFLAG.x, REDFLAG.y);
-      //      }
-      flyto(bot->id, 10, 30);
+      if (bot->team == 1) {
+        flyto(bot->id, BLUEFLAG.x, BLUEFLAG.y);
+      } else {
+        flyto(bot->id, REDFLAG.x, REDFLAG.y);
+      }
+      // flyto(bot->id, 10, 30);
+
+      // problematic one, exposes infinite loop (fixed)
+      // bot->x = 110;
+      // bot->y = 370;
+      // flyto(bot->id, 62, 51);
+
+      // problematic two, exposes needlessly long path, (fixed).
+      // bot->x = 70;
+      // bot->y = 50;
+      // flyto(bot->id, 599, 88);
+
       // flyto(bot->id, 100, 100);
       // flyto(bot->id, 29 * 20, 30);
       // flyto(bot->id, bot->x, bot->y + 10);
@@ -289,7 +300,7 @@ void initialize_vars() {
 
   /* map */
   strncpy(map3, "maps/lvl-syz.txt", 64);
-  strncpy(map3, "maps/lvl1.txt", 64);
+  // strncpy(map3, "maps/lvl1.txt", 64);
   // strncpy(map3, "maps/lvl1b.txt", 64);
   // strncpy(map3, "maps/lvldbg.txt", 64);
   // strncpy(map3, "maps/lvl-x2.txt", 64);
